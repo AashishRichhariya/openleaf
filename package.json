@@ -10,6 +10,8 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@lexical/react": "^0.24.0",
+    "lexical": "^0.24.0",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -18,8 +20,8 @@
     "@eslint/eslintrc": "^3",
     "@eslint/js": "^9.20.0",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "@typescript-eslint/parser": "^8.24.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
