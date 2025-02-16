@@ -23,14 +23,24 @@ export default function Editor(): ReactElement {
   };
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <RichTextPlugin
-        contentEditable={<ContentEditable />}
-        placeholder={<div>Enter some text...</div>}
-        ErrorBoundary={LexicalErrorBoundary}
-      />
-      <HistoryPlugin />
-      <AutoFocusPlugin />
-    </LexicalComposer>
+    <div className="editor-container">
+      <div className="editor-content">
+        <LexicalComposer initialConfig={initialConfig}>
+          <div className="relative min-h-screen py-12">
+            <RichTextPlugin
+              contentEditable={<ContentEditable className="editor-root" />}
+              placeholder={
+                <div className="absolute top-12 text-gray-400 pointer-events-none">
+                  Scribe away...
+                </div>
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+            <HistoryPlugin />
+            <AutoFocusPlugin />
+          </div>
+        </LexicalComposer>
+      </div>
+    </div>
   );
 }

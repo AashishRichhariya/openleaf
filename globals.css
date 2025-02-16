@@ -19,3 +19,21 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  .editor-root {
+    @apply relative outline-none;
+  }
+
+  .editor-paragraph {
+    @apply m-0 leading-relaxed;
+  }
+
+  .editor-container {
+    @apply min-h-screen w-full flex justify-center bg-background;
+  }
+
+  .editor-content {
+    @apply w-full max-w-4xl px-4;
+  }
+}
