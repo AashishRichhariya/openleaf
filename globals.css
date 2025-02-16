@@ -1,0 +1,64 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+:root {
+  /* Editor theme variables */
+  --editor-bg: #ffffff;
+  --editor-text: #1a1a1a;
+  --editor-placeholder: #6b7280;
+}
+
+/* Dark mode colors - we can implement this later */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --editor-bg: #1a1a1a;
+    --editor-text: #ffffff;
+    --editor-placeholder: #9ca3af;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--editor-bg);
+  color: var(--editor-text);
+}
+
+.editor-main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.editor-content {
+  width: 100%;
+  max-width: 800px;
+  min-height: calc(100vh - 4rem); /* Account for padding */
+  outline: none;
+  padding: 1rem;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* Placeholder text styling */
+.editor-content[contenteditable]:empty:before {
+  content: attr(placeholder);
+  color: var(--editor-placeholder);
+  pointer-events: none;
+  position: absolute;
+}
+
+/* Optional: Add subtle border or background to visualize editor area */
+.editor-content {
+  background: var(--editor-bg);
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
