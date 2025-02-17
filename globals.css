@@ -21,6 +21,7 @@ body {
 }
 
 @layer components {
+  /* Base editor components */
   .editor-root {
     @apply relative outline-none;
   }
@@ -35,5 +36,38 @@ body {
 
   .editor-content {
     @apply w-full max-w-4xl px-4;
+  }
+
+  /* Node-specific styles */
+  .editor-heading-h1 {
+    @apply text-4xl font-bold mt-6 mb-4;
+  }
+
+  .editor-heading-h2 {
+    @apply text-3xl font-bold mt-5 mb-3;
+  }
+
+  .editor-heading-h3 {
+    @apply text-2xl font-bold mt-4 mb-2;
+  }
+
+  .editor-list-ul {
+    @apply list-disc ml-6 my-4;
+  }
+
+  .editor-list-ol {
+    @apply list-decimal ml-6 my-4;
+  }
+
+  .editor-listitem {
+    @apply ml-4;
+  }
+
+  .editor-quote {
+    @apply border-l-4 border-gray-300 pl-4 my-4 italic text-gray-600;
+  }
+
+  .editor-code {
+    @apply bg-gray-100 p-2 rounded font-mono text-sm;
   }
 }

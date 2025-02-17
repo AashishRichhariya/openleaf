@@ -8,9 +8,27 @@ importers:
 
   .:
     dependencies:
+      '@lexical/code':
+        specifier: ^0.24.0
+        version: 0.24.0
+      '@lexical/link':
+        specifier: ^0.24.0
+        version: 0.24.0
+      '@lexical/list':
+        specifier: ^0.24.0
+        version: 0.24.0
+      '@lexical/markdown':
+        specifier: ^0.24.0
+        version: 0.24.0
       '@lexical/react':
         specifier: ^0.24.0
         version: 0.24.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(yjs@13.6.23)
+      '@lexical/rich-text':
+        specifier: ^0.24.0
+        version: 0.24.0
+      '@lexical/table':
+        specifier: ^0.24.0
+        version: 0.24.0
       lexical:
         specifier: ^0.24.0
         version: 0.24.0
