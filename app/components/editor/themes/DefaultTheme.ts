@@ -17,8 +17,19 @@ const defaultTheme = {
     },
     ol: "editor-list-ol",
     ul: "editor-list-ul",
-    listitem: "editor-listitem"
+    listitem: "editor-listitem",
+    olDepth: [
+      "editor-list-ol1",
+      "editor-list-ol2",
+      "editor-list-ol3",
+      "editor-list-ol4",
+      "editor-list-ol5",
+    ],
+    checklist: "editor-checklist",
+    listitemChecked: "editor-listitem-checked",
+    listitemUnchecked: "editor-listitem-unchecked"
   },
+  indent: "editor-indent",
   image: "editor-image",
   link: "editor-link",
   text: {

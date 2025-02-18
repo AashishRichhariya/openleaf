@@ -8,8 +8,10 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ReactElement } from "react";
 
@@ -51,13 +53,15 @@ export default function Editor(): ReactElement {
               contentEditable={<ContentEditable className="editor-root" />}
               placeholder={
                 <div className="absolute top-12 text-gray-400 pointer-events-none">
-                  Scribe away...
+                  Scribble away...
                 </div>
               }
               ErrorBoundary={LexicalErrorBoundary}
             />
             <HistoryPlugin />
             <AutoFocusPlugin />
+            <ListPlugin />
+            <TabIndentationPlugin maxIndent={7} />
             <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
           </div>
         </LexicalComposer>

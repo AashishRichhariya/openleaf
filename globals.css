@@ -51,23 +51,122 @@ body {
     @apply text-2xl font-bold mt-4 mb-2;
   }
 
-  .editor-list-ul {
-    @apply list-disc ml-6 my-4;
-  }
-
-  .editor-list-ol {
-    @apply list-decimal ml-6 my-4;
-  }
-
-  .editor-listitem {
-    @apply ml-4;
-  }
-
   .editor-quote {
     @apply border-l-4 border-gray-300 pl-4 my-4 italic text-gray-600;
   }
 
   .editor-code {
     @apply bg-gray-100 p-2 rounded font-mono text-sm;
+  }
+
+   /* Base list styles */
+   .editor-list-ul {
+    @apply p-0 m-0 list-disc list-outside;
+  }
+
+  .editor-list-ol {
+    @apply p-0 m-0 list-decimal list-outside;
+  }
+
+  /* List item styles */
+  .editor-listitem {
+    @apply mx-8;
+  }
+
+  /* Nested list item */
+  .editor-nested-listitem {
+    @apply list-none;
+  }
+
+  /* Different depth ordered lists styles */
+  .editor-list-ol1 {
+    @apply p-0 m-0 list-decimal list-outside;
+  }
+
+  .editor-list-ol2 {
+    @apply p-0 m-0 list-[upper-alpha] list-outside;
+  }
+
+  .editor-list-ol3 {
+    @apply p-0 m-0 list-[lower-alpha] list-outside;
+  }
+
+  .editor-list-ol4 {
+    @apply p-0 m-0 list-[upper-roman] list-outside;
+  }
+
+  .editor-list-ol5 {
+    @apply p-0 m-0 list-[lower-roman] list-outside;
+  }
+
+  /* Checkbox list styles */
+  .editor-listitem-checked,
+  .editor-listitem-unchecked {
+    @apply relative mx-2 px-6 list-none outline-none;
+  }
+
+  .editor-listitem-checked {
+    @apply line-through;
+  }
+
+  .editor-listitem-checked::before,
+  .editor-listitem-unchecked::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    top: 2px;
+    left: 0;
+    cursor: pointer;
+    display: block;
+    background-size: cover;
+    position: absolute;
+  }
+
+  .editor-listitem-unchecked::before {
+    border: 1px solid gray-400; /* gray-400 */
+    border-radius: 2px;
+  }
+
+  .editor-listitem-checked::before {
+    border: 1px solid #3B82F6; /* blue-500 */
+    border-radius: 2px;
+    background-color: #3B82F6; /* blue-500 */
+    background-repeat: no-repeat;
+  }
+
+  /* For RTL support */
+  .editor-listitem-checked[dir='rtl']::before,
+  .editor-listitem-unchecked[dir='rtl']::before {
+    @apply left-auto right-0;
+  }
+
+  /* Focus styles */
+  .editor-listitem-checked:focus::before,
+  .editor-listitem-unchecked:focus::before {
+    @apply shadow-[0_0_0_2px_#a6cdfe] rounded;
+  }
+
+  /* Checkmark for checked items */
+  .editor-listitem-checked::after {
+    content: '';
+    cursor: pointer;
+    border-color: white;
+    border-style: solid;
+    position: absolute;
+    display: block;
+    top: 6px;
+    width: 3px;
+    left: 7px;
+    right: 7px;
+    height: 6px;
+    transform: rotate(45deg);
+    border-width: 0;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+  }
+
+  /* Indentation support */
+  .editor-indent {
+    --indent-base-value: 40px;
   }
 }
