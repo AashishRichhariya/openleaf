@@ -23,19 +23,19 @@ body {
 @layer components {
   /* Base editor components */
   .editor-root {
-    @apply relative outline-none;
-  }
-
-  .editor-paragraph {
-    @apply m-0 leading-relaxed;
-  }
-
-  .editor-container {
     @apply min-h-screen w-full flex justify-center bg-background;
   }
 
-  .editor-content {
-    @apply w-full max-w-4xl px-4;
+  .editor-area {
+    @apply w-full max-w-4xl flex-grow flex flex-col relative bg-green-900 px-4 py-12 cursor-text;
+  }
+
+  .editor-input {
+    @apply flex-1 resize-none outline-none caret-foreground;
+  }
+
+  .editor-placeholder {
+    @apply absolute top-12 left-4 text-gray-400 pointer-events-none select-none;
   }
 
   /* Node-specific styles */

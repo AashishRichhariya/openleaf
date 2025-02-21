@@ -45,27 +45,23 @@ export default function Editor(): ReactElement {
   };
 
   return (
-    <div className="editor-container">
-      <div className="editor-content">
-        <LexicalComposer initialConfig={editorConfig}>
-          <div className="relative min-h-screen py-12">
-            <RichTextPlugin
-              contentEditable={<ContentEditable className="editor-root" />}
-              placeholder={
-                <div className="absolute top-12 text-gray-400 pointer-events-none">
-                  Scribble away...
-                </div>
-              }
-              ErrorBoundary={LexicalErrorBoundary}
-            />
-            <HistoryPlugin />
-            <AutoFocusPlugin />
-            <ListPlugin />
-            <TabIndentationPlugin maxIndent={7} />
-            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-          </div>
-        </LexicalComposer>
-      </div>
+    <div className="editor-root">
+      <LexicalComposer initialConfig={editorConfig}>
+        <div className="editor-area">
+          <RichTextPlugin
+            contentEditable={<ContentEditable className="editor-input" />}
+            placeholder={
+              <div className="editor-placeholder">Scribble away...</div>
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <HistoryPlugin />
+          <AutoFocusPlugin />
+          <ListPlugin />
+          <TabIndentationPlugin maxIndent={7} />
+          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+        </div>
+      </LexicalComposer>
     </div>
   );
 }
