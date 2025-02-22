@@ -4,6 +4,7 @@ import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { TRANSFORMERS } from "@lexical/markdown";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
+import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
@@ -60,6 +61,7 @@ export default function Editor(): ReactElement {
           <AutoFocusPlugin />
           <ListPlugin />
           <ComponentPickerPlugin />
+          <CheckListPlugin />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>

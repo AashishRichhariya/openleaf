@@ -1,1 +1,1 @@
-export { ComponentPickerPlugin } from './ComponentPicker';
+export { ComponentPickerPlugin } from './ComponentPickerPlugin';
