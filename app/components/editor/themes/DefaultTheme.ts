@@ -25,6 +25,13 @@ const defaultTheme = {
       "editor-list-ol4",
       "editor-list-ol5",
     ],
+    ulDepth: [
+      "editor-list-ul1",
+      "editor-list-ul2",
+      "editor-list-ul3",
+      "editor-list-ul4",
+      "editor-list-ul5",
+    ],
     checklist: "editor-checklist",
     listitemChecked: "editor-listitem-checked",
     listitemUnchecked: "editor-listitem-unchecked"

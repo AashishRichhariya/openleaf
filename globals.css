@@ -99,6 +99,19 @@ body {
     @apply p-0 m-0 list-[lower-alpha] list-outside;
   }
 
+  /* Different depth unordered lists styles */
+  .editor-list-ul1 {
+    @apply p-0 m-0 list-disc list-outside;
+  }
+
+  .editor-list-ul2 {
+    @apply p-0 m-0 list-[circle] list-outside;
+  }
+
+  .editor-list-ul3 {
+    @apply p-0 m-0 list-[square] list-outside;
+  }
+
   /* Checkbox list styles */
   .editor-checklist {
     @apply p-0 m-0 list-none;
