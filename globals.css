@@ -27,7 +27,7 @@ body {
   }
 
   .editor-area {
-    @apply w-full max-w-4xl flex-grow flex flex-col relative bg-green-900 px-4 py-12 cursor-text;
+    @apply w-full max-w-4xl flex-grow flex flex-col relative bg-green-900 px-8 py-12 cursor-text;
   }
 
   .editor-input {
@@ -35,7 +35,7 @@ body {
   }
 
   .editor-placeholder {
-    @apply absolute top-12 left-4 text-gray-400 pointer-events-none select-none;
+    @apply absolute top-12 left-8 text-gray-400 pointer-events-none select-none;
   }
 
   /* Node-specific styles */
@@ -84,19 +84,19 @@ body {
   }
 
   .editor-list-ol2 {
-    @apply p-0 m-0 list-[upper-alpha] list-outside;
-  }
-
-  .editor-list-ol3 {
-    @apply p-0 m-0 list-[lower-alpha] list-outside;
-  }
-
-  .editor-list-ol4 {
     @apply p-0 m-0 list-[upper-roman] list-outside;
   }
 
-  .editor-list-ol5 {
+  .editor-list-ol3 {
     @apply p-0 m-0 list-[lower-roman] list-outside;
+  }
+
+  .editor-list-ol4 {
+    @apply p-0 m-0 list-[upper-alpha] list-outside;
+  }
+
+  .editor-list-ol5 {
+    @apply p-0 m-0 list-[lower-alpha] list-outside;
   }
 
   /* Checkbox list styles */
@@ -134,11 +134,6 @@ body {
     @apply content-[''] cursor-pointer border-white border-solid absolute block top-1.5 w-[3px] left-[7px] right-[7px] h-1.5 rotate-45 border-0 border-r-2 border-b-2;
   }
 
-  /* Nested list handling */
-  .editor-nested-listitem {
-    @apply list-none ml-8;
-  }
-
   /* Hide original checkbox for nested items */
   .editor-nested-listitem::before,
   .editor-nested-listitem::after {
@@ -160,9 +155,8 @@ body {
   /* Focus styles */
   .editor-listitem-checked:focus::before,
   .editor-listitem-unchecked:focus::before {
-    @apply shadow-[0_0_0_2px_#a6cdfe] rounded;
+    @apply outline-none;
   }
-
   /* Indentation support */
   .editor-indent {
     --indent-base-value: 40px;
