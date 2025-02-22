@@ -100,31 +100,25 @@ body {
   }
 
   /* Checkbox list styles */
-  /* Base checkbox list styles */
   .editor-checklist {
-    @apply p-0 m-0 list-none list-outside;
+    @apply p-0 m-0 list-none;
   }
 
-  /* Checkbox list item styles*/
+  /* Base checkbox item styles */
   .editor-listitem-checked,
   .editor-listitem-unchecked {
-    @apply relative mx-8 px-6 list-none outline-none;
+    @apply relative mx-2 px-6 list-none outline-none;
   }
 
-  /* Nested checkbox items */
-  .editor-nested-listitem .editor-listitem-checked,
-  .editor-nested-listitem .editor-listitem-unchecked {
-    @apply list-none mx-0;
-  }
-
-  /* Rest of the checkbox style */
+  /* Checked state */
   .editor-listitem-checked {
     @apply line-through;
   }
 
+  /* Checkbox appearance */
   .editor-listitem-checked::before,
   .editor-listitem-unchecked::before {
-    @apply content-[''] w-4 h-4 top-0.5 left-0 cursor-pointer block bg-cover absolute;
+    @apply content-[''] absolute w-4 h-4 top-0.5 left-0 cursor-pointer block bg-cover;
   }
 
   .editor-listitem-unchecked::before {
@@ -133,6 +127,28 @@ body {
 
   .editor-listitem-checked::before {
     @apply border border-blue-500 rounded bg-blue-500 bg-no-repeat;
+  }
+
+  /* Checkmark */
+  .editor-listitem-checked::after {
+    @apply content-[''] cursor-pointer border-white border-solid absolute block top-1.5 w-[3px] left-[7px] right-[7px] h-1.5 rotate-45 border-0 border-r-2 border-b-2;
+  }
+
+  /* Nested list handling */
+  .editor-nested-listitem {
+    @apply list-none ml-8;
+  }
+
+  /* Hide original checkbox for nested items */
+  .editor-nested-listitem::before,
+  .editor-nested-listitem::after {
+    @apply hidden;
+  }
+
+  /* Ensure nested checkboxes maintain proper positioning */
+  .editor-nested-listitem .editor-listitem-checked,
+  .editor-nested-listitem .editor-listitem-unchecked {
+    @apply relative mx-2;
   }
 
   /* RTL support */
@@ -146,16 +162,6 @@ body {
   .editor-listitem-unchecked:focus::before {
     @apply shadow-[0_0_0_2px_#a6cdfe] rounded;
   }
-
-  /* Checkmark */
-  .editor-listitem-checked::after {
-    @apply content-[''] cursor-pointer border-white border-solid absolute block top-1.5 w-[3px] left-[7px] right-[7px] h-1.5 rotate-45 border-0 border-r-2 border-b-2;
-  }
-
-  /* Add proper indentation spacing */
-    .editor-nested-listitem {
-      @apply ml-8;
-    }
 
   /* Indentation support */
   .editor-indent {
