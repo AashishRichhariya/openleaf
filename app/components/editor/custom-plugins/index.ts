@@ -1,0 +1,1 @@
+export { ComponentPickerPlugin } from './ComponentPicker';

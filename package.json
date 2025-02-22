@@ -10,14 +10,15 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
-    "@lexical/code": "^0.24.0",
-    "@lexical/link": "^0.24.0",
-    "@lexical/list": "^0.24.0",
-    "@lexical/markdown": "^0.24.0",
-    "@lexical/react": "^0.24.0",
-    "@lexical/rich-text": "^0.24.0",
-    "@lexical/table": "^0.24.0",
-    "lexical": "^0.24.0",
+    "@lexical/code": "^0.25.0",
+    "@lexical/link": "^0.25.0",
+    "@lexical/list": "^0.25.0",
+    "@lexical/markdown": "^0.25.0",
+    "@lexical/react": "^0.25.0",
+    "@lexical/rich-text": "^0.25.0",
+    "@lexical/selection": "^0.25.0",
+    "@lexical/table": "^0.25.0",
+    "lexical": "^0.25.0",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

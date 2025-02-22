@@ -14,6 +14,7 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ReactElement } from "react";
+import { ComponentPickerPlugin } from "./custom-plugins";
 
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
@@ -58,6 +59,7 @@ export default function Editor(): ReactElement {
           <HistoryPlugin />
           <AutoFocusPlugin />
           <ListPlugin />
+          <ComponentPickerPlugin />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
