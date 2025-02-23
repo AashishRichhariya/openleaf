@@ -173,10 +173,11 @@ function getBaseOptions(editor: LexicalEditor) {
     new ComponentPickerOption("Table", {
       icon: <i className="icon table" />,
       keywords: ["table", "grid", "spreadsheet", "rows", "columns"],
-      onSelect: () => {},
-      // showModal("Insert Table", (onClose) => (
-      //   <InsertTableDialog activeEditor={editor} onClose={onClose} />
-      // )),
+      onSelect: () =>
+        editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+          columns: "4",
+          rows: "4",
+        }),
     }),
     new ComponentPickerOption("Numbered List", {
       icon: <i className="icon number" />,

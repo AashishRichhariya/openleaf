@@ -63,7 +63,7 @@ export default function Editor(): ReactElement {
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
-          <TablePlugin />
+          <TablePlugin hasHorizontalScroll={true} />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
