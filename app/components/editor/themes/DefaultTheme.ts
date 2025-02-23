@@ -81,7 +81,26 @@ const defaultTheme = {
     tag: "editor-tokenProperty",
     url: "editor-tokenOperator",
     variable: "editor-tokenVariable"
-  }
+  },
+  table: "editor-table",
+  tableAddColumns: "editor-table-add-columns",
+  tableAddRows: "editor-table-add-rows",
+  tableAlignment: {
+    center: "editor-table-align-center",
+    right: "editor-table-align-right",
+  },
+  tableCell: "editor-table-cell",
+  tableCellActionButton: "editor-table-cell-action-button",
+  tableCellActionButtonContainer: "editor-table-cell-action-button-container",
+  tableCellHeader: "editor-table-cell-header",
+  tableCellResizer: "editor-table-cell-resizer",
+  tableCellSelected: "editor-table-cell-selected",
+  tableFrozenColumn: "editor-table-frozen-column",
+  tableFrozenRow: "editor-table-frozen-row",
+  tableRowStriping: "editor-table-row-striping",
+  tableScrollableWrapper: "editor-table-scrollable-wrapper",
+  tableSelected: "editor-table-selected",
+  tableSelection: "editor-table-selection",
 };
 
 export default defaultTheme;

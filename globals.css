@@ -250,4 +250,106 @@ body {
   .component-picker-menu .item .text {
     @apply flex leading-5 flex-grow min-w-[150px];
   }
+
+  /* Table wrapper */
+  .editor-table-scrollable-wrapper {
+    @apply overflow-x-auto my-0 mr-6 ml-0;
+  }
+
+  /* Base table */
+  .editor-table {
+    @apply border-collapse border-2 border-gray-400 table-fixed w-fit mt-6 mb-8 min-w-[200px];
+  }
+
+  /* Table alignment */
+  .editor-table-align-center {
+    @apply mx-auto;
+  }
+
+  .editor-table-align-right {
+    @apply ml-auto;
+  }
+
+  /* Table cells */
+  .editor-table-cell {
+    @apply border border-gray-300 min-w-[75px] w-[75px] align-top text-left p-2 relative outline-none bg-slate-600;
+  }
+
+  /* Table header cells */
+  .editor-table-cell-header {
+    @apply border border-gray-300 bg-slate-800 text-left;
+  }
+
+  /* Selected states */
+  .editor-table-selected {
+    @apply outline-2 outline outline-blue-500;
+  }
+
+  .editor-table-cell-selected {
+    @apply caret-transparent relative;
+  }
+
+  .editor-table-cell-selected::after {
+    @apply absolute inset-0 bg-blue-200/50 mix-blend-multiply
+           content-[''] pointer-events-none;
+  }
+
+  /* Row striping */
+  .editor-table-row-striping tr:nth-child(even) {
+    @apply bg-slate-500;
+  }
+
+  /* Frozen columns/rows */
+  .editor-table-frozen-row {
+    @apply overflow-x-clip;
+  }
+
+  .editor-table-frozen-row tr:first-child > td {
+    @apply overflow-clip bg-slate-500 sticky z-10 top-[44px];
+  }
+
+  .editor-table-frozen-row tr:first-child > th {
+    @apply overflow-clip bg-slate-500 sticky z-10 top-[44px];
+  }
+
+  /* Cell resizer */
+  .editor-table-cell-resizer {
+    @apply absolute -right-1 h-full w-2 cursor-ew-resize z-10 top-0;
+  }
+
+  /* Add columns/rows buttons */
+  .editor-table-add-columns,
+  .editor-table-add-rows {
+    @apply absolute bg-gray-200 animate-[table-controls_0.2s_ease] border-0
+           cursor-pointer hover:bg-blue-100;
+  }
+
+  .editor-table-add-columns {
+    @apply h-full;
+  }
+
+  .editor-table-add-rows {
+    @apply w-[calc(100%-25px)];
+  }
+
+  /* Cell action button */
+  .editor-table-cell-action-button-container {
+    @apply absolute right-1 top-1.5 z-10 w-5 h-5;
+  }
+
+  .editor-table-cell-action-button {
+    @apply bg-gray-200 border-0 rounded-full w-5 h-5 text-gray-800
+           cursor-pointer hover:bg-gray-300;
+  }
+
+  /* Selection handling */
+  .editor-table-selection *::selection {
+    @apply bg-transparent;
+  }
+
+  /* Animation for controls */
+  @keyframes table-controls {
+    from { @apply opacity-0; }
+    to { @apply opacity-100; }
+  }
 }

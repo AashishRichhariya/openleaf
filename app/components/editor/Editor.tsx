@@ -13,6 +13,7 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
+import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ReactElement } from "react";
 import { ComponentPickerPlugin } from "./custom-plugins";
@@ -62,6 +63,7 @@ export default function Editor(): ReactElement {
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
+          <TablePlugin />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
