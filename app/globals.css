@@ -352,4 +352,29 @@ body {
     from { @apply opacity-0; }
     to { @apply opacity-100; }
   }
+
+  /* Inline Table Input styles */
+  .editor-table-input {
+    @apply inline-flex items-center gap-2 px-2 py-1.5 bg-gray-100 rounded;
+  }
+
+  .editor-table-input input {
+    @apply w-16 px-2 py-1 bg-white border border-gray-300 rounded text-sm
+           focus:outline-none hover:border-gray-400 transition-colors duration-200;
+  }
+
+  .editor-table-input input::-webkit-inner-spin-button,
+  .editor-table-input input::-webkit-outer-spin-button {
+    @apply appearance-none m-0;
+  }
+
+  /* Active state styling */
+  .editor-table-input input:focus {
+    @apply ring-2 ring-blue-500 border-transparent;
+  }
+
+  /* Placeholder styling */
+  .editor-table-input input::placeholder {
+    @apply text-gray-400;
+  }
 }

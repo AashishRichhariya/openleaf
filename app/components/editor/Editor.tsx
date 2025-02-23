@@ -20,6 +20,7 @@ import { ComponentPickerPlugin } from "./custom-plugins";
 
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { InlineTableInputNode } from "./custom-nodes";
 
 const theme = DefaultTheme;
 
@@ -44,6 +45,7 @@ export default function Editor(): ReactElement {
       TableRowNode,
       AutoLinkNode,
       LinkNode,
+      InlineTableInputNode,
     ],
   };
 
