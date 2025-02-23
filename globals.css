@@ -177,7 +177,7 @@ body {
 
   /* Typeahead Menu Components */
   .typeahead-popover {
-    @apply fixed bg-background shadow-lg rounded-lg;
+    @apply fixed bg-background shadow-lg rounded-lg py-2;
   }
 
   .typeahead-popover ul {

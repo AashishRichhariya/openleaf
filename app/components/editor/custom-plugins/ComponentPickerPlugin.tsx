@@ -69,6 +69,31 @@ function ComponentPickerMenuItem({
   if (isSelected) {
     className += " selected";
   }
+
+  /*
+    Force scroll selected item into view when it's outside the visible area.
+    Fixes arrow key navigation on initial "/" trigger where default scroll behavior doesn't work.
+    Corrective measure taken to compensate lexical menu scroll doesn't work properly on initial render.
+  */
+  if (isSelected) {
+    if (option.ref?.current) {
+      const element = option.ref.current;
+      const parent = element.closest(".typeahead-popover ul");
+
+      if (parent) {
+        const parentRect = parent.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+
+        if (
+          elementRect.top < parentRect.top ||
+          elementRect.bottom > parentRect.bottom
+        ) {
+          element.scrollIntoView({ block: "nearest" });
+        }
+      }
+    }
+  }
+
   return (
     <li
       key={option.key}
