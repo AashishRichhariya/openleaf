@@ -1,19 +1,21 @@
 import { INSERT_TABLE_COMMAND } from "@lexical/table";
-import { $getNodeByKey, LexicalEditor, TextNode } from "lexical";
+import { $getNodeByKey, DecoratorNode, LexicalEditor, NodeKey } from "lexical";
 import { ReactElement, useEffect, useRef, useState } from "react";
 
 interface InlineTableInputProps {
   editor: LexicalEditor;
-  nodeKey: string;
+  nodeKey: NodeKey;
 }
 
 export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
+  console.log("InlineTableInput rendering", { editor, nodeKey });
   const [dimensions, setDimensions] = useState({ rows: "", cols: "" });
   const [activeInput, setActiveInput] = useState<"rows" | "cols">("rows");
   const rowsInputRef = useRef<HTMLInputElement>(null);
   const colsInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    // Focus the rows input on mount
     rowsInputRef.current?.focus();
   }, []);
 
@@ -101,7 +103,7 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
   };
 
   return (
-    <span className="editor-table-input">
+    <span className="editor-table-input" contentEditable={false}>
       <span className="text-gray-500">/table</span>
       <input
         ref={rowsInputRef}
@@ -136,39 +138,74 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
   );
 }
 
-export class InlineTableInputNode extends TextNode {
-  __editor: LexicalEditor;
-
-  constructor(editor: LexicalEditor, text?: string, key?: string) {
-    super(text, key);
-    this.__editor = editor;
-  }
-
+export class InlineTableInputNode extends DecoratorNode<ReactElement> {
   static getType(): string {
     return "inline-table-input-node";
   }
 
   static clone(node: InlineTableInputNode): InlineTableInputNode {
-    return new InlineTableInputNode(node.__editor, node.__text, node.__key);
+    return new InlineTableInputNode(node.__key);
+  }
+
+  constructor(key?: NodeKey) {
+    super(key);
+    console.log("InlineTableInputNode constructor called", key);
   }
 
   createDOM(): HTMLElement {
+    console.log("createDOM called");
     const dom = document.createElement("span");
-    dom.className = "inline-block";
+    dom.className = "editor-table-input-wrapper";
+
+    // dom.setAttribute("data-lexical-table-input", "true");
     return dom;
   }
 
   updateDOM(): boolean {
+    console.log("updateDOM called for InlineTableInputNode");
     return false;
   }
 
   decorate(editor: LexicalEditor): ReactElement {
+    console.log(
+      "InlineTableInputNode.decorate called with nodeKey:",
+      this.__key
+    );
     return <InlineTableInput editor={editor} nodeKey={this.__key} />;
+  }
+
+  getTextContent(): string {
+    return "/table";
+  }
+
+  isInline(): boolean {
+    return true;
+  }
+
+  // This helps with selection and editing behavior
+  isIsolated(): boolean {
+    return true;
+  }
+
+  // This prevents the node from being affected by text operations
+  canBeEmpty(): boolean {
+    return false;
+  }
+
+  exportJSON() {
+    return {
+      ...super.exportJSON(),
+      type: "inline-table-input-node",
+      version: 1,
+    };
+  }
+
+  static importJSON(serializedNode: any): InlineTableInputNode {
+    const node = new InlineTableInputNode();
+    return node;
   }
 }
 
-export function $createTableInputNode(
-  editor: LexicalEditor
-): InlineTableInputNode {
-  return new InlineTableInputNode(editor);
+export function $createInlineTableInputNode(): InlineTableInputNode {
+  return new InlineTableInputNode();
 }

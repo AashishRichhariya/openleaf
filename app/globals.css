@@ -354,6 +354,10 @@ body {
   }
 
   /* Inline Table Input styles */
+  .editor-table-input-wrapper {
+    @apply inline-block;
+  }
+
   .editor-table-input {
     @apply inline-flex items-center gap-2 px-2 py-1.5 bg-gray-100 rounded;
   }

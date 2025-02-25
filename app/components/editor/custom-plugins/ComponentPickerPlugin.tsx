@@ -25,7 +25,7 @@ import {
 import type { JSX } from "react";
 import { ReactElement, useCallback, useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
-import { $createTableInputNode } from "../custom-nodes";
+import { $createInlineTableInputNode } from "../custom-nodes";
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
@@ -174,16 +174,11 @@ function getBaseOptions(editor: LexicalEditor) {
     new ComponentPickerOption("Table", {
       icon: <i className="icon table" />,
       keywords: ["table", "grid", "spreadsheet", "rows", "columns"],
-      // onSelect: () =>
-      //   editor.dispatchCommand(INSERT_TABLE_COMMAND, {
-      //     columns: "4",
-      //     rows: "4",
-      //   }),
       onSelect: () => {
         editor.update(() => {
           const selection = $getSelection();
           if ($isRangeSelection(selection)) {
-            const node = $createTableInputNode(editor);
+            const node = $createInlineTableInputNode();
             selection.insertNodes([node]);
           }
         });

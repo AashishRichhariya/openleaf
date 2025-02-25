@@ -1,4 +1,4 @@
 export {
-  $createTableInputNode,
+  $createInlineTableInputNode,
   InlineTableInputNode,
 } from "./InlineTableInputNode";
