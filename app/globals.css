@@ -359,26 +359,45 @@ body {
   }
 
   .editor-table-input {
-    @apply inline-flex items-center gap-2 px-2 py-1.5 bg-gray-100 rounded;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: inherit;
+    line-height: inherit;
+    user-select: none;
   }
 
   .editor-table-input input {
-    @apply w-16 px-2 py-1 bg-white border border-gray-300 rounded text-sm
-           focus:outline-none hover:border-gray-400 transition-colors duration-200;
+    width: 40px;
+    height: 24px;
+    padding: 2px 4px;
+    font-size: inherit;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background-color: rgba(240, 240, 245, 0.3);
+    color: #333;
+    text-align: center;
   }
 
-  .editor-table-input input::-webkit-inner-spin-button,
-  .editor-table-input input::-webkit-outer-spin-button {
-    @apply appearance-none m-0;
-  }
-
-  /* Active state styling */
   .editor-table-input input:focus {
-    @apply ring-2 ring-blue-500 border-transparent;
+    outline: none;
+    border-color: #3b82f6;
+    background-color: rgba(240, 240, 245, 0.5);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
   }
 
-  /* Placeholder styling */
   .editor-table-input input::placeholder {
-    @apply text-gray-400;
+    color: #9ca3af;
+    opacity: 0.8;
+  }
+
+  /* Hide number input spinner buttons */
+  .editor-table-input input::-webkit-outer-spin-button,
+  .editor-table-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .editor-table-input input[type=number] {
+    -moz-appearance: textfield;
   }
 }

@@ -8,7 +8,6 @@ interface InlineTableInputProps {
 }
 
 export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
-  console.log("InlineTableInput rendering", { editor, nodeKey });
   const [dimensions, setDimensions] = useState({ rows: "", cols: "" });
   const [activeInput, setActiveInput] = useState<"rows" | "cols">("rows");
   const rowsInputRef = useRef<HTMLInputElement>(null);
@@ -42,6 +41,7 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
       case " ":
         if (isValid) {
           e.preventDefault();
+          e.stopPropagation();
           insertTable(rows, cols);
         }
         break;
@@ -81,16 +81,23 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
   };
 
   const insertTable = (rows: number, cols: number) => {
+    // First remove the node in a separate update
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if (node) {
         node.remove();
       }
-      editor.dispatchCommand(INSERT_TABLE_COMMAND, {
-        columns: String(cols),
-        rows: String(rows),
-      });
     });
+
+    // Then dispatch the table command in a separate update with a small delay
+    // This prevents command collision issues
+    setTimeout(() => {
+      editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+        rows: String(rows),
+        columns: String(cols),
+        includeHeaders: true,
+      });
+    }, 10);
   };
 
   const removeNode = () => {
@@ -100,6 +107,17 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
         node.remove();
       }
     });
+  };
+
+  // Handle insertion with a button click as well
+  const handleButtonClick = () => {
+    const rows = Number(dimensions.rows);
+    const cols = Number(dimensions.cols);
+    const isValid = rows > 0 && rows <= 500 && cols > 0 && cols <= 50;
+
+    if (isValid) {
+      insertTable(rows, cols);
+    }
   };
 
   return (
@@ -134,6 +152,12 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
         max="50"
         placeholder="cols"
       />
+      <button
+        className="editor-table-button bg-blue-500 text-white px-2 py-1 ml-2 rounded text-sm"
+        onClick={handleButtonClick}
+      >
+        Insert
+      </button>
     </span>
   );
 }
@@ -149,28 +173,19 @@ export class InlineTableInputNode extends DecoratorNode<ReactElement> {
 
   constructor(key?: NodeKey) {
     super(key);
-    console.log("InlineTableInputNode constructor called", key);
   }
 
   createDOM(): HTMLElement {
-    console.log("createDOM called");
     const dom = document.createElement("span");
     dom.className = "editor-table-input-wrapper";
-
-    // dom.setAttribute("data-lexical-table-input", "true");
     return dom;
   }
 
   updateDOM(): boolean {
-    console.log("updateDOM called for InlineTableInputNode");
     return false;
   }
 
   decorate(editor: LexicalEditor): ReactElement {
-    console.log(
-      "InlineTableInputNode.decorate called with nodeKey:",
-      this.__key
-    );
     return <InlineTableInput editor={editor} nodeKey={this.__key} />;
   }
 
