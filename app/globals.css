@@ -258,7 +258,7 @@ body {
 
   /* Base table */
   .editor-table {
-    @apply border-collapse border-2 border-gray-400 table-fixed w-fit mt-6 mb-8 min-w-[200px];
+    @apply border-collapse border-2 border-gray-400 table-fixed w-full mt-6 mb-8 min-w-[200px];
   }
 
   /* Table alignment */
@@ -272,7 +272,7 @@ body {
 
   /* Table cells */
   .editor-table-cell {
-    @apply border border-gray-300 min-w-[75px] w-[75px] align-top text-left p-2 relative outline-none bg-slate-600;
+    @apply border border-gray-300 align-top text-left p-2 relative outline-none bg-slate-600;
   }
 
   /* Table header cells */
