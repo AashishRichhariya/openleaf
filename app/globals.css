@@ -332,6 +332,12 @@ body {
     @apply w-[calc(100%-25px)];
   }
 
+  .editor-table-add-columns::before,
+
+  .editor-table-add-rows::before {
+    @apply content-['+'] absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
+  }
+
   /* Cell action button */
   .editor-table-cell-action-button-container {
     @apply absolute right-1 top-1.5 z-10 w-5 h-5;

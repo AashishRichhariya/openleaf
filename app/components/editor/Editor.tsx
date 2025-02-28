@@ -15,8 +15,11 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ReactElement } from "react";
-import { ComponentPickerPlugin } from "./custom-plugins";
+import { ReactElement, useState } from "react";
+import {
+  ComponentPickerPlugin,
+  TableHoverActionsPlugin,
+} from "./custom-plugins";
 
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
@@ -29,6 +32,17 @@ function onError(error: Error) {
 }
 
 export default function Editor(): ReactElement {
+  // Create a ref for the floating anchor element
+  const [floatingAnchorElem, setFloatingAnchorElem] =
+    useState<HTMLDivElement | null>(null);
+
+  // Function to set the floating anchor ref
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
+
   const editorConfig = {
     namespace: "openleaf-editor",
     theme,
@@ -54,7 +68,11 @@ export default function Editor(): ReactElement {
       <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-area">
           <RichTextPlugin
-            contentEditable={<ContentEditable className="editor-input" />}
+            contentEditable={
+              <div ref={onRef}>
+                <ContentEditable className="editor-input" />
+              </div>
+            }
             placeholder={
               <div className="editor-placeholder">Scribble away...</div>
             }
@@ -68,6 +86,10 @@ export default function Editor(): ReactElement {
           <TablePlugin hasHorizontalScroll={true} />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+          {/* Add the table-related plugins with the anchor element */}
+          {floatingAnchorElem && (
+            <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
+          )}
         </div>
       </LexicalComposer>
     </div>
