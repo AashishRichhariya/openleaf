@@ -320,16 +320,8 @@ body {
   /* Add columns/rows buttons */
   .editor-table-add-columns,
   .editor-table-add-rows {
-    @apply absolute bg-gray-200 animate-[table-controls_0.2s_ease] border-0
-           cursor-pointer hover:bg-blue-100;
-  }
-
-  .editor-table-add-columns {
-    @apply h-full;
-  }
-
-  .editor-table-add-rows {
-    @apply w-[calc(100%-25px)];
+    @apply absolute bg-blue-400 animate-[table-controls_0.2s_ease] border-0
+           cursor-pointer hover:bg-blue-500;
   }
 
   .editor-table-add-columns::before,
