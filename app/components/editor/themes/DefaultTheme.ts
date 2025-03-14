@@ -101,6 +101,10 @@ const defaultTheme = {
   tableScrollableWrapper: "editor-table-scrollable-wrapper",
   tableSelected: "editor-table-selected",
   tableSelection: "editor-table-selection",
+  // put table cell action styling here
+  // tableActionMenuDropdown: "editor-tableActionMenuDropdown",
+  // tableActionMenuItem: "editor-tableActionMenuItem",
+  // tableActionMenuDivider: "editor-tableActionMenuDivider",
 };
 
 export default defaultTheme;

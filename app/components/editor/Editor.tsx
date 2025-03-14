@@ -18,6 +18,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ReactElement, useState } from "react";
 import {
   ComponentPickerPlugin,
+  TableActionMenuPlugin,
   TableHoverActionsPlugin,
 } from "./custom-plugins";
 
@@ -88,7 +89,10 @@ export default function Editor(): ReactElement {
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
           {/* Add the table-related plugins with the anchor element */}
           {floatingAnchorElem && (
-            <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
+            <>
+              <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
+              <TableActionMenuPlugin anchorElem={floatingAnchorElem} />
+            </>
           )}
         </div>
       </LexicalComposer>
