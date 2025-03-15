@@ -331,15 +331,6 @@ body {
   }
 
   /* Cell action button */
-  /* .editor-table-cell-action-button-container {
-    @apply absolute right-1 top-1.5 z-10 w-5 h-5;
-  }
-
-  .editor-table-cell-action-button {
-    @apply bg-gray-200 border-0 rounded-full w-5 h-5 text-gray-800
-           cursor-pointer hover:bg-gray-300;
-  } */
-
   .table-cell-action-button-container {
     @apply absolute z-10 top-0 left-0 opacity-0;
     will-change: transform;
