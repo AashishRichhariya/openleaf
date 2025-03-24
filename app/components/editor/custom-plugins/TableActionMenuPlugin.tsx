@@ -56,7 +56,7 @@ function TableActionMenu({
   onClose,
   tableCellNode: _tableCellNode,
 }: TableCellActionMenuProps) {
-  const [editor] = useLexicalComposerContext();
+  const [editor, { getTheme }] = useLexicalComposerContext();
   const dropDownRef = useRef<HTMLDivElement | null>(null);
   const [tableCellNode, updateTableCellNode] = useState(_tableCellNode);
   const [selectionCounts, updateSelectionCounts] = useState({
@@ -531,9 +531,9 @@ function TableCellActionMenuContainer({
     if (enabled) {
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
       const anchorRect = anchorElem.getBoundingClientRect();
-      const top = tableCellRect.top - anchorRect.top;
-      const left = tableCellRect.right - anchorRect.left;
-      menu.style.transform = `translate(${left}px, ${top}px)`;
+      const verticalOffset = tableCellRect.top;
+      const horizontalOffset = tableCellRect.right - anchorRect.left;
+      menu.style.transform = `translate(${horizontalOffset}px, ${verticalOffset}px)`;
     }
   }, [editor, anchorElem]);
 

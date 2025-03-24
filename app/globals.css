@@ -332,8 +332,7 @@ body {
 
   /* Cell action button */
   .table-cell-action-button-container {
-    @apply absolute z-10 top-0 left-0 opacity-0;
-    will-change: transform;
+    @apply absolute z-10 top-0 left-2 opacity-0;
   }
 
   .table-cell-action-button-container--active {
