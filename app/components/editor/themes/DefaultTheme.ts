@@ -92,6 +92,8 @@ const defaultTheme = {
   tableCell: "editor-table-cell",
   tableCellActionButton: "editor-table-cell-action-button",
   tableCellActionButtonContainer: "table-cell-action-button-container",
+  tableCellActionButtonActiveContainer: "table-cell-action-button-container-active",
+  tableCellActionButtonInactiveContainer: "table-cell-action-button-container-inactive",
   tableCellHeader: "editor-table-cell-header",
   tableCellResizer: "editor-table-cell-resizer",
   tableCellSelected: "editor-table-cell-selected",

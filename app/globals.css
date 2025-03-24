@@ -332,14 +332,14 @@ body {
 
   /* Cell action button */
   .table-cell-action-button-container {
-    @apply absolute z-10 top-0 left-2 opacity-0;
+    @apply absolute z-10 top-0 left-2 opacity-0 transition-opacity duration-100;
   }
 
-  .table-cell-action-button-container--active {
+  .table-cell-action-button-container-active {
     @apply opacity-100 pointer-events-auto;
   }
 
-  .table-cell-action-button-container--inactive {
+  .table-cell-action-button-container-inactive {
     @apply opacity-0 pointer-events-none;
   }
 

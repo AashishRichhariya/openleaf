@@ -441,8 +441,8 @@ function TableCellActionMenuContainer({
 
     function disable() {
       if (menu) {
-        menu.classList.remove("table-cell-action-button-container--active");
-        menu.classList.add("table-cell-action-button-container--inactive");
+        menu.classList.remove(getTheme()?.tableCellActionButtonActiveContainer);
+        menu.classList.add(getTheme()?.tableCellActionButtonInactiveContainer);
       }
       setTableMenuCellNode(null);
     }
@@ -521,13 +521,16 @@ function TableCellActionMenuContainer({
 
     const enabled = !tableObserver || !tableObserver.isSelecting;
     menu.classList.toggle(
-      "table-cell-action-button-container--active",
+      getTheme()?.tableCellActionButtonActiveContainer,
       enabled
     );
     menu.classList.toggle(
-      "table-cell-action-button-container--inactive",
+      getTheme()?.tableCellActionButtonInactiveContainer,
       !enabled
     );
+
+    menu.classList.remove(getTheme()?.tableCellActionButtonActiveContainer);
+    menu.classList.add(getTheme()?.tableCellActionButtonInactiveContainer);
 
     if (enabled) {
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
