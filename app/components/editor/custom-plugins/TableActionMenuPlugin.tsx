@@ -18,6 +18,7 @@ import {
   getTableObserverFromTableElement,
   TableCellHeaderStates,
   TableCellNode,
+  TableRowNode,
 } from "@lexical/table";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -261,7 +262,7 @@ function TableActionMenu({
       const tableColumnIndex =
         $getTableColumnIndexFromTableCellNode(tableCellNode);
 
-      const tableRows = tableNode.getChildren();
+      const tableRows = tableNode.getChildren<TableRowNode>();
       const maxRowsLength = Math.max(
         ...tableRows.map((row) => row.getChildren().length)
       );
@@ -300,7 +301,7 @@ function TableActionMenu({
 
   return createPortal(
     <div
-      className="table-action-menu-dropdown"
+      className={getTheme()?.tableActionMenuDropdown}
       ref={dropDownRef}
       onClick={(e) => {
         e.stopPropagation();
@@ -308,7 +309,7 @@ function TableActionMenu({
     >
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => insertTableRowAtSelection(false)}
         data-test-id="table-insert-row-above"
       >
@@ -320,7 +321,7 @@ function TableActionMenu({
       </button>
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => insertTableRowAtSelection(true)}
         data-test-id="table-insert-row-below"
       >
@@ -333,7 +334,7 @@ function TableActionMenu({
       <hr />
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => insertTableColumnAtSelection(false)}
         data-test-id="table-insert-column-before"
       >
@@ -347,7 +348,7 @@ function TableActionMenu({
       </button>
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => insertTableColumnAtSelection(true)}
         data-test-id="table-insert-column-after"
       >
@@ -362,7 +363,7 @@ function TableActionMenu({
       <hr />
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => deleteTableColumnAtSelection()}
         data-test-id="table-delete-columns"
       >
@@ -370,7 +371,7 @@ function TableActionMenu({
       </button>
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => deleteTableRowAtSelection()}
         data-test-id="table-delete-rows"
       >
@@ -378,7 +379,7 @@ function TableActionMenu({
       </button>
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => deleteTableAtSelection()}
         data-test-id="table-delete"
       >
@@ -387,7 +388,7 @@ function TableActionMenu({
       <hr />
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => toggleTableRowIsHeader()}
       >
         <span className="text">
@@ -400,7 +401,7 @@ function TableActionMenu({
       </button>
       <button
         type="button"
-        className="item"
+        className={getTheme()?.tableActionMenuItem}
         onClick={() => toggleTableColumnIsHeader()}
         data-test-id="table-column-header"
       >
@@ -422,7 +423,7 @@ function TableCellActionMenuContainer({
 }: {
   anchorElem: HTMLElement;
 }): JSX.Element {
-  const [editor] = useLexicalComposerContext();
+  const [editor, { getTheme }] = useLexicalComposerContext();
 
   const menuButtonRef = useRef<HTMLDivElement | null>(null);
   const menuRootRef = useRef<HTMLButtonElement | null>(null);

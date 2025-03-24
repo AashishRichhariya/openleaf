@@ -91,7 +91,7 @@ const defaultTheme = {
   },
   tableCell: "editor-table-cell",
   tableCellActionButton: "editor-table-cell-action-button",
-  tableCellActionButtonContainer: "editor-table-cell-action-button-container",
+  tableCellActionButtonContainer: "table-cell-action-button-container",
   tableCellHeader: "editor-table-cell-header",
   tableCellResizer: "editor-table-cell-resizer",
   tableCellSelected: "editor-table-cell-selected",
@@ -101,10 +101,8 @@ const defaultTheme = {
   tableScrollableWrapper: "editor-table-scrollable-wrapper",
   tableSelected: "editor-table-selected",
   tableSelection: "editor-table-selection",
-  // put table cell action styling here
-  // tableActionMenuDropdown: "editor-tableActionMenuDropdown",
-  // tableActionMenuItem: "editor-tableActionMenuItem",
-  // tableActionMenuDivider: "editor-tableActionMenuDivider",
+  tableActionMenuDropdown: "table-action-menu-dropdown",
+  tableActionMenuItem: "table-action-menu-item",
 };
 
 export default defaultTheme;
