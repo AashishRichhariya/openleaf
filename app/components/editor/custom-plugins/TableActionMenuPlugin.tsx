@@ -583,19 +583,22 @@ function TableCellActionMenuContainer({
   }, [prevTableCellDOM, tableCellNode]);
 
   return (
-    <div className="table-cell-action-button-container" ref={menuButtonRef}>
+    <div
+      className={getTheme()?.tableCellActionButtonContainer}
+      ref={menuButtonRef}
+    >
       {tableCellNode != null && (
         <>
           <button
             type="button"
-            className="table-cell-action-button chevron-down"
+            className={getTheme()?.tableCellActionButton}
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
             }}
             ref={menuRootRef}
           >
-            <i className="chevron-down" />
+            <i className={getTheme()?.tableCellActionButtonIcon} />
           </button>
           {isMenuOpen && (
             <TableActionMenu
