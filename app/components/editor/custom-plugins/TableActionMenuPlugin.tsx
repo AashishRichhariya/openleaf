@@ -529,9 +529,6 @@ function TableCellActionMenuContainer({
       !enabled
     );
 
-    menu.classList.remove(getTheme()?.tableCellActionButtonActiveContainer);
-    menu.classList.add(getTheme()?.tableCellActionButtonInactiveContainer);
-
     if (enabled) {
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
       const anchorRect = anchorElem.getBoundingClientRect();
