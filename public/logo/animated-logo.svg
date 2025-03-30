@@ -14,12 +14,12 @@
     <path d="M100 30 C140 30, 160 60, 160 100 C160 140, 140 170, 100 170 C60 170, 40 140, 40 100 L40 30 Z"
           fill="none"
           stroke="#2F855A"
-          stroke-width="8"/>
+          stroke-width="12"/>
 
     <!-- Text cursor line with animation -->
     <line x1="90" y1="60" x2="90" y2="140"
           stroke="#2F855A"
-          stroke-width="8">
+          stroke-width="12">
       <animate attributeName="opacity"
                values="1;0;1"
                dur="1.5s"
