@@ -8,7 +8,6 @@
   --editor-bg: #ffffff;
   --editor-border: #e2e8f0;
   --accent: #2F855A;
-  --nav-border: #e2e8f0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,7 +17,6 @@
     --editor-bg: #1E293B;
     --editor-border: #2d3748;
     --accent: #2F855A;
-    --nav-border: #1f2937;
   }
 }
 
@@ -31,7 +29,7 @@ body {
 @layer components {
    /* Navbar Components */
    .navbar {
-    @apply w-full bg-transparent border-b border-nav-border;
+    @apply w-full bg-transparent;
   }
 
   .navbar-container {
@@ -60,7 +58,7 @@ body {
   .editor-area {
     @apply w-full max-w-4xl flex-grow flex flex-col relative
            bg-editor-bg shadow-lg px-8 py-12 cursor-text
-           mt-8 rounded-t-2xl;
+           rounded-squircle;
   }
 
   .editor-input {

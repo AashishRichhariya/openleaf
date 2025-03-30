@@ -20,7 +20,6 @@ export default {
           '50': 'rgba(var(--accent-rgb), 0.5)',
           '80': 'rgba(var(--accent-rgb), 0.5)',
         },
-        "nav-border": "var(--nav-border)",
       },
       borderColor: {
         DEFAULT: "var(--editor-border)",
@@ -34,6 +33,9 @@ export default {
       backgroundColor: {
         DEFAULT: "var(--background)",
       },
+      borderRadius: {
+        'squircle': '24px 24px 24px 24px / 28px 28px 28px 28px',
+      }
     },
   },
   plugins: [],
