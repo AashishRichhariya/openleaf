@@ -1,8 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
 import type { Metadata } from "next";
-import "./globals.css";
 import Navbar from "./components/editor/Navbar";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +18,39 @@ export const metadata: Metadata = {
   title: "Openleaf",
   description:
     "Your free, open-source, minimalistc, sign-up free browser based text editor",
+  icons: {
+    // Modern browsers - SVG favicons
+    icon: [
+      { url: "/favicon/animated-favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon/static-favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon/favicon.ico" }, // For older browsers
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    // Apple devices
+    apple: [
+      {
+        url: "/favicon/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+    // Other device-specific icons
+    other: [
+      {
+        url: "/favicon/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/favicon/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+  },
+  // Include the manifest file for PWA support
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
