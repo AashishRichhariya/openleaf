@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Openleaf",
+  title: "openleaf",
   description:
     "Your free, open-source, minimalistc, sign-up free browser based text editor",
   icons: {
