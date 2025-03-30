@@ -3,14 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f4f1;
+  --foreground: #1a2e23;
+  --editor-bg: #ffffff;
+  --editor-border: #e2e8f0;
+  --accent: #2F855A;
+  --nav-border: #e2e8f0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #111827;
+    --foreground: #e2e8f0;
+    --editor-bg: #1E293B;
+    --editor-border: #2d3748;
+    --accent: #2F855A;
+    --nav-border: #1f2937;
   }
 }
 
@@ -23,7 +31,7 @@ body {
 @layer components {
    /* Navbar Components */
    .navbar {
-    @apply w-full bg-background border-b border-gray-200 dark:border-gray-800;
+    @apply w-full bg-transparent border-b border-nav-border;
   }
 
   .navbar-container {
@@ -50,11 +58,13 @@ body {
   }
 
   .editor-area {
-    @apply w-full max-w-4xl flex-grow flex flex-col relative bg-green-900 px-8 py-12 cursor-text;
+    @apply w-full max-w-4xl flex-grow flex flex-col relative
+           bg-editor-bg shadow-lg px-8 py-12 cursor-text
+           mt-8 rounded-t-2xl;
   }
 
   .editor-input {
-    @apply flex-1 resize-none outline-none caret-foreground;
+    @apply flex-1 resize-none outline-none caret-accent;
   }
 
   .editor-placeholder {
@@ -75,11 +85,11 @@ body {
   }
 
   .editor-quote {
-    @apply border-l-4 border-gray-300 pl-4 my-4 italic text-gray-300;
+    @apply border-l-4 border-accent pl-4 my-4 italic text-gray-400;
   }
 
   .editor-code {
-    @apply bg-gray-100 p-2 rounded font-mono text-sm;
+    @apply bg-gray-100 dark:bg-gray-800 p-2 rounded font-mono text-sm;
   }
 
   /* Base list styles */
@@ -162,7 +172,7 @@ body {
   }
 
   .editor-listitem-checked::before {
-    @apply border border-blue-500 rounded bg-blue-500 bg-no-repeat;
+    @apply border border-accent rounded bg-accent bg-no-repeat;
   }
 
   /* Checkmark */
@@ -200,7 +210,7 @@ body {
 
   /* Typeahead Menu Components */
   .typeahead-popover {
-    @apply fixed bg-background shadow-lg rounded-lg py-2;
+    @apply fixed bg-editor-bg shadow-lg rounded-lg py-2;
   }
 
   .typeahead-popover ul {
@@ -218,11 +228,11 @@ body {
   }
 
   .typeahead-popover ul li.selected {
-    @apply bg-gray-500;
+    @apply bg-gray-200 dark:bg-gray-700;
   }
 
   .typeahead-popover li {
-    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-background rounded-lg border-0;
+    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-editor-bg rounded-lg border-0;
   }
 
   .typeahead-popover li.active {
@@ -238,7 +248,7 @@ body {
   }
 
   .typeahead-popover li:hover {
-    @apply bg-gray-500;
+    @apply bg-gray-200 dark:bg-gray-700;
   }
 
   .typeahead-popover li .text {
@@ -259,11 +269,11 @@ body {
   }
 
   .component-picker-menu .item.selected {
-    @apply bg-gray-500;
+    @apply bg-gray-200 dark:bg-gray-700;
   }
 
   .component-picker-menu .item:hover {
-    @apply bg-gray-500;
+    @apply bg-gray-200 dark:bg-gray-700;
   }
 
   .component-picker-menu .item .icon {
@@ -281,7 +291,7 @@ body {
 
   /* Base table */
   .editor-table {
-    @apply border-collapse border-2 border-gray-400 table-fixed w-full mt-6 mb-8 min-w-[200px];
+    @apply border-collapse border-2 border-gray-300 dark:border-gray-600 table-fixed w-full mt-6 mb-8 min-w-[200px];
   }
 
   /* Table alignment */
@@ -295,17 +305,17 @@ body {
 
   /* Table cells */
   .editor-table-cell {
-    @apply border border-gray-300 align-top text-left p-2 relative outline-none bg-slate-600;
+    @apply border border-gray-300 dark:border-gray-600 align-top text-left p-2 relative outline-none bg-gray-50 dark:bg-gray-800;
   }
 
   /* Table header cells */
   .editor-table-cell-header {
-    @apply border border-gray-300 bg-slate-800 text-left;
+    @apply border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-left;
   }
 
   /* Selected states */
   .editor-table-selected {
-    @apply outline-2 outline outline-blue-500;
+    @apply outline-2 outline outline-accent;
   }
 
   .editor-table-cell-selected {
@@ -313,13 +323,13 @@ body {
   }
 
   .editor-table-cell-selected::after {
-    @apply absolute inset-0 bg-blue-200/50 mix-blend-multiply
+    @apply absolute inset-0 bg-accent-20 mix-blend-multiply
            content-[''] pointer-events-none;
   }
 
   /* Row striping */
   .editor-table-row-striping tr:nth-child(even) {
-    @apply bg-slate-500;
+    @apply bg-gray-100 dark:bg-gray-700;
   }
 
   /* Frozen columns/rows */
@@ -328,11 +338,11 @@ body {
   }
 
   .editor-table-frozen-row tr:first-child > td {
-    @apply overflow-clip bg-slate-500 sticky z-10 top-[44px];
+    @apply overflow-clip bg-gray-100 dark:bg-gray-700 sticky z-10 top-[44px];
   }
 
   .editor-table-frozen-row tr:first-child > th {
-    @apply overflow-clip bg-slate-500 sticky z-10 top-[44px];
+    @apply overflow-clip bg-gray-100 dark:bg-gray-700 sticky z-10 top-[44px];
   }
 
   /* Cell resizer */
@@ -343,12 +353,11 @@ body {
   /* Add columns/rows buttons */
   .editor-table-add-columns,
   .editor-table-add-rows {
-    @apply absolute bg-blue-400 animate-[table-controls_0.2s_ease] border-0
-           cursor-pointer hover:bg-blue-500;
+    @apply absolute bg-accent animate-[table-controls_0.2s_ease] border-0
+           cursor-pointer hover:bg-accent-80;
   }
 
   .editor-table-add-columns::before,
-
   .editor-table-add-rows::before {
     @apply content-['+'] absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
   }
@@ -367,12 +376,12 @@ body {
   }
 
   .table-cell-action-button {
-    @apply bg-white border border-gray-300 rounded-full w-6 h-6
+    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full w-6 h-6
            flex items-center justify-center cursor-pointer;
   }
 
   .table-cell-action-button:hover {
-    @apply bg-gray-100;
+    @apply bg-gray-100 dark:bg-gray-700;
   }
 
   .table-cell-action-button i.table-cell-action-button-icon {
@@ -384,21 +393,21 @@ body {
   }
 
   .table-action-menu-dropdown {
-    @apply bg-white rounded shadow-md fixed z-50 w-52 opacity-0
+    @apply bg-white dark:bg-gray-800 rounded shadow-md fixed z-50 w-52 opacity-0
            transition-opacity duration-100;
   }
 
   .table-action-menu-dropdown .table-action-menu-item {
     @apply flex items-center px-3 py-2 border-0 bg-transparent
-           w-full text-left cursor-pointer text-sm text-gray-800;
+           w-full text-left cursor-pointer text-sm text-gray-800 dark:text-gray-200;
   }
 
   .table-action-menu-dropdown .table-action-menu-item:hover {
-    @apply bg-gray-100;
+    @apply bg-gray-100 dark:bg-gray-700;
   }
 
   .table-action-menu-dropdown hr {
-    @apply my-1 border-0 border-t border-gray-300;
+    @apply my-1 border-0 border-t border-gray-300 dark:border-gray-600;
   }
 
   /* Selection handling */
