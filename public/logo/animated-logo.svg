@@ -29,6 +29,5 @@
     </line>
   </g>
 
-  <!-- Text "openleaf" with reduced spacing -->
   <text x="200" y="140" class="logo-text">openleaf</text>
 </svg>
