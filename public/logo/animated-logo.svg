@@ -21,7 +21,10 @@
           stroke-width="12">
       <animate attributeName="opacity"
                values="1;0;1"
-               dur="1.5s"
+                dur="2.0s"
+                keyTimes="0;0.5;1"
+                keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"
+                calcMode="spline"
                repeatCount="indefinite"/>
     </line>
   </g>
