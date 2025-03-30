@@ -1,27 +1,26 @@
-<svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 675 180" xmlns="http://www.w3.org/2000/svg">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Hind:wght@500&amp;display=swap');
     .logo-text {
       font-family: 'Hind', sans-serif;
       font-weight: 400;
       fill: #2F855A;
-      font-size: 88px;
+      font-size: 124px;
     }
   </style>
 
-  <!-- Leaf shape (scaled up for better proportion with text) -->
-  <g transform="translate(0, 0) scale(1)">
+  <g>
     <path d="M100 30 C140 30, 160 60, 160 100 C160 140, 140 170, 100 170 C60 170, 40 140, 40 100 L40 30 Z"
           fill="none"
           stroke="#2F855A"
           stroke-width="12"/>
 
-    <!-- Text cursor line with animation -->
+    <!-- static text cursor -->
      <line x1="90" y1="60" x2="90" y2="140"
           stroke="#2F855A"
           stroke-width="12"/>
   </g>
 
   <!-- Text "openleaf" with reduced spacing -->
-  <text x="180" y="140" class="logo-text">openleaf</text>
+  <text x="200" y="140" class="logo-text">openleaf</text>
 </svg>

@@ -49,10 +49,6 @@ body {
     @apply flex-grow w-full flex justify-center bg-background;
   }
 
-  /* .editor-root {
-    @apply min-h-screen w-full flex justify-center bg-background;
-  } */
-
   .editor-area {
     @apply w-full max-w-4xl flex-grow flex flex-col relative bg-green-900 px-8 py-12 cursor-text;
   }
