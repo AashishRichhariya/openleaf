@@ -70,7 +70,7 @@ export default function Editor(): ReactElement {
         <div className="editor-area">
           <RichTextPlugin
             contentEditable={
-              <div ref={onRef}>
+              <div ref={onRef} className="editor-wrapper">
                 <ContentEditable className="editor-input" />
               </div>
             }

@@ -44,13 +44,12 @@ body {
     @apply flex items-center space-x-6;
   }
 
-
   /* Base editor components */
   .editor-main {
     @apply flex flex-col min-h-screen;
   }
 
-  /* Modified editor-root to work with navbar */
+
   .editor-root {
     @apply flex-grow w-full flex justify-center bg-background;
   }
@@ -61,8 +60,12 @@ body {
            rounded-squircle;
   }
 
+  .editor-wrapper {
+    @apply h-full flex flex-col w-full;
+  }
+
   .editor-input {
-    @apply flex-1 resize-none outline-none caret-accent;
+    @apply flex-1 resize-none outline-none caret-accent min-h-full;
   }
 
   .editor-placeholder {
