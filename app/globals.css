@@ -56,7 +56,7 @@ body {
 
   .editor-area {
     @apply w-full max-w-4xl flex-grow flex flex-col relative
-           bg-editor-bg shadow-lg px-8 py-12 cursor-text
+           bg-editor-bg shadow-lg px-8 py-12 mb-4 cursor-text
            rounded-squircle;
   }
 
