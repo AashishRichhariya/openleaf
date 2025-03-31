@@ -12,10 +12,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #111827;
-    --foreground: #e2e8f0;
-    --editor-bg: #1E293B;
-    --editor-border: #2d3748;
+    --background: #1E2D24;
+    --foreground: #E6EBE8;
+    --editor-bg: #2F3C33;
+    --editor-border: #364A3F;
     --accent: #2F855A;
   }
 }
