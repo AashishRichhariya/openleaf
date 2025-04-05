@@ -10,6 +10,8 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.782.0",
+    "@aws-sdk/lib-dynamodb": "^3.782.0",
     "@lexical/code": "^0.25.0",
     "@lexical/link": "^0.25.0",
     "@lexical/list": "^0.25.0",
