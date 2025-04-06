@@ -1,5 +1,3 @@
-"use server";
-
 import { fetchDocument } from "../../lib/document-actions";
 import Editor from "../components/editor/Editor";
 
@@ -10,5 +8,6 @@ interface EditorPageProps {
 export default async function EditorPage(props: EditorPageProps) {
   const { slug } = await props.params;
   const document = await fetchDocument(slug);
-  return <Editor initialContent={document?.content} slug={slug} />;
+  const pageContent = document?.content ?? null;
+  return <Editor initialContent={pageContent} slug={slug} />;
 }

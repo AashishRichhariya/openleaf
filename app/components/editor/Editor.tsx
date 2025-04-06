@@ -17,7 +17,7 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ReactElement, useRef, useState } from "react";
+import { ReactElement, useState } from "react";
 import {
   ComponentPickerPlugin,
   TableActionMenuPlugin,
@@ -50,7 +50,6 @@ export default function Editor({
   // Create a ref for the floating anchor element
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
-  const editorStateRef = useRef<EditorState | null>(null);
 
   // Function to set the floating anchor ref
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
@@ -80,13 +79,10 @@ export default function Editor({
     editorState: initialContent,
   };
 
-  // Create debounced save function
-  const debouncedSave = useDebounce(async () => {
-    if (!editorStateRef.current) return;
-
+  const debouncedSave = useDebounce(async (editorState: EditorState) => {
     try {
       // Convert editor state to Stringfied JSON and save
-      const jsonState = JSON.stringify(editorStateRef.current.toJSON());
+      const jsonState = JSON.stringify(editorState.toJSON());
       await saveDocument(slug, jsonState);
 
       console.log("Document saved successfully");
@@ -97,11 +93,8 @@ export default function Editor({
 
   // Handle editor changes
   const handleEditorChange = (editorState: EditorState) => {
-    // Update ref with current state
-    editorStateRef.current = editorState;
-
     // Trigger debounced save
-    debouncedSave();
+    debouncedSave(editorState);
   };
 
   return (
