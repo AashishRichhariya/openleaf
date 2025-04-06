@@ -1,5 +1,5 @@
 import { fetchDocument } from "../../lib/document-actions";
-import Editor from "../components/editor/Editor";
+import EditorContainer from "../components/editor/EditorContainer";
 
 interface EditorPageProps {
   params: Promise<{ slug: string }>;
@@ -11,5 +11,12 @@ export default async function EditorPage(props: EditorPageProps) {
   const pageContent = document?.content
     ? JSON.stringify(document.content)
     : null;
-  return <Editor initialContent={pageContent} slug={slug} />;
+
+  return (
+    <EditorContainer
+      slug={slug}
+      initialContent={pageContent}
+      isReadOnly={document?.read_only ?? false}
+    />
+  );
 }
