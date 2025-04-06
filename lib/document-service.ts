@@ -77,7 +77,7 @@ export async function slugExists(slug: string): Promise<boolean> {
 /**
  * Generate a random slug of specified length
  */
-export function generateRandomSlug(length: number = 8): string {
+export async function generateRandomSlug(length: number = 8): Promise<string> {
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {

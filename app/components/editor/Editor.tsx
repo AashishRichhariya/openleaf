@@ -1,3 +1,5 @@
+"use client";
+
 import DefaultTheme from "./themes/DefaultTheme";
 
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
@@ -15,16 +17,25 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ReactElement, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
 import {
   ComponentPickerPlugin,
   TableActionMenuPlugin,
   TableHoverActionsPlugin,
 } from "./custom-plugins";
 
+import { useDebounce } from "@/app/hooks";
+import { saveDocument } from "@/lib/document-actions";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { EditorState } from "lexical";
 import { InlineTableInputNode } from "./custom-nodes";
+
+interface EditorProps {
+  initialContent: any;
+  slug: string;
+}
 
 const theme = DefaultTheme;
 
@@ -32,10 +43,14 @@ function onError(error: Error) {
   console.error(error);
 }
 
-export default function Editor(): ReactElement {
+export default function Editor({
+  initialContent,
+  slug,
+}: EditorProps): ReactElement {
   // Create a ref for the floating anchor element
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
+  const editorStateRef = useRef<EditorState | null>(null);
 
   // Function to set the floating anchor ref
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
@@ -62,6 +77,31 @@ export default function Editor(): ReactElement {
       LinkNode,
       InlineTableInputNode,
     ],
+    editorState: initialContent,
+  };
+
+  // Create debounced save function
+  const debouncedSave = useDebounce(async () => {
+    if (!editorStateRef.current) return;
+
+    try {
+      // Convert editor state to Stringfied JSON and save
+      const jsonState = JSON.stringify(editorStateRef.current.toJSON());
+      await saveDocument(slug, jsonState);
+
+      console.log("Document saved successfully");
+    } catch (err) {
+      console.error("Error saving document:", err);
+    }
+  }, 2000);
+
+  // Handle editor changes
+  const handleEditorChange = (editorState: EditorState) => {
+    // Update ref with current state
+    editorStateRef.current = editorState;
+
+    // Trigger debounced save
+    debouncedSave();
   };
 
   return (
@@ -87,6 +127,7 @@ export default function Editor(): ReactElement {
           <TablePlugin hasHorizontalScroll={true} />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+          <OnChangePlugin onChange={handleEditorChange} />
           {/* Add the table-related plugins with the anchor element */}
           {floatingAnchorElem && (
             <>

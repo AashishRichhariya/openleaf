@@ -15,7 +15,7 @@ import {
 /**
  * Save a document - creates a new one or updates an existing one
  */
-export async function saveDocument(slug: string, content: object, readOnly: boolean = false): Promise<Document> {
+export async function saveDocument(slug: string, content: string, readOnly: boolean = false): Promise<Document> {
   const document: Document = {
     slug,
     content,
