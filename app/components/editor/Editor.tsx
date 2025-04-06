@@ -24,8 +24,6 @@ import {
   TableHoverActionsPlugin,
 } from "./custom-plugins";
 
-import { useDebounce } from "@/app/hooks";
-import { saveDocument } from "@/lib/document-actions";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
@@ -34,7 +32,7 @@ import { InlineTableInputNode } from "./custom-nodes";
 
 interface EditorProps {
   initialContent: string | null;
-  slug: string;
+  onEditorStateChange: (editorState: EditorState) => void;
 }
 
 const theme = DefaultTheme;
@@ -45,7 +43,7 @@ function onError(error: Error) {
 
 export default function Editor({
   initialContent,
-  slug,
+  onEditorStateChange,
 }: EditorProps): ReactElement {
   // Create a ref for the floating anchor element
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -79,21 +77,6 @@ export default function Editor({
     editorState: initialContent,
   };
 
-  const debouncedSave = useDebounce(async (editorState: EditorState) => {
-    try {
-      await saveDocument(slug, editorState.toJSON());
-      console.log("Document saved successfully");
-    } catch (err) {
-      console.error("Error saving document:", err);
-    }
-  }, 2000);
-
-  // Handle editor changes
-  const handleEditorChange = (editorState: EditorState) => {
-    // Trigger debounced save
-    debouncedSave(editorState);
-  };
-
   return (
     <div className="editor-root">
       <LexicalComposer initialConfig={editorConfig}>
@@ -117,7 +100,7 @@ export default function Editor({
           <TablePlugin hasHorizontalScroll={true} />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-          <OnChangePlugin onChange={handleEditorChange} />
+          <OnChangePlugin onChange={onEditorStateChange} />
           {/* Add the table-related plugins with the anchor element */}
           {floatingAnchorElem && (
             <>
