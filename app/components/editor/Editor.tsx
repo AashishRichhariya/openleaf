@@ -33,7 +33,7 @@ import { EditorState } from "lexical";
 import { InlineTableInputNode } from "./custom-nodes";
 
 interface EditorProps {
-  initialContent: any;
+  initialContent: string | null;
   slug: string;
 }
 
@@ -81,10 +81,7 @@ export default function Editor({
 
   const debouncedSave = useDebounce(async (editorState: EditorState) => {
     try {
-      // Convert editor state to Stringfied JSON and save
-      const jsonState = JSON.stringify(editorState.toJSON());
-      await saveDocument(slug, jsonState);
-
+      await saveDocument(slug, editorState.toJSON());
       console.log("Document saved successfully");
     } catch (err) {
       console.error("Error saving document:", err);
