@@ -17,7 +17,7 @@ export default function EditorContainer({
   initialContent = null,
   isReadOnly = false,
 }: EditorContainerProps) {
-  const isNewPage = !initialContent;
+  let isNewDocument = !initialContent;
   const lastSavedContentRef = useRef<string | null>(
     initialContent ? JSON.stringify(JSON.parse(initialContent)) : null
   );
@@ -27,10 +27,9 @@ export default function EditorContainer({
       const editorStateJson = editorState.toJSON();
       const currentContent = JSON.stringify(editorStateJson);
       if (currentContent !== lastSavedContentRef.current) {
-        await saveDocument(slug, editorStateJson);
-
+        await saveDocument(slug, editorStateJson, isReadOnly, isNewDocument);
         console.log("Document saved successfully");
-
+        isNewDocument = false;
         lastSavedContentRef.current = currentContent;
       }
     } catch (err) {

@@ -4,7 +4,8 @@
 import { Document } from '@/types';
 import {
   GetCommand,
-  PutCommand
+  PutCommand,
+  UpdateCommand
 } from "@aws-sdk/lib-dynamodb";
 import { docClient, DOCUMENTS_TABLE_NAME } from "./aws-config";
 
@@ -12,20 +13,7 @@ import { docClient, DOCUMENTS_TABLE_NAME } from "./aws-config";
 /**
  * Create or update a document in DynamoDB
  */
-export async function createOrUpdateDocument(document: Document): Promise<Document> {
-  const now = new Date().toISOString();
-
-  // Set timestamps
-  if (!document.created_at) {
-    document.created_at = now;
-  }
-  document.updated_at = now;
-
-  // Set default version if not provided
-  if (!document.version) {
-    document.version = 1;
-  }
-
+export async function createDocument(document: Document): Promise<Document> {
   const params = {
     TableName: DOCUMENTS_TABLE_NAME,
     Item: document,
@@ -35,7 +23,52 @@ export async function createOrUpdateDocument(document: Document): Promise<Docume
     await docClient.send(new PutCommand(params));
     return document;
   } catch (error) {
-    console.error("Error creating/updating document:", error);
+    console.error("Error creating document:", error);
+    throw error;
+  }
+}
+
+/**
+ * Update specific fields of a document in DynamoDB
+ */
+export async function updateDocument(
+  slug: string,
+  updates: Partial<Document>,
+  version: number = 1,
+): Promise<Document> {
+  // Build the update expression and attribute values
+  let updateExpression = "SET ";
+  const expressionAttributeValues: { [key: string]: any } = {};
+  const expressionAttributeNames: { [key: string]: string } = {};
+
+  Object.keys(updates).forEach((key, index) => {
+    const valueKey = `:val${index}`;
+    const nameKey = `#attr${index}`;
+
+    updateExpression += index === 0 ? "" : ", ";
+    updateExpression += `${nameKey} = ${valueKey}`;
+
+    expressionAttributeValues[valueKey] = (updates as Record<string, any>)[key];
+    expressionAttributeNames[nameKey] = key;
+  });
+
+  const params = {
+    TableName: DOCUMENTS_TABLE_NAME,
+    Key: {
+      slug,
+      version
+    },
+    UpdateExpression: updateExpression,
+    ExpressionAttributeValues: expressionAttributeValues,
+    ExpressionAttributeNames: expressionAttributeNames,
+    ReturnValues: "ALL_NEW" as const
+  };
+
+  try {
+    const response = await docClient.send(new UpdateCommand(params));
+    return response.Attributes as Document;
+  } catch (error) {
+    console.error("Error updating document fields:", error);
     throw error;
   }
 }
