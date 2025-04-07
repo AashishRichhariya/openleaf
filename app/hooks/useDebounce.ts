@@ -18,7 +18,7 @@ export function useDebounce<T extends (...args: never[]) => void>(
           }
         },
         ms,
-        {maxWait},
+        maxWait !== undefined ? { maxWait } : undefined,
       ),
     [ms, maxWait],
   );
