@@ -3,6 +3,7 @@
 import { useDebounce } from "@/app/hooks";
 import { saveDocument } from "@/lib/document-actions";
 import { EditorState } from "lexical";
+import { useRef } from "react";
 import Editor from "./Editor";
 
 interface EditorContainerProps {
@@ -17,11 +18,21 @@ export default function EditorContainer({
   isReadOnly = false,
 }: EditorContainerProps) {
   const isNewPage = !initialContent;
+  const lastSavedContentRef = useRef<string | null>(
+    initialContent ? JSON.stringify(JSON.parse(initialContent)) : null
+  );
 
   const debouncedSave = useDebounce(async (editorState: EditorState) => {
     try {
-      await saveDocument(slug, editorState.toJSON());
-      console.log("Document saved successfully");
+      const editorStateJson = editorState.toJSON();
+      const currentContent = JSON.stringify(editorStateJson);
+      if (currentContent !== lastSavedContentRef.current) {
+        await saveDocument(slug, editorStateJson);
+
+        console.log("Document saved successfully");
+
+        lastSavedContentRef.current = currentContent;
+      }
     } catch (err) {
       console.error("Error saving document:", err);
     }

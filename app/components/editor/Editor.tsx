@@ -100,7 +100,10 @@ export default function Editor({
           <TablePlugin hasHorizontalScroll={true} />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-          <OnChangePlugin onChange={onEditorStateChange} />
+          <OnChangePlugin
+            onChange={onEditorStateChange}
+            ignoreSelectionChange={true}
+          />
           {/* Add the table-related plugins with the anchor element */}
           {floatingAnchorElem && (
             <>
