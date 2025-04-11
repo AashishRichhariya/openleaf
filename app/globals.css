@@ -3,11 +3,61 @@
 @tailwind utilities;
 
 :root {
-  --background: #1E2D24;
-  --foreground: #E6EBE8;
-  --editor-bg: #2F3C33;
-  --editor-border: #364A3F;
-  --accent: #2F855A;
+  /* Core palette */
+  --primary: #2F855A;           /* Main brand/accent color */
+  --primary-rgb: 47, 133, 90;   /* RGB values for opacity variants */
+  --surface-dark: #1E2D24;      /* Main background */
+  --surface-medium: #2F3C33;    /* Editor background */
+  --surface-light: #364A3F;     /* Borders */
+  --text: #E6EBE8;              /* Main text color */
+
+  /* Derived colors - automatically calculated from core palette */
+  --primary-20: rgba(var(--primary-rgb), 0.2);
+  --primary-50: rgba(var(--primary-rgb), 0.5);
+  --primary-80: rgba(var(--primary-rgb), 0.8);
+
+  /* Application of core palette to specific UI elements */
+  --background: var(--surface-dark);
+  --foreground: var(--text);
+  --editor-bg: var(--surface-medium);
+  --editor-border: var(--surface-light);
+  --accent: var(--primary);
+  --accent-rgb: var(--primary-rgb);
+
+  /* Grayscale palette */
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+
+  /* Semantic colors for UI elements */
+  --placeholder-text: var(--gray-400);
+  --quote-border: var(--primary);
+  --checkbox-border: var(--gray-400);
+  --checkbox-checked-bg: var(--primary);
+  --checkbox-checkmark: white;
+  --code-bg: var(--gray-800);
+  --dropdown-chevron: #444;
+
+  /* Table colors */
+  --table-border: var(--gray-600);
+  --table-cell-bg: var(--gray-800);
+  --table-header-bg: var(--gray-700);
+  --table-selected-bg: var(--primary-20);
+  --table-striping: var(--gray-700);
+
+  /* Form input colors */
+  --input-border: var(--gray-300);
+  --input-text: var(--text);
+  --input-bg: rgba(var(--primary-rgb), 0.05);
+  --input-focus-border: var(--primary);
+  --input-focus-bg: rgba(var(--primary-rgb), 0.1);
+  --input-focus-shadow: rgba(var(--primary-rgb), 0.2);
+  --input-placeholder: var(--gray-400);
 }
 
 body {
@@ -59,7 +109,7 @@ body {
   }
 
   .editor-placeholder {
-    @apply absolute top-12 left-8 text-gray-400 pointer-events-none select-none;
+    @apply absolute top-12 left-8 text-placeholder-text pointer-events-none select-none;
   }
 
   /* Node-specific styles */
@@ -76,11 +126,11 @@ body {
   }
 
   .editor-quote {
-    @apply border-l-4 border-accent pl-4 my-4 italic text-gray-400;
+    @apply border-l-4 border-quote-border pl-4 my-4 italic text-placeholder-text;
   }
 
   .editor-code {
-    @apply bg-gray-100 dark:bg-gray-800 p-2 rounded font-mono text-sm;
+    @apply bg-code-bg p-2 rounded font-mono text-sm;
   }
 
   /* Base list styles */
@@ -159,16 +209,16 @@ body {
   }
 
   .editor-listitem-unchecked::before {
-    @apply border border-gray-400 rounded;
+    @apply border border-checkbox-border rounded;
   }
 
   .editor-listitem-checked::before {
-    @apply border border-accent rounded bg-accent bg-no-repeat;
+    @apply border border-checkbox-checked-bg rounded bg-checkbox-checked-bg bg-no-repeat;
   }
 
   /* Checkmark */
   .editor-listitem-checked::after {
-    @apply content-[''] cursor-pointer border-white border-solid absolute block top-1.5 w-[3px] left-[7px] right-[7px] h-1.5 rotate-45 border-0 border-r-2 border-b-2;
+    @apply content-[''] cursor-pointer border-checkbox-checkmark border-solid absolute block top-1.5 w-[3px] left-[7px] right-[7px] h-1.5 rotate-45 border-0 border-r-2 border-b-2;
   }
 
   /* Hide original checkbox for nested items */
@@ -219,7 +269,7 @@ body {
   }
 
   .typeahead-popover ul li.selected {
-    @apply bg-gray-200 dark:bg-gray-700;
+    @apply bg-gray-700;
   }
 
   .typeahead-popover li {
@@ -239,7 +289,7 @@ body {
   }
 
   .typeahead-popover li:hover {
-    @apply bg-gray-200 dark:bg-gray-700;
+    @apply bg-gray-700;
   }
 
   .typeahead-popover li .text {
@@ -260,11 +310,11 @@ body {
   }
 
   .component-picker-menu .item.selected {
-    @apply bg-gray-200 dark:bg-gray-700;
+    @apply bg-gray-700;
   }
 
   .component-picker-menu .item:hover {
-    @apply bg-gray-200 dark:bg-gray-700;
+    @apply bg-gray-700;
   }
 
   .component-picker-menu .item .icon {
@@ -282,7 +332,7 @@ body {
 
   /* Base table */
   .editor-table {
-    @apply border-collapse border-2 border-gray-300 dark:border-gray-600 table-fixed w-full mt-6 mb-8 min-w-[200px];
+    @apply border-collapse border-2 border-table-border table-fixed w-full mt-6 mb-8 min-w-[200px];
   }
 
   /* Table alignment */
@@ -296,12 +346,12 @@ body {
 
   /* Table cells */
   .editor-table-cell {
-    @apply border border-gray-300 dark:border-gray-600 align-top text-left p-2 relative outline-none bg-gray-50 dark:bg-gray-800;
+    @apply border border-table-border align-top text-left p-2 relative outline-none bg-table-cell-bg;
   }
 
   /* Table header cells */
   .editor-table-cell-header {
-    @apply border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-left;
+    @apply border border-table-border bg-table-header-bg text-left;
   }
 
   /* Selected states */
@@ -314,13 +364,13 @@ body {
   }
 
   .editor-table-cell-selected::after {
-    @apply absolute inset-0 bg-accent-20 mix-blend-multiply
+    @apply absolute inset-0 bg-table-selected-bg mix-blend-multiply
            content-[''] pointer-events-none;
   }
 
   /* Row striping */
   .editor-table-row-striping tr:nth-child(even) {
-    @apply bg-gray-100 dark:bg-gray-700;
+    @apply bg-table-striping;
   }
 
   /* Frozen columns/rows */
@@ -329,11 +379,11 @@ body {
   }
 
   .editor-table-frozen-row tr:first-child > td {
-    @apply overflow-clip bg-gray-100 dark:bg-gray-700 sticky z-10 top-[44px];
+    @apply overflow-clip bg-table-header-bg sticky z-10 top-[44px];
   }
 
   .editor-table-frozen-row tr:first-child > th {
-    @apply overflow-clip bg-gray-100 dark:bg-gray-700 sticky z-10 top-[44px];
+    @apply overflow-clip bg-table-header-bg sticky z-10 top-[44px];
   }
 
   /* Cell resizer */
@@ -367,12 +417,12 @@ body {
   }
 
   .table-cell-action-button {
-    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full w-6 h-6
+    @apply bg-table-cell-bg border border-table-border rounded-full w-6 h-6
            flex items-center justify-center cursor-pointer;
   }
 
   .table-cell-action-button:hover {
-    @apply bg-gray-100 dark:bg-gray-700;
+    @apply bg-table-header-bg;
   }
 
   .table-cell-action-button i.table-cell-action-button-icon {
@@ -380,25 +430,26 @@ body {
     /* Custom chevron - can't convert directly to Tailwind */
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 5px solid #444;
+    border-top: 5px solid var(--dropdown-chevron);
   }
 
+
   .table-action-menu-dropdown {
-    @apply bg-white dark:bg-gray-800 rounded shadow-md fixed z-50 w-52 opacity-0
+    @apply bg-table-cell-bg rounded shadow-md fixed z-50 w-52 opacity-0
            transition-opacity duration-100;
   }
 
   .table-action-menu-dropdown .table-action-menu-item {
     @apply flex items-center px-3 py-2 border-0 bg-transparent
-           w-full text-left cursor-pointer text-sm text-gray-800 dark:text-gray-200;
+           w-full text-left cursor-pointer text-sm text-foreground;
   }
 
   .table-action-menu-dropdown .table-action-menu-item:hover {
-    @apply bg-gray-100 dark:bg-gray-700;
+    @apply bg-table-header-bg;
   }
 
   .table-action-menu-dropdown hr {
-    @apply my-1 border-0 border-t border-gray-300 dark:border-gray-600;
+    @apply my-1 border-0 border-t border-table-border;
   }
 
   /* Selection handling */
@@ -427,27 +478,19 @@ body {
   }
 
   .editor-table-input input {
-    width: 40px;
-    height: 24px;
-    padding: 2px 4px;
-    font-size: inherit;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
-    background-color: rgba(240, 240, 245, 0.3);
-    color: #333;
-    text-align: center;
+    @apply w-10 h-6 py-0.5 px-1
+           border border-input-border
+           rounded bg-input-bg text-input-text text-center;
   }
 
   .editor-table-input input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    background-color: rgba(240, 240, 245, 0.5);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    @apply outline-none border-input-focus-border bg-input-focus-bg;
+    /* We can't use @apply for complex shadows with variables, so keeping this direct */
+    box-shadow: 0 0 0 2px var(--input-focus-shadow);
   }
 
   .editor-table-input input::placeholder {
-    color: #9ca3af;
-    opacity: 0.8;
+    @apply text-input-placeholder opacity-80;
   }
 
   /* Hide number input spinner buttons */

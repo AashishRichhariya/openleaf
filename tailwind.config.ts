@@ -10,29 +10,124 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Core palette
+        primary: "var(--primary)",
+        "surface-dark": "var(--surface-dark)",
+        "surface-medium": "var(--surface-medium)",
+        "surface-light": "var(--surface-light)",
+        text: "var(--text)",
+
+        // Mapped colors (existing)
         background: "var(--background)",
         foreground: "var(--foreground)",
         "editor-bg": "var(--editor-bg)",
         "editor-border": "var(--editor-border)",
+
+        // Accent colors with opacity variants
         accent: {
           DEFAULT: 'var(--accent)',
-          '20': 'rgba(var(--accent-rgb), 0.2)',
-          '50': 'rgba(var(--accent-rgb), 0.5)',
-          '80': 'rgba(var(--accent-rgb), 0.5)',
+          '20': 'var(--primary-20)',
+          '50': 'var(--primary-50)',
+          '80': 'var(--primary-80)',
+        },
+
+        // Keep your existing gray scale
+        gray: {
+          50: "var(--gray-50)",
+          100: "var(--gray-100)",
+          200: "var(--gray-200)",
+          300: "var(--gray-300)",
+          400: "var(--gray-400)",
+          600: "var(--gray-600)",
+          700: "var(--gray-700)",
+          800: "var(--gray-800)",
         },
       },
-      borderColor: {
-        DEFAULT: "var(--editor-border)",
-      },
-      caretColor: {
-        DEFAULT: "var(--accent)",
-      },
-      textColor: {
-        DEFAULT: "var(--foreground)",
-      },
+
+      // Add the semantic colors to all relevant color utilities
       backgroundColor: {
         DEFAULT: "var(--background)",
+        "placeholder-text": "var(--placeholder-text)",
+        "quote-border": "var(--quote-border)",
+        "checkbox-border": "var(--checkbox-border)",
+        "checkbox-checked-bg": "var(--checkbox-checked-bg)",
+        "checkbox-checkmark": "var(--checkbox-checkmark)",
+        "code-bg": "var(--code-bg)",
+        "dropdown-chevron": "var(--dropdown-chevron)",
+        "table-border": "var(--table-border)",
+        "table-cell-bg": "var(--table-cell-bg)",
+        "table-header-bg": "var(--table-header-bg)",
+        "table-selected-bg": "var(--table-selected-bg)",
+        "table-striping": "var(--table-striping)",
+        "input-border": "var(--input-border)",
+        "input-text": "var(--input-text)",
+        "input-bg": "var(--input-bg)",
+        "input-focus-border": "var(--input-focus-border)",
+        "input-focus-bg": "var(--input-focus-bg)",
+        "input-focus-shadow": "var(--input-focus-shadow)",
+        "input-placeholder": "var(--input-placeholder)",
       },
+
+      textColor: {
+        DEFAULT: "var(--foreground)",
+        "placeholder-text": "var(--placeholder-text)",
+        "quote-border": "var(--quote-border)",
+        "checkbox-border": "var(--checkbox-border)",
+        "checkbox-checked-bg": "var(--checkbox-checked-bg)",
+        "checkbox-checkmark": "var(--checkbox-checkmark)",
+        "code-bg": "var(--code-bg)",
+        "dropdown-chevron": "var(--dropdown-chevron)",
+        "table-border": "var(--table-border)",
+        "table-cell-bg": "var(--table-cell-bg)",
+        "table-header-bg": "var(--table-header-bg)",
+        "table-selected-bg": "var(--table-selected-bg)",
+        "table-striping": "var(--table-striping)",
+        "input-border": "var(--input-border)",
+        "input-text": "var(--input-text)",
+        "input-bg": "var(--input-bg)",
+        "input-focus-border": "var(--input-focus-border)",
+        "input-focus-bg": "var(--input-focus-bg)",
+        "input-focus-shadow": "var(--input-focus-shadow)",
+        "input-placeholder": "var(--input-placeholder)",
+      },
+
+      borderColor: {
+        DEFAULT: "var(--editor-border)",
+        "placeholder-text": "var(--placeholder-text)",
+        "quote-border": "var(--quote-border)",
+        "checkbox-border": "var(--checkbox-border)",
+        "checkbox-checked-bg": "var(--checkbox-checked-bg)",
+        "checkbox-checkmark": "var(--checkbox-checkmark)",
+        "code-bg": "var(--code-bg)",
+        "dropdown-chevron": "var(--dropdown-chevron)",
+        "table-border": "var(--table-border)",
+        "table-cell-bg": "var(--table-cell-bg)",
+        "table-header-bg": "var(--table-header-bg)",
+        "table-selected-bg": "var(--table-selected-bg)",
+        "table-striping": "var(--table-striping)",
+        "input-border": "var(--input-border)",
+        "input-text": "var(--input-text)",
+        "input-bg": "var(--input-bg)",
+        "input-focus-border": "var(--input-focus-border)",
+        "input-focus-bg": "var(--input-focus-bg)",
+        "input-focus-shadow": "var(--input-focus-shadow)",
+        "input-placeholder": "var(--input-placeholder)",
+      },
+
+      caretColor: {
+        DEFAULT: "var(--accent)",
+        "placeholder-text": "var(--placeholder-text)",
+        "checkbox-border": "var(--checkbox-border)",
+        "checkbox-checked-bg": "var(--checkbox-checked-bg)",
+        "checkbox-checkmark": "var(--checkbox-checkmark)",
+        "dropdown-chevron": "var(--dropdown-chevron)",
+        "input-text": "var(--input-text)",
+      },
+
+      outlineColor: {
+        "accent": "var(--accent)",
+      },
+
       borderRadius: {
         'squircle': '24px 24px 24px 24px / 28px 28px 28px 28px',
       }
@@ -40,4 +135,3 @@ export default {
   },
   plugins: [],
 } satisfies Config;
-
