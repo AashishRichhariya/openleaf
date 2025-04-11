@@ -3,21 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --background: #f0f4f1;
-  --foreground: #1a2e23;
-  --editor-bg: #ffffff;
-  --editor-border: #e2e8f0;
+  --background: #1E2D24;
+  --foreground: #E6EBE8;
+  --editor-bg: #2F3C33;
+  --editor-border: #364A3F;
   --accent: #2F855A;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1E2D24;
-    --foreground: #E6EBE8;
-    --editor-bg: #2F3C33;
-    --editor-border: #364A3F;
-    --accent: #2F855A;
-  }
 }
 
 body {
