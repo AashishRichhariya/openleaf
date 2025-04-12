@@ -19,6 +19,10 @@ export default {
         "surface-dark": "var(--surface-dark)",
         "surface-medium": "var(--surface-medium)",
         "surface-light": "var(--surface-light)",
+        "surface-dark-lighter": "var(--surface-dark-lighter)",
+        "surface-dark-darker": "var(--surface-dark-darker)",
+        "surface-medium-lighter": "var(--surface-medium-lighter)",
+        "surface-medium-darker": "var(--surface-medium-darker)",
         text: "var(--text)",
         "text-secondary": "var(--text-secondary)",
         "text-tertiary": "var(--text-tertiary)",
@@ -67,6 +71,10 @@ export default {
         "primary-20": "var(--primary-20)",
         "primary-50": "var(--primary-50)",
         "primary-80": "var(--primary-80)",
+        "surface-dark-lighter": "var(--surface-dark-lighter)",
+        "surface-dark-darker": "var(--surface-dark-darker)",
+        "surface-medium-lighter": "var(--surface-medium-lighter)",
+        "surface-medium-darker": "var(--surface-medium-darker)",
       },
 
       textColor: {
