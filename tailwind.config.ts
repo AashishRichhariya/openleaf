@@ -26,21 +26,10 @@ export default {
         // Accent colors with opacity variants
         accent: {
           DEFAULT: 'var(--accent)',
+          '10': 'var(--primary-10)',
           '20': 'var(--primary-20)',
           '50': 'var(--primary-50)',
           '80': 'var(--primary-80)',
-        },
-
-        // Keep your existing gray scale
-        gray: {
-          50: "var(--gray-50)",
-          100: "var(--gray-100)",
-          200: "var(--gray-200)",
-          300: "var(--gray-300)",
-          400: "var(--gray-400)",
-          600: "var(--gray-600)",
-          700: "var(--gray-700)",
-          800: "var(--gray-800)",
         },
       },
 

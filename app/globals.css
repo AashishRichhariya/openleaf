@@ -8,13 +8,27 @@
   --primary-rgb: 47, 133, 90;   /* RGB values for opacity variants */
   --surface-dark: #1E2D24;      /* Main background */
   --surface-medium: #2F3C33;    /* Editor background */
-  --surface-light: #364A3F;     /* Borders */
+  --surface-light: #4A7856;     /* Borders */
   --text: #E6EBE8;              /* Main text color */
 
   /* Derived colors - automatically calculated from core palette */
-  --primary-20: rgba(var(--primary-rgb), 0.2);
-  --primary-50: rgba(var(--primary-rgb), 0.5);
-  --primary-80: rgba(var(--primary-rgb), 0.8);
+  --primary-10: rgba(var(--primary-rgb), 0.1);  /* Subtle highlights, hover states */
+  --primary-20: rgba(var(--primary-rgb), 0.2);  /* Selected elements, focus states */
+  --primary-50: rgba(var(--primary-rgb), 0.5);  /* Secondary buttons, progress indicators */
+  --primary-80: rgba(var(--primary-rgb), 0.8);  /* Hover state for primary elements */
+
+   /* Surface variations */
+  --surface-dark-lighter: #252F2A;  /* A lighter shade of surface-dark */
+  --surface-dark-darker: #171F1A;   /* A darker shade of surface-dark */
+  --surface-medium-lighter: #3A473E; /* A lighter shade of surface-medium */
+  --surface-medium-darker: #2C352E;  /* A darker shade of surface-medium */
+
+
+  /* Text variations for different emphasis levels */
+  --text-rgb: 230, 235, 232;    /* RGB values for text opacity variants */
+  --text-secondary: rgba(var(--text-rgb), 0.7); /* Secondary text, less emphasis */
+  --text-tertiary: rgba(var(--text-rgb), 0.5);  /* Placeholder text, disabled states */
+  --text-disabled: rgba(var(--text-rgb), 0.3);  /* Very low emphasis text */
 
   /* Application of core palette to specific UI elements */
   --background: var(--surface-dark);
@@ -24,40 +38,30 @@
   --accent: var(--primary);
   --accent-rgb: var(--primary-rgb);
 
-  /* Grayscale palette */
-  --gray-50: #F9FAFB;
-  --gray-100: #F3F4F6;
-  --gray-200: #E5E7EB;
-  --gray-300: #D1D5DB;
-  --gray-400: #9CA3AF;
-  --gray-600: #4B5563;
-  --gray-700: #374151;
-  --gray-800: #1F2937;
-
   /* Semantic colors for UI elements */
-  --placeholder-text: var(--gray-400);
+  --placeholder-text: var(--text-tertiary);
   --quote-border: var(--primary);
-  --checkbox-border: var(--gray-400);
+  --checkbox-border: var(--surface-light);
   --checkbox-checked-bg: var(--primary);
-  --checkbox-checkmark: white;
-  --code-bg: var(--gray-800);
-  --dropdown-chevron: #444;
+  --checkbox-checkmark: var(--text);
+  --code-bg: var(--surface-dark-lighter);
+  --dropdown-chevron: var(--text-secondary);
 
   /* Table colors */
-  --table-border: var(--gray-600);
-  --table-cell-bg: var(--gray-800);
-  --table-header-bg: var(--gray-700);
+  --table-border: var(--surface-light);
+  --table-cell-bg: var(--surface-medium-darker);
+  --table-header-bg: var(--surface-dark-lighter);
   --table-selected-bg: var(--primary-20);
-  --table-striping: var(--gray-700);
+  --table-striping: rgba(var(--text-rgb), 0.05);
 
   /* Form input colors */
-  --input-border: var(--gray-300);
+  --input-border: var(--surface-light);
   --input-text: var(--text);
-  --input-bg: rgba(var(--primary-rgb), 0.05);
+  --input-bg: var(--surface-dark);
   --input-focus-border: var(--primary);
-  --input-focus-bg: rgba(var(--primary-rgb), 0.1);
-  --input-focus-shadow: rgba(var(--primary-rgb), 0.2);
-  --input-placeholder: var(--gray-400);
+  --input-focus-bg: var(--primary-10);
+  --input-focus-shadow: var(--primary-20);
+  --input-placeholder: var(--text-tertiary);
 }
 
 body {
