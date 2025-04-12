@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     // Apple devices
     apple: [
       {
-        url: "/favicon/apple-touch-icon.png",
+        url: "/favicon/apple-icon.png",
         sizes: "180x180",
         type: "image/png",
       },
@@ -49,8 +49,7 @@ export const metadata: Metadata = {
       },
     ],
   },
-  // Include the manifest file for PWA support
-  manifest: "/site.webmanifest",
+  manifest: "/favicon/manifest.json",
 };
 
 export default function RootLayout({
