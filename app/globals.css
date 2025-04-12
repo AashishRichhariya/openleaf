@@ -4,31 +4,48 @@
 
 :root {
   /* Core palette */
-  --primary: #2F855A;           /* Main brand/accent color */
-  --primary-rgb: 47, 133, 90;   /* RGB values for opacity variants */
-  --surface-dark: #1E2D24;      /* Main background */
-  --surface-medium: #2F3C33;    /* Editor background */
-  --surface-light: #4A7856;     /* Borders */
-  --text: #E6EBE8;              /* Main text color */
+  --primary: #2f855a; /* Main brand/accent color */
+  --primary-rgb: 47, 133, 90; /* RGB values for opacity variants */
+  --surface-dark: #1e2d24; /* Main background */
+  --surface-medium: #2f3c33; /* Editor background */
+  --surface-light: #4a7856; /* Borders */
+  --text: #e6ebe8; /* Main text color */
 
   /* Derived colors - automatically calculated from core palette */
-  --primary-10: rgba(var(--primary-rgb), 0.1);  /* Subtle highlights, hover states */
-  --primary-20: rgba(var(--primary-rgb), 0.2);  /* Selected elements, focus states */
-  --primary-50: rgba(var(--primary-rgb), 0.5);  /* Secondary buttons, progress indicators */
-  --primary-80: rgba(var(--primary-rgb), 0.8);  /* Hover state for primary elements */
+  --primary-10: rgba(
+    var(--primary-rgb),
+    0.1
+  ); /* Subtle highlights, hover states */
+  --primary-20: rgba(
+    var(--primary-rgb),
+    0.2
+  ); /* Selected elements, focus states */
+  --primary-50: rgba(
+    var(--primary-rgb),
+    0.5
+  ); /* Secondary buttons, progress indicators */
+  --primary-80: rgba(
+    var(--primary-rgb),
+    0.8
+  ); /* Hover state for primary elements */
 
-   /* Surface variations */
-  --surface-dark-lighter: #252F2A;  /* A lighter shade of surface-dark */
-  --surface-dark-darker: #171F1A;   /* A darker shade of surface-dark */
-  --surface-medium-lighter: #3A473E; /* A lighter shade of surface-medium */
-  --surface-medium-darker: #2C352E;  /* A darker shade of surface-medium */
-
+  /* Surface variations */
+  --surface-dark-lighter: #252f2a; /* A lighter shade of surface-dark */
+  --surface-dark-darker: #171f1a; /* A darker shade of surface-dark */
+  --surface-medium-lighter: #3a473e; /* A lighter shade of surface-medium */
+  --surface-medium-darker: #2c352e; /* A darker shade of surface-medium */
 
   /* Text variations for different emphasis levels */
-  --text-rgb: 230, 235, 232;    /* RGB values for text opacity variants */
-  --text-secondary: rgba(var(--text-rgb), 0.7); /* Secondary text, less emphasis */
-  --text-tertiary: rgba(var(--text-rgb), 0.5);  /* Placeholder text, disabled states */
-  --text-disabled: rgba(var(--text-rgb), 0.3);  /* Very low emphasis text */
+  --text-rgb: 230, 235, 232; /* RGB values for text opacity variants */
+  --text-secondary: rgba(
+    var(--text-rgb),
+    0.7
+  ); /* Secondary text, less emphasis */
+  --text-tertiary: rgba(
+    var(--text-rgb),
+    0.5
+  ); /* Placeholder text, disabled states */
+  --text-disabled: rgba(var(--text-rgb), 0.3); /* Very low emphasis text */
 
   /* Application of core palette to specific UI elements */
   --background: var(--surface-dark);
@@ -67,12 +84,11 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer components {
-   /* Navbar Components */
-   .navbar {
+  /* Navbar Components */
+  .navbar {
     @apply w-full bg-transparent;
   }
 
@@ -92,7 +108,6 @@ body {
   .editor-main {
     @apply flex flex-col min-h-screen;
   }
-
 
   .editor-root {
     @apply flex-grow w-full flex justify-center bg-background;
@@ -138,7 +153,7 @@ body {
   }
 
   /* Base list styles */
-   .editor-list-ul {
+  .editor-list-ul {
     @apply p-0 m-0 list-disc list-outside;
   }
 
@@ -238,8 +253,8 @@ body {
   }
 
   /* RTL support */
-  .editor-listitem-checked[dir='rtl']::before,
-  .editor-listitem-unchecked[dir='rtl']::before {
+  .editor-listitem-checked[dir="rtl"]::before,
+  .editor-listitem-unchecked[dir="rtl"]::before {
     @apply left-auto right-0;
   }
 
@@ -254,80 +269,80 @@ body {
   }
 
   /* Typeahead Menu Components */
-.typeahead-popover {
-  @apply fixed bg-editor-bg shadow-lg rounded-squircle-sm py-2;
-}
+  .typeahead-popover {
+    @apply fixed bg-editor-bg shadow-lg rounded-squircle-sm py-2;
+  }
 
-.typeahead-popover ul {
-  @apply p-0 m-0 list-none rounded-squircle-sm max-h-64 overflow-y-scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+  .typeahead-popover ul {
+    @apply p-0 m-0 list-none rounded-squircle-sm max-h-64 overflow-y-scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-.typeahead-popover ul::-webkit-scrollbar {
-  @apply hidden;
-}
+  .typeahead-popover ul::-webkit-scrollbar {
+    @apply hidden;
+  }
 
-.typeahead-popover ul li {
-  @apply m-0 min-w-[180px] text-sm outline-none cursor-pointer rounded-lg;
-}
+  .typeahead-popover ul li {
+    @apply m-0 min-w-[180px] text-sm outline-none cursor-pointer rounded-lg;
+  }
 
-.typeahead-popover ul li.selected {
-  @apply bg-surface-medium-lighter;
-}
+  .typeahead-popover ul li.selected {
+    @apply bg-surface-medium-lighter;
+  }
 
-.typeahead-popover li {
-  @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-editor-bg rounded-lg border-0;
-}
+  .typeahead-popover li {
+    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-editor-bg rounded-lg border-0;
+  }
 
-.typeahead-popover li.active {
-  @apply flex w-5 h-5 bg-contain;
-}
+  .typeahead-popover li.active {
+    @apply flex w-5 h-5 bg-contain;
+  }
 
-.typeahead-popover li:first-child {
-  @apply rounded-t-lg;
-}
+  .typeahead-popover li:first-child {
+    @apply rounded-t-lg;
+  }
 
-.typeahead-popover li:last-child {
-  @apply rounded-b-lg;
-}
+  .typeahead-popover li:last-child {
+    @apply rounded-b-lg;
+  }
 
-.typeahead-popover li:hover {
-  @apply bg-surface-medium-lighter;
-}
+  .typeahead-popover li:hover {
+    @apply bg-surface-medium-lighter;
+  }
 
-.typeahead-popover li .text {
-  @apply flex leading-5 flex-grow min-w-[150px];
-}
+  .typeahead-popover li .text {
+    @apply flex leading-5 flex-grow min-w-[150px];
+  }
 
-.typeahead-popover li .icon {
-  @apply flex w-5 h-5 select-none mr-2 leading-4 bg-contain bg-no-repeat bg-center;
-}
+  .typeahead-popover li .icon {
+    @apply flex w-5 h-5 select-none mr-2 leading-4 bg-contain bg-no-repeat bg-center;
+  }
 
-/* Component Picker Specific */
-.component-picker-menu {
-  @apply w-[200px] rounded-squircle-sm overflow-hidden;
-}
+  /* Component Picker Specific */
+  .component-picker-menu {
+    @apply w-[200px] rounded-squircle-sm overflow-hidden;
+  }
 
-.component-picker-menu .item {
-  @apply items-center cursor-pointer flex flex-row p-2 mx-2 rounded;
-}
+  .component-picker-menu .item {
+    @apply items-center cursor-pointer flex flex-row p-2 mx-2 rounded;
+  }
 
-.component-picker-menu .item.selected {
-  @apply bg-primary-20;
-}
+  .component-picker-menu .item.selected {
+    @apply bg-primary-20;
+  }
 
-.component-picker-menu .item:hover {
-  @apply bg-primary-10;
-}
+  .component-picker-menu .item:hover {
+    @apply bg-primary-10;
+  }
 
-.component-picker-menu .item .icon {
-  @apply flex mr-2 w-5 h-5 select-none;
-}
+  .component-picker-menu .item .icon {
+    @apply flex mr-2 w-5 h-5 select-none;
+  }
 
-.component-picker-menu .item .text {
-  @apply flex leading-5 flex-grow min-w-[150px];
-}
+  .component-picker-menu .item .text {
+    @apply flex leading-5 flex-grow min-w-[150px];
+  }
   /* Table wrapper */
   .editor-table-scrollable-wrapper {
     @apply overflow-x-auto my-0 mr-6 ml-0;
@@ -460,8 +475,12 @@ body {
 
   /* Animation for controls */
   @keyframes table-controls {
-    from { @apply opacity-0; }
-    to { @apply opacity-100; }
+    from {
+      @apply opacity-0;
+    }
+    to {
+      @apply opacity-100;
+    }
   }
 
   /* Inline Table Input styles */
@@ -532,7 +551,7 @@ body {
     margin: 0;
   }
 
-  .editor-table-input input[type=number] {
+  .editor-table-input input[type="number"] {
     -moz-appearance: textfield;
   }
 
