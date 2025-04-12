@@ -420,12 +420,12 @@ body {
   }
 
   .table-cell-action-button {
-    @apply bg-table-cell-bg border border-table-border rounded-full w-6 h-6
-           flex items-center justify-center cursor-pointer;
+    @apply bg-surface-medium border border-surface-light rounded-full w-6 h-6
+          flex items-center justify-center cursor-pointer;
   }
 
   .table-cell-action-button:hover {
-    @apply bg-table-header-bg;
+    @apply bg-surface-dark-lighter;
   }
 
   .table-cell-action-button i.table-cell-action-button-icon {
@@ -433,28 +433,26 @@ body {
     /* Custom chevron - can't convert directly to Tailwind */
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 5px solid var(--dropdown-chevron);
+    border-top: 5px solid var(--text-secondary);
   }
 
-
   .table-action-menu-dropdown {
-    @apply bg-table-cell-bg rounded shadow-md fixed z-50 w-52 opacity-0
-           transition-opacity duration-100;
+    @apply bg-surface-medium rounded shadow-md fixed z-50 w-52 opacity-0
+          transition-opacity duration-100;
   }
 
   .table-action-menu-dropdown .table-action-menu-item {
     @apply flex items-center px-3 py-2 border-0 bg-transparent
-           w-full text-left cursor-pointer text-sm text-foreground;
+          w-full text-left cursor-pointer text-sm text-foreground;
   }
 
   .table-action-menu-dropdown .table-action-menu-item:hover {
-    @apply bg-table-header-bg;
+    @apply bg-surface-medium-lighter;
   }
 
   .table-action-menu-dropdown hr {
-    @apply my-1 border-0 border-t border-table-border;
+    @apply my-1 border-0 border-t border-surface-light;
   }
-
   /* Selection handling */
   .editor-table-selection *::selection {
     @apply bg-transparent;
