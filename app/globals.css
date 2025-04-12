@@ -541,4 +541,17 @@ body {
     @apply border-input-focus-border;
     box-shadow: 0 0 0 2px var(--input-focus-shadow);
   }
+
+  /* Simple scrollbar color styling */
+  * {
+    scrollbar-color: var(--surface-light) transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--surface-light);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
