@@ -12,10 +12,17 @@ export default {
       colors: {
         // Core palette
         primary: "var(--primary)",
+        "primary-10": "var(--primary-10)",
+        "primary-20": "var(--primary-20)",
+        "primary-50": "var(--primary-50)",
+        "primary-80": "var(--primary-80)",
         "surface-dark": "var(--surface-dark)",
         "surface-medium": "var(--surface-medium)",
         "surface-light": "var(--surface-light)",
         text: "var(--text)",
+        "text-secondary": "var(--text-secondary)",
+        "text-tertiary": "var(--text-tertiary)",
+        "text-disabled": "var(--text-disabled)",
 
         // Mapped colors (existing)
         background: "var(--background)",
@@ -55,11 +62,19 @@ export default {
         "input-focus-bg": "var(--input-focus-bg)",
         "input-focus-shadow": "var(--input-focus-shadow)",
         "input-placeholder": "var(--input-placeholder)",
+        "primary": "var(--primary)",
+        "primary-10": "var(--primary-10)",
+        "primary-20": "var(--primary-20)",
+        "primary-50": "var(--primary-50)",
+        "primary-80": "var(--primary-80)",
       },
 
       textColor: {
         DEFAULT: "var(--foreground)",
         "placeholder-text": "var(--placeholder-text)",
+        "text-secondary": "var(--text-secondary)",
+        "text-tertiary": "var(--text-tertiary)",
+        "text-disabled": "var(--text-disabled)",
         "quote-border": "var(--quote-border)",
         "checkbox-border": "var(--checkbox-border)",
         "checkbox-checked-bg": "var(--checkbox-checked-bg)",
@@ -119,6 +134,10 @@ export default {
 
       borderRadius: {
         'squircle': '24px 24px 24px 24px / 28px 28px 28px 28px',
+      },
+
+      transitionProperty: {
+        'colors': 'color, background-color, border-color, text-decoration-color, fill, stroke',
       }
     },
   },

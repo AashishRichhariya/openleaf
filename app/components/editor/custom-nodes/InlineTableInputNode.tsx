@@ -109,20 +109,23 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
     });
   };
 
+  // Check if inputs are valid for enabling/disabling the button
+  const isValid =
+    Number(dimensions.rows) > 0 &&
+    Number(dimensions.rows) <= 500 &&
+    Number(dimensions.cols) > 0 &&
+    Number(dimensions.cols) <= 50;
+
   // Handle insertion with a button click as well
   const handleButtonClick = () => {
-    const rows = Number(dimensions.rows);
-    const cols = Number(dimensions.cols);
-    const isValid = rows > 0 && rows <= 500 && cols > 0 && cols <= 50;
-
     if (isValid) {
-      insertTable(rows, cols);
+      insertTable(Number(dimensions.rows), Number(dimensions.cols));
     }
   };
 
   return (
     <span className="editor-table-input" contentEditable={false}>
-      <span className="text-gray-500">/table</span>
+      <span className="table-command-text">/table</span>
       <input
         ref={rowsInputRef}
         type="number"
@@ -130,14 +133,12 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
         onChange={(e) => handleInputChange("rows", e.target.value)}
         onKeyDown={(e) => handleKeyDown(e, "rows")}
         onFocus={() => handleFocus("rows")}
-        className={`editor-table-input input ${
-          activeInput === "rows" ? "ring-2 ring-blue-500" : ""
-        }`}
+        className={activeInput === "rows" ? "active" : ""}
         min="1"
         max="500"
         placeholder="rows"
       />
-      <span className="text-gray-500">×</span>
+      <span className="dimension-separator">×</span>
       <input
         ref={colsInputRef}
         type="number"
@@ -145,16 +146,15 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
         onChange={(e) => handleInputChange("cols", e.target.value)}
         onKeyDown={(e) => handleKeyDown(e, "cols")}
         onFocus={() => handleFocus("cols")}
-        className={`editor-table-input input ${
-          activeInput === "cols" ? "ring-2 ring-blue-500" : ""
-        }`}
+        className={activeInput === "cols" ? "active" : ""}
         min="1"
         max="50"
         placeholder="cols"
       />
       <button
-        className="editor-table-button bg-blue-500 text-white px-2 py-1 ml-2 rounded text-sm"
+        className="editor-table-button"
         onClick={handleButtonClick}
+        disabled={!isValid}
       >
         Insert
       </button>

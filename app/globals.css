@@ -481,10 +481,16 @@ body {
     user-select: none;
   }
 
+  /* Style for the "/table" prefix */
+  .editor-table-input .table-command-text {
+    @apply text-placeholder-text;
+  }
+
+  /* Input styles */
   .editor-table-input input {
-    @apply w-10 h-6 py-0.5 px-1
-           border border-input-border
-           rounded bg-input-bg text-input-text text-center;
+    @apply w-12 h-7 py-0.5 px-1
+          border border-input-border
+          rounded bg-input-bg text-input-text text-center;
   }
 
   .editor-table-input input:focus {
@@ -494,7 +500,32 @@ body {
   }
 
   .editor-table-input input::placeholder {
-    @apply text-input-placeholder opacity-80;
+    @apply text-input-placeholder;
+  }
+
+  /* Dimension separator × symbol */
+  .editor-table-input .dimension-separator {
+    @apply text-text-secondary;
+  }
+
+  /* Insert button */
+  .editor-table-button {
+    @apply bg-primary text-text px-2 py-1 ml-2 rounded text-sm
+          border-0 cursor-pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .editor-table-button:hover {
+    @apply bg-primary;
+  }
+
+  .editor-table-button:focus {
+    @apply outline-none;
+    box-shadow: 0 0 0 2px var(--input-focus-shadow);
+  }
+
+  .editor-table-button:disabled {
+    @apply bg-primary-50 cursor-not-allowed;
   }
 
   /* Hide number input spinner buttons */
@@ -503,7 +534,14 @@ body {
     -webkit-appearance: none;
     margin: 0;
   }
+
   .editor-table-input input[type=number] {
     -moz-appearance: textfield;
+  }
+
+  /* Active input highlight */
+  .editor-table-input input.active {
+    @apply border-input-focus-border;
+    box-shadow: 0 0 0 2px var(--input-focus-shadow);
   }
 }
