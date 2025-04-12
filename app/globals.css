@@ -130,11 +130,11 @@ body {
   }
 
   .editor-quote {
-    @apply border-l-4 border-quote-border pl-4 my-4 italic text-placeholder-text;
+    @apply border-l-4 border-quote-border pl-4 my-4 italic text-placeholder-text rounded-r-squircle-xs;
   }
 
   .editor-code {
-    @apply bg-code-bg p-2 rounded font-mono text-sm;
+    @apply bg-code-bg p-2 rounded-squircle-sm font-mono text-sm;
   }
 
   /* Base list styles */
@@ -255,11 +255,11 @@ body {
 
   /* Typeahead Menu Components */
 .typeahead-popover {
-  @apply fixed bg-editor-bg shadow-lg rounded-lg py-2;
+  @apply fixed bg-editor-bg shadow-lg rounded-squircle-sm py-2;
 }
 
 .typeahead-popover ul {
-  @apply p-0 m-0 list-none rounded-lg max-h-64 overflow-y-scroll;
+  @apply p-0 m-0 list-none rounded-squircle-sm max-h-64 overflow-y-scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -306,7 +306,7 @@ body {
 
 /* Component Picker Specific */
 .component-picker-menu {
-  @apply w-[200px];
+  @apply w-[200px] rounded-squircle-sm overflow-hidden;
 }
 
 .component-picker-menu .item {
@@ -335,7 +335,7 @@ body {
 
   /* Base table */
   .editor-table {
-    @apply border-collapse border-2 border-table-border table-fixed w-full mt-6 mb-8 min-w-[200px];
+    @apply border-collapse border-2 border-table-border table-fixed w-full mt-6 mb-8 min-w-[200px] rounded-squircle-sm overflow-hidden;
   }
 
   /* Table alignment */
@@ -398,7 +398,7 @@ body {
   .editor-table-add-columns,
   .editor-table-add-rows {
     @apply absolute bg-accent animate-[table-controls_0.2s_ease] border-0
-           cursor-pointer hover:bg-accent-80;
+          cursor-pointer hover:bg-accent-80 rounded-squircle-xs;
   }
 
   .editor-table-add-columns::before,
@@ -420,7 +420,7 @@ body {
   }
 
   .table-cell-action-button {
-    @apply bg-surface-medium border border-surface-light rounded-full w-6 h-6
+    @apply bg-surface-medium border border-surface-light rounded-squircle-xs w-6 h-6
           flex items-center justify-center cursor-pointer;
   }
 
@@ -437,7 +437,7 @@ body {
   }
 
   .table-action-menu-dropdown {
-    @apply bg-surface-medium rounded shadow-md fixed z-50 w-52 opacity-0
+    @apply bg-surface-medium rounded-squircle-sm shadow-md fixed z-50 w-52 opacity-0
           transition-opacity duration-100;
   }
 
@@ -487,7 +487,7 @@ body {
   .editor-table-input input {
     @apply w-12 h-7 py-0.5 px-1
           border border-input-border
-          rounded bg-input-bg text-input-text text-center;
+          rounded-squircle-xs bg-input-bg text-input-text text-center;
   }
 
   .editor-table-input input:focus {
@@ -507,7 +507,7 @@ body {
 
   /* Insert button */
   .editor-table-button {
-    @apply bg-primary text-text px-2 py-1 ml-2 rounded text-sm
+    @apply bg-primary text-text px-2 py-1 ml-2 rounded-squircle-xs text-sm
           border-0 cursor-pointer;
     transition: background-color 0.2s ease;
   }
