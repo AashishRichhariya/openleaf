@@ -130,7 +130,7 @@ export async function findAvailableSlug(
 ): Promise<string> {
   let attempts = 0;
   while (attempts < maxAttempts) {
-    const slug = generateRandomSlug(length);
+    const slug = await generateRandomSlug(length);
     const exists = await slugExists(slug);
     if (!exists) {
       return slug;
