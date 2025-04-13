@@ -1,19 +1,19 @@
-import { $createCodeNode } from "@lexical/code";
+import { $createCodeNode } from '@lexical/code';
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
-} from "@lexical/list";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
+} from '@lexical/list';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import {
   LexicalTypeaheadMenuPlugin,
   MenuOption,
   useBasicTypeaheadTriggerMatch,
-} from "@lexical/react/LexicalTypeaheadMenuPlugin";
-import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
-import { $setBlocksType } from "@lexical/selection";
-import { INSERT_TABLE_COMMAND } from "@lexical/table";
+} from '@lexical/react/LexicalTypeaheadMenuPlugin';
+import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
+import { $setBlocksType } from '@lexical/selection';
+import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import {
   $createParagraphNode,
   $getSelection,
@@ -21,11 +21,13 @@ import {
   FORMAT_ELEMENT_COMMAND,
   LexicalEditor,
   TextNode,
-} from "lexical";
-import type { JSX } from "react";
-import { ReactElement, useCallback, useMemo, useState } from "react";
-import * as ReactDOM from "react-dom";
-import { $createInlineTableInputNode } from "../custom-nodes";
+} from 'lexical';
+import { ReactElement, useCallback, useMemo, useState } from 'react';
+import * as ReactDOM from 'react-dom';
+
+import { $createInlineTableInputNode } from '../custom-nodes';
+
+import type { JSX } from 'react';
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
@@ -43,7 +45,7 @@ class ComponentPickerOption extends MenuOption {
       icon?: JSX.Element;
       keywords?: Array<string>;
       onSelect: (queryString: string) => void;
-    }
+    },
   ) {
     super(title);
     this.title = title;
@@ -66,9 +68,9 @@ function ComponentPickerMenuItem({
   onMouseEnter: () => void;
   option: ComponentPickerOption;
 }) {
-  let className = "item";
+  let className = 'item';
   if (isSelected) {
-    className += " selected";
+    className += ' selected';
   }
 
   /*
@@ -79,7 +81,7 @@ function ComponentPickerMenuItem({
   if (isSelected) {
     if (option.ref?.current) {
       const element = option.ref.current;
-      const parent = element.closest(".typeahead-popover ul");
+      const parent = element.closest('.typeahead-popover ul');
 
       if (parent) {
         const parentRect = parent.getBoundingClientRect();
@@ -89,7 +91,7 @@ function ComponentPickerMenuItem({
           elementRect.top < parentRect.top ||
           elementRect.bottom > parentRect.bottom
         ) {
-          element.scrollIntoView({ block: "nearest" });
+          element.scrollIntoView({ block: 'nearest' });
         }
       }
     }
@@ -103,7 +105,7 @@ function ComponentPickerMenuItem({
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
-      id={"typeahead-item-" + index}
+      id={'typeahead-item-' + index}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >
@@ -133,11 +135,11 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
         (columns) =>
           new ComponentPickerOption(`${rows}x${columns} Table`, {
             icon: <i className="icon table" />,
-            keywords: ["table"],
+            keywords: ['table'],
             onSelect: () =>
               editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
-          })
-      )
+          }),
+      ),
     );
   }
 
@@ -146,9 +148,9 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
 
 function getBaseOptions(editor: LexicalEditor) {
   return [
-    new ComponentPickerOption("Paragraph", {
+    new ComponentPickerOption('Paragraph', {
       icon: <i className="icon paragraph" />,
-      keywords: ["normal", "paragraph", "p", "text"],
+      keywords: ['normal', 'paragraph', 'p', 'text'],
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -161,7 +163,7 @@ function getBaseOptions(editor: LexicalEditor) {
       (n) =>
         new ComponentPickerOption(`Heading ${n}`, {
           icon: <i className={`icon h${n}`} />,
-          keywords: ["heading", "header", `h${n}`],
+          keywords: ['heading', 'header', `h${n}`],
           onSelect: () =>
             editor.update(() => {
               const selection = $getSelection();
@@ -169,11 +171,11 @@ function getBaseOptions(editor: LexicalEditor) {
                 $setBlocksType(selection, () => $createHeadingNode(`h${n}`));
               }
             }),
-        })
+        }),
     ),
-    new ComponentPickerOption("Table", {
+    new ComponentPickerOption('Table', {
       icon: <i className="icon table" />,
-      keywords: ["table", "grid", "spreadsheet", "rows", "columns"],
+      keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
       onSelect: () => {
         editor.update(() => {
           const selection = $getSelection();
@@ -184,27 +186,27 @@ function getBaseOptions(editor: LexicalEditor) {
         });
       },
     }),
-    new ComponentPickerOption("Numbered List", {
+    new ComponentPickerOption('Numbered List', {
       icon: <i className="icon number" />,
-      keywords: ["numbered list", "ordered list", "ol"],
+      keywords: ['numbered list', 'ordered list', 'ol'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
     }),
-    new ComponentPickerOption("Bulleted List", {
+    new ComponentPickerOption('Bulleted List', {
       icon: <i className="icon bullet" />,
-      keywords: ["bulleted list", "unordered list", "ul"],
+      keywords: ['bulleted list', 'unordered list', 'ul'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
     }),
-    new ComponentPickerOption("Check List", {
+    new ComponentPickerOption('Check List', {
       icon: <i className="icon check" />,
-      keywords: ["check list", "todo list"],
+      keywords: ['check list', 'todo list'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
     }),
-    new ComponentPickerOption("Quote", {
+    new ComponentPickerOption('Quote', {
       icon: <i className="icon quote" />,
-      keywords: ["block quote"],
+      keywords: ['block quote'],
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -213,9 +215,9 @@ function getBaseOptions(editor: LexicalEditor) {
           }
         }),
     }),
-    new ComponentPickerOption("Code", {
+    new ComponentPickerOption('Code', {
       icon: <i className="icon code" />,
-      keywords: ["javascript", "python", "js", "codeblock"],
+      keywords: ['javascript', 'python', 'js', 'codeblock'],
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -233,20 +235,20 @@ function getBaseOptions(editor: LexicalEditor) {
           }
         }),
     }),
-    new ComponentPickerOption("Divider", {
+    new ComponentPickerOption('Divider', {
       icon: <i className="icon horizontal-rule" />,
-      keywords: ["horizontal rule", "divider", "hr"],
+      keywords: ['horizontal rule', 'divider', 'hr'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
     }),
-    ...(["left", "center", "right", "justify"] as const).map(
+    ...(['left', 'center', 'right', 'justify'] as const).map(
       (alignment) =>
         new ComponentPickerOption(`Align ${alignment}`, {
           icon: <i className={`icon ${alignment}-align`} />,
-          keywords: ["align", "justify", alignment],
+          keywords: ['align', 'justify', alignment],
           onSelect: () =>
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
-        })
+        }),
     ),
   ];
 }
@@ -255,7 +257,7 @@ export function ComponentPickerPlugin(): ReactElement {
   const [editor] = useLexicalComposerContext();
   const [queryString, setQueryString] = useState<string | null>(null);
 
-  const checkForTriggerMatch = useBasicTypeaheadTriggerMatch("/", {
+  const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
     minLength: 0,
   });
 
@@ -266,14 +268,14 @@ export function ComponentPickerPlugin(): ReactElement {
       return baseOptions;
     }
 
-    const regex = new RegExp(queryString, "i");
+    const regex = new RegExp(queryString, 'i');
 
     return [
       ...getDynamicOptions(editor, queryString),
       ...baseOptions.filter(
         (option) =>
           regex.test(option.title) ||
-          option.keywords.some((keyword) => regex.test(keyword))
+          option.keywords.some((keyword) => regex.test(keyword)),
       ),
     ];
   }, [editor, queryString]);
@@ -283,7 +285,7 @@ export function ComponentPickerPlugin(): ReactElement {
       selectedOption: ComponentPickerOption,
       nodeToRemove: TextNode | null,
       closeMenu: () => void,
-      matchingString: string
+      matchingString: string,
     ) => {
       editor.update(() => {
         nodeToRemove?.remove();
@@ -291,7 +293,7 @@ export function ComponentPickerPlugin(): ReactElement {
         closeMenu();
       });
     },
-    [editor]
+    [editor],
   );
 
   return (
@@ -302,31 +304,31 @@ export function ComponentPickerPlugin(): ReactElement {
       options={options}
       menuRenderFn={(
         anchorElementRef,
-        { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }
+        { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex },
       ) =>
         anchorElementRef.current && options.length
           ? ReactDOM.createPortal(
-              <div className="typeahead-popover component-picker-menu">
-                <ul>
-                  {options.map((option, i: number) => (
-                    <ComponentPickerMenuItem
-                      index={i}
-                      isSelected={selectedIndex === i}
-                      onClick={() => {
-                        setHighlightedIndex(i);
-                        selectOptionAndCleanUp(option);
-                      }}
-                      onMouseEnter={() => {
-                        setHighlightedIndex(i);
-                      }}
-                      key={option.key}
-                      option={option}
-                    />
-                  ))}
-                </ul>
-              </div>,
-              anchorElementRef.current
-            )
+            <div className="typeahead-popover component-picker-menu">
+              <ul>
+                {options.map((option, i: number) => (
+                  <ComponentPickerMenuItem
+                    index={i}
+                    isSelected={selectedIndex === i}
+                    onClick={() => {
+                      setHighlightedIndex(i);
+                      selectOptionAndCleanUp(option);
+                    }}
+                    onMouseEnter={() => {
+                      setHighlightedIndex(i);
+                    }}
+                    key={option.key}
+                    option={option}
+                  />
+                ))}
+              </ul>
+            </div>,
+            anchorElementRef.current,
+          )
           : null
       }
     />

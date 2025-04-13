@@ -1,10 +1,12 @@
-"use client";
+'use client';
 
-import { useDebounce } from "@/app/hooks";
-import { saveDocument } from "@/lib/document-actions";
-import { EditorState } from "lexical";
-import { useRef } from "react";
-import Editor from "./Editor";
+import { EditorState } from 'lexical';
+import { useRef } from 'react';
+
+import { useDebounce } from '@/app/hooks';
+import { saveDocument } from '@/lib/document-actions';
+
+import Editor from './Editor';
 
 interface EditorContainerProps {
   slug: string;
@@ -19,7 +21,7 @@ export default function EditorContainer({
 }: EditorContainerProps) {
   let isNewDocument = !initialContent;
   const lastSavedContentRef = useRef<string | null>(
-    initialContent ? JSON.stringify(JSON.parse(initialContent)) : null
+    initialContent ? JSON.stringify(JSON.parse(initialContent)) : null,
   );
 
   const debouncedSave = useDebounce(async (editorState: EditorState) => {
@@ -28,12 +30,12 @@ export default function EditorContainer({
       const currentContent = JSON.stringify(editorStateJson);
       if (currentContent !== lastSavedContentRef.current) {
         await saveDocument(slug, editorStateJson, isReadOnly, isNewDocument);
-        console.log("Document saved successfully");
+        console.log('Document saved successfully');
         isNewDocument = false;
         lastSavedContentRef.current = currentContent;
       }
     } catch (err) {
-      console.error("Error saving document:", err);
+      console.error('Error saving document:', err);
     }
   }, 2000);
 

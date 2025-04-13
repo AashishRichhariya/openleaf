@@ -1,34 +1,34 @@
-"use client";
+'use client';
 
-import DefaultTheme from "./themes/DefaultTheme";
 
-import { CodeHighlightNode, CodeNode } from "@lexical/code";
-import { ListItemNode, ListNode } from "@lexical/list";
-import { TRANSFORMERS } from "@lexical/markdown";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ReactElement, useState } from "react";
+import { CodeHighlightNode, CodeNode } from '@lexical/code';
+import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { ListItemNode, ListNode } from '@lexical/list';
+import { TRANSFORMERS } from '@lexical/markdown';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { EditorState } from 'lexical';
+import { ReactElement, useState } from 'react';
+
+import { InlineTableInputNode } from './custom-nodes';
 import {
   ComponentPickerPlugin,
   TableActionMenuPlugin,
   TableHoverActionsPlugin,
-} from "./custom-plugins";
-
-import { AutoLinkNode, LinkNode } from "@lexical/link";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
-import { EditorState } from "lexical";
-import { InlineTableInputNode } from "./custom-nodes";
+} from './custom-plugins';
+import DefaultTheme from './themes/DefaultTheme';
 
 interface EditorProps {
   initialContent: string | null;
@@ -57,7 +57,7 @@ export default function Editor({
   };
 
   const editorConfig = {
-    namespace: "openleaf-editor",
+    namespace: 'openleaf-editor',
     theme,
     onError,
     nodes: [

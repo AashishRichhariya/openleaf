@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation';
 
 /**
  * Generates a random 10-character string
@@ -6,8 +6,8 @@ import { redirect } from "next/navigation";
  */
 function getRandomString(): string {
   const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
 
   for (let i = 0; i < 10; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));

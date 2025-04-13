@@ -1,20 +1,27 @@
 'use server';
 
-import { Document } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
+import { Document } from '@/types';
+
 import {
   createDocument,
   findAvailableSlug,
   getDocumentBySlug,
   slugExists,
-  updateDocument
+  updateDocument,
 } from '../lib/document-service';
 
 /**
  * Save a document - creates a new one or updates an existing one
  */
-export async function saveDocument(slug: string, content: object, readOnly: boolean = false, isNewDocument: boolean = true): Promise<Document> {
+export async function saveDocument(
+  slug: string, 
+  content: object, 
+  readOnly: boolean = false, 
+  isNewDocument: boolean = true,
+): Promise<Document> {
   const now = new Date().toISOString();
 
   let savedDoc = null;
@@ -33,7 +40,7 @@ export async function saveDocument(slug: string, content: object, readOnly: bool
       content,
       read_only: readOnly,
       updated_at: now,
-    }
+    };
     savedDoc = await updateDocument(slug, updates, 1);
   }
 

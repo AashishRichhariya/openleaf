@@ -1,7 +1,6 @@
-import type { JSX } from "react";
 
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
 import {
   $getTableAndElementByKey,
   $getTableColumnIndexFromTableCellNode,
@@ -14,21 +13,23 @@ import {
   TableCellNode,
   TableNode,
   TableRowNode,
-} from "@lexical/table";
-import { $findMatchingParent, mergeRegister } from "@lexical/utils";
+} from '@lexical/table';
+import { $findMatchingParent, mergeRegister } from '@lexical/utils';
 import {
   $getNearestNodeFromDOMNode,
   EditorThemeClasses,
   isHTMLElement,
   LexicalNode,
   NodeKey,
-} from "lexical";
-import * as React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+} from 'lexical';
+import * as React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { useDebounce } from "@/app/hooks";
-import { getThemeSelector } from "@/app/utils";
+import { useDebounce } from '@/app/hooks';
+import { getThemeSelector } from '@/app/utils';
+
+import type { JSX } from 'react';
 
 const BUTTON_WIDTH_PX = 20;
 
@@ -74,7 +75,7 @@ function TableHoverActionsContainer({
           if ($isTableCellNode(maybeTableCell)) {
             const table = $findMatchingParent(
               maybeTableCell,
-              (node: LexicalNode) => $isTableNode(node)
+              (node: LexicalNode) => $isTableNode(node),
             );
             if (!$isTableNode(table)) {
               return;
@@ -82,7 +83,7 @@ function TableHoverActionsContainer({
 
             tableDOMElement = getTableElement(
               table,
-              editor.getElementByKey(table.getKey())
+              editor.getElementByKey(table.getKey()),
             );
 
             if (tableDOMElement) {
@@ -104,7 +105,7 @@ function TableHoverActionsContainer({
             }
           }
         },
-        { editor }
+        { editor },
       );
 
       if (tableDOMElement) {
@@ -148,7 +149,7 @@ function TableHoverActionsContainer({
       }
     },
     50,
-    250
+    250,
   );
 
   // Hide the buttons on any table dimensions change to prevent last row cells
@@ -165,13 +166,13 @@ function TableHoverActionsContainer({
       return;
     }
 
-    document.addEventListener("mousemove", debouncedOnMouseMove);
+    document.addEventListener('mousemove', debouncedOnMouseMove);
 
     return () => {
       setShownRow(false);
       setShownColumn(false);
       debouncedOnMouseMove.cancel();
-      document.removeEventListener("mousemove", debouncedOnMouseMove);
+      document.removeEventListener('mousemove', debouncedOnMouseMove);
     };
   }, [shouldListenMouseMove, debouncedOnMouseMove]);
 
@@ -185,18 +186,18 @@ function TableHoverActionsContainer({
               let resetObserver = false;
               for (const [key, type] of mutations) {
                 switch (type) {
-                  case "created": {
-                    tableSetRef.current.add(key);
-                    resetObserver = true;
-                    break;
-                  }
-                  case "destroyed": {
-                    tableSetRef.current.delete(key);
-                    resetObserver = true;
-                    break;
-                  }
-                  default:
-                    break;
+                case 'created': {
+                  tableSetRef.current.add(key);
+                  resetObserver = true;
+                  break;
+                }
+                case 'destroyed': {
+                  tableSetRef.current.delete(key);
+                  resetObserver = true;
+                  break;
+                }
+                default:
+                  break;
                 }
               }
               if (resetObserver) {
@@ -209,11 +210,11 @@ function TableHoverActionsContainer({
                 setShouldListenMouseMove(tableSetRef.current.size > 0);
               }
             },
-            { editor }
+            { editor },
           );
         },
-        { skipInitialization: false }
-      )
+        { skipInitialization: false },
+      ),
     );
   }, [editor, tableResizeObserver]);
 
@@ -221,7 +222,7 @@ function TableHoverActionsContainer({
     editor.update(() => {
       if (tableCellDOMNodeRef.current) {
         const maybeTableNode = $getNearestNodeFromDOMNode(
-          tableCellDOMNodeRef.current
+          tableCellDOMNodeRef.current,
         );
         maybeTableNode?.selectEnd();
         if (insertRow) {
@@ -261,28 +262,28 @@ function TableHoverActionsContainer({
 
 function getMouseInfo(
   event: MouseEvent,
-  getTheme: () => EditorThemeClasses | null | undefined
+  getTheme: () => EditorThemeClasses | null | undefined,
 ): {
   tableDOMNode: HTMLElement | null;
   isOutside: boolean;
 } {
   const target = event.target;
-  const tableCellClass = getThemeSelector(getTheme, "tableCell");
+  const tableCellClass = getThemeSelector(getTheme, 'tableCell');
 
   if (isHTMLElement(target)) {
     const tableDOMNode = target.closest<HTMLElement>(
-      `td${tableCellClass}, th${tableCellClass}`
+      `td${tableCellClass}, th${tableCellClass}`,
     );
 
     const isOutside = !(
       tableDOMNode ||
       target.closest<HTMLElement>(
-        `button${getThemeSelector(getTheme, "tableAddRows")}`
+        `button${getThemeSelector(getTheme, 'tableAddRows')}`,
       ) ||
       target.closest<HTMLElement>(
-        `button${getThemeSelector(getTheme, "tableAddColumns")}`
+        `button${getThemeSelector(getTheme, 'tableAddColumns')}`,
       ) ||
-      target.closest<HTMLElement>("div.TableCellResizer__resizer")
+      target.closest<HTMLElement>('div.TableCellResizer__resizer')
     );
 
     return { isOutside, tableDOMNode };
@@ -300,8 +301,8 @@ export function TableHoverActionsPlugin({
 
   return isEditable
     ? createPortal(
-        <TableHoverActionsContainer anchorElem={anchorElem} />,
-        anchorElem
-      )
+      <TableHoverActionsContainer anchorElem={anchorElem} />,
+      anchorElem,
+    )
     : null;
 }

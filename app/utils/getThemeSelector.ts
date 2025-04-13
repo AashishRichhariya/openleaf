@@ -8,7 +8,7 @@ import { EditorThemeClasses } from 'lexical';
  */
 export function getThemeSelector(
   getTheme: () => EditorThemeClasses | null | undefined,
-  name: string
+  name: string,
 ): string {
   const theme = getTheme();
   if (!theme) return '';

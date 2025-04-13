@@ -1,5 +1,5 @@
-import { fetchDocument } from "../../lib/document-actions";
-import EditorContainer from "../components/editor/EditorContainer";
+import { fetchDocument } from '../../lib/document-actions';
+import EditorContainer from '../components/editor/EditorContainer';
 
 interface EditorPageProps {
   params: Promise<{ slug: string }>;
