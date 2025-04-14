@@ -1,15 +1,15 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist_Mono, Rubik } from 'next/font/google';
 
 import Navbar from './components/Navbar';
 
 import type { Metadata } from 'next';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const rubik = Rubik({
   subsets: ['latin'],
+  variable: '--font-rubik',
 });
 
 const geistMono = Geist_Mono({
@@ -62,9 +62,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${rubik.variable} ${geistMono.variable} antialiased`}>
         <Navbar />
         <main className="editor-main">
           {children}

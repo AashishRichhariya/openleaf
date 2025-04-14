@@ -9,6 +9,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-rubik)'],
+        mono: ['var(--font-geist-mono)'],
+      },
       colors: {
         // Core palette
         primary: "var(--primary)",
