@@ -84,7 +84,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-rubik);
+  font-family: var(--font-geist-sans);
 }
 
 @layer components {
