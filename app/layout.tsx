@@ -1,5 +1,5 @@
+import { Analytics } from "@vercel/analytics/react";
 import { Geist, Geist_Mono } from 'next/font/google';
-
 import Navbar from './components/Navbar';
 
 import type { Metadata } from 'next';
@@ -64,7 +64,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar />
-        <main className="editor-main">{children}</main>
+        <main className="editor-main">
+          {children}
+          <Analytics />
+        </main>
       </body>
     </html>
   );
