@@ -7,13 +7,17 @@ interface EditorPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ 
-  params, 
-}: { 
-  params: { slug: string } 
-}): Promise<Metadata> {
+type MetadataProps = {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata(
+  { params }: MetadataProps,
+): Promise<Metadata> {
+  const { slug } = await params;
+  
   return {
-    title: `openleaf | ${params.slug}`,
+    title: `openleaf | ${slug}`,
   };
 }
 
