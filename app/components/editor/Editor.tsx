@@ -93,7 +93,7 @@ export default function Editor({
             ErrorBoundary={LexicalErrorBoundary}
           />
           <HistoryPlugin />
-          <AutoFocusPlugin />
+          {!initialContent && <AutoFocusPlugin />}
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
