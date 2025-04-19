@@ -38,6 +38,18 @@ export async function updateDocument(
   updates: Partial<Document>,
   version: number = 1,
 ): Promise<Document> {
+  const existingDocument = await getDocumentBySlug(slug);
+  
+  // If document doesn't exist, throw an error
+  if (!existingDocument) {
+    throw new Error(`Document with slug ${slug} not found`);
+  }
+   
+  // return silently if the document is read-only
+  if (existingDocument.read_only === true) {
+    return existingDocument;
+  }
+  
   // Build the update expression and attribute values
   let updateExpression = 'SET ';
   const expressionAttributeValues: { [key: string]: any } = {};
