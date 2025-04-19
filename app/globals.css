@@ -105,6 +105,15 @@ body {
     @apply flex items-center space-x-6;
   }
 
+  /* Nav link styles */
+  .nav-link {
+    @apply text-[var(--text-tertiary)] no-underline p-2 text-lg rounded transition-colors duration-200;
+  }
+
+  .nav-link:hover {
+    @apply text-[var(--primary)] underline;
+  }
+
   /* Base editor components */
   .editor-main {
     @apply flex flex-col min-h-screen;
@@ -573,5 +582,10 @@ body {
 
   ::-webkit-scrollbar-track {
     background: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 0;
   }
 }

@@ -16,7 +16,9 @@ export default function Navbar() {
             />
           </Link>
         </div>
-        <div className="navbar-links">{/* Placeholder for future links */}</div>
+        <div className="navbar-links"><Link href="/info" target="_blank" className="nav-link">
+            info
+          </Link></div>
       </div>
     </nav>
   );
