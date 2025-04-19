@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+
 import { fetchDocument } from '../../lib/document-actions';
 import EditorContainer from '../components/editor/EditorContainer';
 
@@ -7,7 +8,7 @@ interface EditorPageProps {
 }
 
 export async function generateMetadata({ 
-  params 
+  params, 
 }: { 
   params: { slug: string } 
 }): Promise<Metadata> {

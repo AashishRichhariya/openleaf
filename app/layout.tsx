@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     'instant document sharing',
     'web-based editor',
     'plain text editor',
-    'lexical editor' 
+    'lexical editor', 
   ],
   icons: {
     // Modern browsers - SVG favicons
