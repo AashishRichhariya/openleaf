@@ -1,8 +1,19 @@
+import { Metadata } from 'next';
 import { fetchDocument } from '../../lib/document-actions';
 import EditorContainer from '../components/editor/EditorContainer';
 
 interface EditorPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: { slug: string } 
+}): Promise<Metadata> {
+  return {
+    title: `openleaf | ${params.slug}`,
+  };
 }
 
 export default async function EditorPage(props: EditorPageProps) {
