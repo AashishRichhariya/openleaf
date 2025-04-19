@@ -2,6 +2,8 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Beta Status](https://img.shields.io/badge/Status-Beta-yellow.svg)](https://github.com/AashishRichhariya/openleaf)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen.svg)](https://openleaf.xyz/info)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/AashishRichhariya/openleaf/pulls)
 
 ## The minimalist web-based editor
 
@@ -21,7 +23,9 @@ Check it out: [openleaf.xyz/info](https://openleaf.xyz/info)
 ## Features
 
 ### Markdown Syntax
+
 **openleaf** supports markdown shortcuts for quick formatting (type the symbol then press space to activate):
+
 - Type `#` for a large heading
 - Type `##` for a medium heading
 - Type `###` for a small heading
@@ -30,7 +34,9 @@ Check it out: [openleaf.xyz/info](https://openleaf.xyz/info)
 - Type `>` for blockquotes
 
 ### Command Menu
+
 Press `/` to access the command menu with all available formatting options:
+
 - Headings (3 levels)
 - Lists (numbered, bulleted, checklist)
 - Tables
@@ -40,12 +46,16 @@ Press `/` to access the command menu with all available formatting options:
 - And more!
 
 ### Tables
+
 Create tables easily by either:
+
 - Type `/table` and select from the menu
 - Or type `/NxM` where N and M are any numbers (like `/3x4`, `/2x6`, etc.) to instantly create a table with that many rows and columns
 
 ### Checklists
+
 Keep track of tasks with checkable lists:
+
 - [x] Create a minimalist editor
 - [x] Make it work without signup with a simple url
 - [x] Add Markdown support
@@ -57,13 +67,15 @@ Keep track of tasks with checkable lists:
 ## Philosophy
 
 **openleaf** is designed with simplicity in mind:
- > The best tool is the one that gets out of your way. 
+
+> The best tool is the one that gets out of your way.
 
 The goal is to provide a writing space that's instantly available when needed, without barriers or complexity. Sometimes all you need is a quick place to jot down thoughts or draft something up.
 
 ## Privacy & Security
 
 By design, **openleaf** is open and accessible. This means:
+
 - Anyone with the URL can view and edit your content
 - Nothing is private by default
 - Choose obscure URLs for reduced discoverability
@@ -73,6 +85,7 @@ By design, **openleaf** is open and accessible. This means:
 ## Use Cases
 
 ### Perfect for:
+
 - Quick notes while browsing
 - Drafting emails or messages
 - Temporary information sharing
@@ -80,6 +93,7 @@ By design, **openleaf** is open and accessible. This means:
 - Instant document creation
 
 ### Not ideal for:
+
 - Private/confidential information
 - Long-term document storage
 
@@ -98,6 +112,7 @@ This project is open source under the MIT license. Contributions and feedback ar
 ## Technical Details
 
 **openleaf** is built with:
+
 - [Lexical](https://lexical.dev/) - Meta's open-sourced text editor framework
 - [Next.js](https://nextjs.org/) - Full stack React framework with TypeScript
 - [Tailwind CSS](https://tailwindcss.com/) - For styling
@@ -106,6 +121,7 @@ This project is open source under the MIT license. Contributions and feedback ar
 ## Future Possibilities
 
 If interest grows, potential future features might include:
+
 - Optional user accounts
 - Temporary URL leasing (lock a URL for your exclusive use for a set period)
 - More formatting options
@@ -122,10 +138,10 @@ git clone https://github.com/AashishRichhariya/openleaf.git
 cd openleaf
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run the development server
-npm run dev
+pnpm dev
 ```
 
 ## License
