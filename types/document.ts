@@ -8,9 +8,9 @@ export interface Document {
   slug: string;
 
   /**
-   * The document's content - can be any object structure
+   * The document's content
    */
-  content: any;
+  content: object | null ;
 
   /**
    * Whether the document is read-only

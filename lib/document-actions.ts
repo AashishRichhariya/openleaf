@@ -13,6 +13,8 @@ import {
   updateDocument,
 } from '../lib/document-service';
 
+import { isDocumentContentEmpty } from './document-utils';
+
 /**
  * Save a document - creates a new one or updates an existing one
  */
@@ -22,13 +24,14 @@ export async function saveDocument(
   readOnly: boolean = false, 
   isNewDocument: boolean = true,
 ): Promise<Document> {
+  const processedContent = isDocumentContentEmpty(content) ? null : content;
   const now = new Date().toISOString();
 
   let savedDoc = null;
   if (isNewDocument) {
     const document: Document = {
       slug,
-      content,
+      content: processedContent,
       read_only: readOnly,
       version: 1, // Default version
       created_at: now,
@@ -37,7 +40,7 @@ export async function saveDocument(
     savedDoc = await createDocument(document);
   } else {
     const updates: Partial<Document> = {
-      content,
+      content: processedContent,
       read_only: readOnly,
       updated_at: now,
     };
