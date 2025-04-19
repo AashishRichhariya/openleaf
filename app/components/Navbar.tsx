@@ -18,7 +18,7 @@ export default function Navbar() {
         </div>
         <div className="navbar-links"><Link href="/info" target="_blank" className="nav-link">
             info
-          </Link></div>
+        </Link></div>
       </div>
     </nav>
   );
