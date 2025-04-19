@@ -19,8 +19,32 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'openleaf',
-  description:
-    'Your free, open-source, minimalistc, sign-up free browser based text editor',
+  description: 'A free, open-source, minimalist browser-based rich text editor with markdown support. No signup required - just visit any URL and start writing instantly.',
+  keywords: [
+    'browser text editor', 
+    'no-signup editor', 
+    'markdown editor', 
+    'minimalist editor', 
+    'instant notes', 
+    'ephemeral documents', 
+    'collaborative editor',
+    'real-time text editor',
+    'open source editor',
+    'temporary notes',
+    'online notepad',
+    'notes',
+    'quick notes',
+    'online notes',
+    'temp notes',
+    'temporary notes',
+    'online scratchpad',
+    'quick notes tool',
+    'browser notepad',
+    'instant document sharing',
+    'web-based editor',
+    'plain text editor',
+    'lexical editor' 
+  ],
   icons: {
     // Modern browsers - SVG favicons
     icon: [
