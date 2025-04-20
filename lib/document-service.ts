@@ -10,6 +10,8 @@ import {
 import { Document } from '@/types';
 
 import { docClient, DOCUMENTS_TABLE_NAME } from './aws-config';
+import { fetchDocument } from './document-actions';
+import { generateRandomSlug, isDocumentContentEmpty } from './document-utils';
 
 
 /**
@@ -122,32 +124,44 @@ export async function slugExists(slug: string): Promise<boolean> {
 }
 
 /**
- * Generate a random slug of specified length
+ * Check if a slug document is empty or doesn't exist
+ * 
+ * @param slug The slug to check
+ * @returns true if document doesn't exist or is empty, false otherwise
  */
-export async function generateRandomSlug(length: number = 8): Promise<string> {
-  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
+export async function isSlugDocumentEmpty(slug: string): Promise<boolean> {
+  try {
+    const document = await fetchDocument(slug);
+    
+    // Return true if document is null or content is empty
+    return !document || await isDocumentContentEmpty(document.content);
+  } catch (error) {
+    console.error(`Error checking if slug document is empty: ${error}`);
+    return true; // Consider non-existent or error as empty
   }
-  return result;
 }
 
 /**
  * Find an available (unused) slug
  */
 export async function findAvailableSlug(
-  length: number = 8, 
-  maxAttempts: number = 5,
+  length: number = 12, 
+  maxAttempts: number = 10,
 ): Promise<string> {
   let attempts = 0;
+  let lastSlug = '';
+  
   while (attempts < maxAttempts) {
     const slug = await generateRandomSlug(length);
-    const exists = await slugExists(slug);
-    if (!exists) {
+    lastSlug = slug;
+    
+    const isEmpty = await isSlugDocumentEmpty(slug);
+    if (isEmpty) {
       return slug;
     }
     attempts++;
   }
-  throw new Error('Failed to find an available slug after multiple attempts');
+  
+  console.warn(`Warning: Could not find empty slug after ${maxAttempts} attempts. Using last generated slug.`);
+  return lastSlug;
 }

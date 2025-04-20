@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 import { Document } from '@/types';
 
@@ -24,7 +23,7 @@ export async function saveDocument(
   readOnly: boolean = false, 
   isNewDocument: boolean = true,
 ): Promise<Document> {
-  const processedContent = isDocumentContentEmpty(content) ? null : content;
+  const processedContent = await isDocumentContentEmpty(content) ? null : content;
   const now = new Date().toISOString();
 
   let savedDoc = null;
@@ -70,12 +69,7 @@ export async function checkSlugExists(slug: string): Promise<boolean> {
 /**
  * Create a new document with a random slug and redirect to it
  */
-export async function createRandomDocument() {
-  const newSlug = await findAvailableSlug();
-
-  // Create an empty document
-  await saveDocument(newSlug, {}, false);
-
-  // Redirect to the new document
-  redirect(`/${newSlug}`);
+export async function getRandomAvailableSlug(): Promise<string> {
+  return await findAvailableSlug();
 }
+
