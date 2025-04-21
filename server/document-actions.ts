@@ -10,7 +10,7 @@ import {
   getDocumentBySlug,
   slugExists,
   updateDocument,
-} from '../lib/document-service';
+} from './document-service';
 
 import { isDocumentContentEmpty } from './document-utils';
 
