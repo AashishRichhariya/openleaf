@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
-import { fetchDocument } from '../../lib/document-actions';
+import { fetchDocument } from '@/server/document-actions';
+
 import EditorContainer from '../components/editor/EditorContainer';
 
 interface EditorPageProps {

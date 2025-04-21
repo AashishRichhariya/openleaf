@@ -7,8 +7,9 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: ['/'],  // Allow all paths by default
         disallow: [
-          '/api/',     // Disallow API routes
+          '/server/',     // Disallow API routes
           '/_next/',   // Disallow Next.js system files
+          '/_vercel/',   // Disallow vercel files
         ],
       },
     ],

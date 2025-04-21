@@ -4,7 +4,7 @@ import { EditorState } from 'lexical';
 import { useRef } from 'react';
 
 import { useDebounce } from '@/app/hooks';
-import { saveDocument } from '@/lib/document-actions';
+import { saveDocument } from '@/server/document-actions';
 
 import Editor from './Editor';
 

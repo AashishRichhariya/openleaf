@@ -3,7 +3,7 @@ export const revalidate = 0;
 
 import { redirect } from 'next/navigation';
 
-import { getRandomAvailableSlug } from '../lib/document-actions';
+import { getRandomAvailableSlug } from '@/server/document-actions';
 
 export default async function Home() {
   const randomSlug = await getRandomAvailableSlug();
