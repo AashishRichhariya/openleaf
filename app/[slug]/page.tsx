@@ -24,7 +24,7 @@ export async function generateMetadata(
 
 export default async function EditorPage(props: EditorPageProps) {
   const { slug } = await props.params;
-  const document = await fetchDocument(slug);
+  const document = await fetchDocument(slug.toLowerCase());
   const pageContent = document?.content
     ? JSON.stringify(document.content)
     : null;

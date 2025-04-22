@@ -96,7 +96,7 @@ export async function getDocumentBySlug(slug: string): Promise<Document | null> 
   const params = {
     TableName: DOCUMENTS_TABLE_NAME,
     Key: {
-      slug: slug,
+      slug,
       version: 1, // Default version
     },
   };
