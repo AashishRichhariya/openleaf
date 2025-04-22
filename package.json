@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "next lint --fix"
+    "lint:fix": "next lint --fix",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.782.0",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@eslint/js": "^9.20.0",
+    "@next/bundle-analyzer": "^15.3.1",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20",
     "@types/react": "^19.0.8",
