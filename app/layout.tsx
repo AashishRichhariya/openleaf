@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Navbar from './components/Navbar';
 
 import type { Metadata } from 'next';
+import CloudflareWebAnalytics from './components/analytics/CloudflareWebAnalytics';
 import './globals.css';
 
 const geistSans = Geist({
@@ -92,6 +93,7 @@ export default function RootLayout({
           {children}
           <Analytics />
           <SpeedInsights />
+          <CloudflareWebAnalytics token={process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN || ''}/>
         </main>
       </body>
     </html>
