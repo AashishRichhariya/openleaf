@@ -2,10 +2,10 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import CloudflareWebAnalytics from './components/analytics/CloudflareWebAnalytics';
 import Navbar from './components/Navbar';
 
 import type { Metadata } from 'next';
-import CloudflareWebAnalytics from './components/analytics/CloudflareWebAnalytics';
 import './globals.css';
 
 const geistSans = Geist({
