@@ -8,7 +8,7 @@ export default function Navbar() {
         <div className="navbar-logo">
           <Link href="/" target="_blank">
             <Image
-              src="/logo/animated-logo.svg"
+              src="/logo/animated-logo-minified.svg"
               alt="Openleaf Logo"
               width={150}
               height={60}
