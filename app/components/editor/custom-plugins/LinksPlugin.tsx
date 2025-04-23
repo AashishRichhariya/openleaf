@@ -1,4 +1,5 @@
 import { AutoLinkPlugin, createLinkMatcherWithRegExp } from '@lexical/react/LexicalAutoLinkPlugin';
+import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin';
 import { LinkPlugin as LexicalLinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import * as React from 'react';
 
@@ -63,6 +64,7 @@ export function LinksPlugin(): React.ReactElement {
       
       {/* Auto-link detection */}
       <AutoLinkPlugin matchers={MATCHERS} />
+      <ClickableLinkPlugin />
     </>
   );
 }
