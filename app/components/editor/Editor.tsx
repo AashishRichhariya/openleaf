@@ -25,6 +25,7 @@ import { ReactElement, useState } from 'react';
 import { InlineTableInputNode } from './custom-nodes';
 import {
   ComponentPickerPlugin,
+  LinksPlugin,
   TableActionMenuPlugin,
   TableHoverActionsPlugin,
 } from './custom-plugins';
@@ -104,6 +105,7 @@ export default function Editor({
             onChange={onEditorStateChange}
             ignoreSelectionChange={true}
           />
+          <LinksPlugin/>
           {/* Add the table-related plugins with the anchor element */}
           {floatingAnchorElem && (
             <>

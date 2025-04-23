@@ -47,6 +47,10 @@
   ); /* Placeholder text, disabled states */
   --text-disabled: rgba(var(--text-rgb), 0.3); /* Very low emphasis text */
 
+  /* Link color values */
+  --text-link: #0ea5e9; /* sky-500 color for links */
+  --text-link-hover: #38bdf8; /* sky-400 color for link hover */
+
   /* Application of core palette to specific UI elements */
   --background: var(--surface-dark);
   --foreground: var(--text);
@@ -139,6 +143,21 @@ body {
 
   .editor-placeholder {
     @apply absolute top-12 left-8 text-placeholder-text pointer-events-none select-none;
+  }
+
+  /* .editor-link {
+    @apply text-sky-500 cursor-pointer transition-colors duration-200;
+  }
+  .editor-link:hover {
+    @apply text-sky-400 underline;
+  } */
+
+  .editor-link {
+    @apply text-link cursor-pointer transition-colors duration-200;
+  }
+
+  .editor-link:hover {
+    @apply text-link-hover underline;
   }
 
   /* Node-specific styles */

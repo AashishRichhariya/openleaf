@@ -84,6 +84,8 @@ export default {
       textColor: {
         DEFAULT: "var(--foreground)",
         "placeholder-text": "var(--placeholder-text)",
+        "link": "var(--text-link)", 
+        "link-hover": "var(--text-link-hover)", 
         "text-secondary": "var(--text-secondary)",
         "text-tertiary": "var(--text-tertiary)",
         "text-disabled": "var(--text-disabled)",
