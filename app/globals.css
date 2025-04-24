@@ -52,9 +52,9 @@
   --text-link-hover: #70d3ff; /* Brighter blue on hover */
 
   /* Application of core palette to specific UI elements */
-  --background: var(--surface-dark);
+  --background: var(--surface-dark-darker);
   --foreground: var(--text);
-  --editor-bg: var(--surface-medium);
+  --editor-bg: var(--surface-medium-darker);
   --editor-border: var(--surface-light);
   --accent: var(--primary);
   --accent-rgb: var(--primary-rgb);
@@ -70,8 +70,8 @@
 
   /* Table colors */
   --table-border: var(--surface-light);
-  --table-cell-bg: var(--surface-medium-darker);
-  --table-header-bg: var(--surface-dark-lighter);
+  --table-cell-bg: var(--surface-medium);
+  --table-header-bg: var(--surface-dark);
   --table-selected-bg: var(--primary-20);
   --table-striping: rgba(var(--text-rgb), 0.05);
 
@@ -292,7 +292,7 @@ body {
 
   /* Typeahead Menu Components */
   .typeahead-popover {
-    @apply fixed bg-editor-bg shadow-lg rounded-squircle-sm py-2;
+    @apply fixed bg-surface-medium shadow-lg rounded-squircle-sm py-2;
   }
 
   .typeahead-popover ul {
@@ -314,7 +314,7 @@ body {
   }
 
   .typeahead-popover li {
-    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-editor-bg rounded-lg border-0;
+    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-surface-medium rounded-lg border-0;
   }
 
   .typeahead-popover li.active {
@@ -351,11 +351,11 @@ body {
   }
 
   .component-picker-menu .item.selected {
-    @apply bg-primary-20;
+    @apply bg-surface-light;
   }
 
   .component-picker-menu .item:hover {
-    @apply bg-primary-10;
+    @apply bg-surface-light;
   }
 
   .component-picker-menu .item .icon {
@@ -372,7 +372,13 @@ body {
 
   /* Base table */
   .editor-table {
-    @apply border-collapse border-2 border-table-border table-fixed w-full mt-6 mb-8 min-w-[200px] rounded-squircle-sm overflow-hidden;
+    @apply relative border-collapse border-0 table-fixed w-full mt-6 mb-8 min-w-[200px] rounded-squircle-sm overflow-hidden;
+  }
+
+  /* Pseudo-element for the outer border */
+  .editor-table::after {
+    content: "";
+    @apply absolute inset-0 pointer-events-none border border-table-border rounded-squircle-sm;
   }
 
   /* Table alignment */
@@ -386,12 +392,12 @@ body {
 
   /* Table cells */
   .editor-table-cell {
-    @apply border border-table-border align-top text-left p-2 relative outline-none bg-table-cell-bg;
+    @apply border border-table-border align-top text-center p-2 relative outline-none bg-table-cell-bg;
   }
 
   /* Table header cells */
   .editor-table-cell-header {
-    @apply border border-table-border bg-table-header-bg text-left;
+    @apply border border-table-border bg-table-header-bg text-center;
   }
 
   /* Selected states */
@@ -484,7 +490,7 @@ body {
   }
 
   .table-action-menu-dropdown .table-action-menu-item:hover {
-    @apply bg-surface-medium-lighter;
+    @apply bg-surface-light;
   }
 
   .table-action-menu-dropdown hr {
