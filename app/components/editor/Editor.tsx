@@ -85,7 +85,7 @@ export default function Editor({
           <RichTextPlugin
             contentEditable={
               <div ref={onRef} className="editor-wrapper">
-                <ContentEditable className="editor-input" />
+                <ContentEditable className="editor-input" aria-label="Text editor content" role="textbox" />
               </div>
             }
             placeholder={

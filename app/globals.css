@@ -145,13 +145,6 @@ body {
     @apply absolute top-12 left-8 text-placeholder-text pointer-events-none select-none;
   }
 
-  /* .editor-link {
-    @apply text-sky-500 cursor-pointer transition-colors duration-200;
-  }
-  .editor-link:hover {
-    @apply text-sky-400 underline;
-  } */
-
   .editor-link {
     @apply text-link cursor-pointer transition-colors duration-200;
   }
