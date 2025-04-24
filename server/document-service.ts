@@ -145,14 +145,13 @@ export async function isSlugDocumentEmpty(slug: string): Promise<boolean> {
  * Find an available (unused) slug
  */
 export async function findAvailableSlug(
-  length: number = 12, 
-  maxAttempts: number = 10,
+  maxAttempts: number = 20,
 ): Promise<string> {
   let attempts = 0;
   let lastSlug = '';
   
   while (attempts < maxAttempts) {
-    const slug = await generateRandomSlug(length);
+    const slug = await generateRandomSlug();
     lastSlug = slug;
     
     const isEmpty = await isSlugDocumentEmpty(slug);

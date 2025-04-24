@@ -26,7 +26,8 @@
     "lodash-es": "^4.17.21",
     "next": "15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
