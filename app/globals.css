@@ -48,8 +48,8 @@
   --text-disabled: rgba(var(--text-rgb), 0.3); /* Very low emphasis text */
 
   /* Link color values */
-  --text-link: #0ea5e9; /* sky-500 color for links */
-  --text-link-hover: #38bdf8; /* sky-400 color for link hover */
+  --text-link: #38bdf8; /* sky-400 color for links */
+  --text-link-hover: #70d3ff; /* Brighter blue on hover */
 
   /* Application of core palette to specific UI elements */
   --background: var(--surface-dark);
@@ -111,7 +111,7 @@ body {
 
   /* Nav link styles */
   .nav-link {
-    @apply text-[var(--text-tertiary)] no-underline p-2 text-lg rounded transition-colors duration-200;
+    @apply text-text-secondary no-underline p-2 text-lg rounded transition-colors duration-200;
   }
 
   .nav-link:hover {
@@ -145,13 +145,6 @@ body {
     @apply absolute top-12 left-8 text-placeholder-text pointer-events-none select-none;
   }
 
-  /* .editor-link {
-    @apply text-sky-500 cursor-pointer transition-colors duration-200;
-  }
-  .editor-link:hover {
-    @apply text-sky-400 underline;
-  } */
-
   .editor-link {
     @apply text-link cursor-pointer transition-colors duration-200;
   }
@@ -174,7 +167,7 @@ body {
   }
 
   .editor-quote {
-    @apply border-l-4 border-quote-border pl-4 my-4 italic text-placeholder-text rounded-r-squircle-xs;
+    @apply border-l-4 border-quote-border pl-4 my-4 italic text-text-secondary rounded-r-squircle-xs;
   }
 
   .editor-code {
