@@ -1,5 +1,3 @@
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
 import CloudflareWebAnalytics from './components/analytics/CloudflareWebAnalytics';
@@ -91,8 +89,6 @@ export default function RootLayout({
         <Navbar />
         <main className="editor-main">
           {children}
-          <Analytics />
-          <SpeedInsights />
           <CloudflareWebAnalytics token={process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN || ''}/>
         </main>
       </body>
