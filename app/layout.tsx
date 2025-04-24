@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 
 import CloudflareWebAnalytics from './components/analytics/CloudflareWebAnalytics';
+import UmamiAnalytics from './components/analytics/UmamiAnalytics';
 import Navbar from './components/Navbar';
 
 import type { Metadata } from 'next';
@@ -90,6 +91,10 @@ export default function RootLayout({
         <main className="editor-main">
           {children}
           <CloudflareWebAnalytics token={process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN || ''}/>
+          <UmamiAnalytics 
+            websiteId={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || ''}
+            scriptUrl={process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL || ''}
+          />
         </main>
       </body>
     </html>
