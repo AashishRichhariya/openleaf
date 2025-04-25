@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { GitHubLink } from './social-links/github';
 import { RedditLink } from './social-links/reddit';
 
 export default function Navbar() {
@@ -23,6 +24,7 @@ export default function Navbar() {
             info
           </Link>
           <RedditLink />
+          <GitHubLink />
         </div>
       </div>
     </nav>
