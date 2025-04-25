@@ -108,7 +108,7 @@ body {
   }
 
   .navbar-links {
-    @apply flex items-center space-x-6;
+    @apply flex items-center space-x-4;
   }
 
   /* Nav link styles */
