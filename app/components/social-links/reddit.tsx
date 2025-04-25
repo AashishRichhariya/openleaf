@@ -1,6 +1,7 @@
-import { IconProps, SocialLinkProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
+
+import { IconProps, SocialLinkProps } from '@/types';
 
 const RedditIcon: React.FC<IconProps> = ({ size = 32 }) => {
   return (
@@ -18,15 +19,15 @@ const RedditIcon: React.FC<IconProps> = ({ size = 32 }) => {
 };
 
 export const RedditLink: React.FC<SocialLinkProps> = ({ 
-  href = "https://www.reddit.com/r/openleafEditor/", 
-  label = "r/openleafEditor", 
+  href = 'https://www.reddit.com/r/openleafEditor/', 
+  label = 'r/openleafEditor', 
 }) => {
   return (
     <Link 
       href={href} 
       target="_blank" 
       rel="noopener"
-      className={`nav-link social-link`}
+      className={'nav-link social-link'}
       aria-label={`Visit our Reddit community: ${label}`}
     >
       <RedditIcon />
