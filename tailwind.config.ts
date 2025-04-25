@@ -38,6 +38,10 @@ export default {
         "editor-bg": "var(--editor-bg)",
         "editor-border": "var(--editor-border)",
 
+        // Navigation colors
+        "nav-link": "var(--nav-link)",
+        "nav-link-hover": "var(--nav-link-hover)",
+
         // Accent colors with opacity variants
         accent: {
           DEFAULT: 'var(--accent)',

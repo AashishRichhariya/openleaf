@@ -50,6 +50,8 @@
   /* Link color values */
   --text-link: #38bdf8; /* sky-400 color for links */
   --text-link-hover: #70d3ff; /* Brighter blue on hover */
+  --nav-link: var(--text-secondary);
+  --nav-link-hover: var(--primary); /* Hover color for navbar links */
 
   /* Application of core palette to specific UI elements */
   --background: var(--surface-dark-darker);
@@ -111,26 +113,26 @@ body {
 
   /* Nav link styles */
   .nav-link {
-    @apply text-text-secondary no-underline p-2 text-lg rounded transition-colors duration-200;
+    @apply text-nav-link no-underline text-lg rounded transition-colors duration-200;
   }
 
   .nav-link:hover {
-    @apply text-[var(--primary)] underline;
+    @apply text-nav-link-hover underline;
   }
 
   /* Social link styles */
   .social-link {
-    @apply flex items-center text-text-secondary transition-colors duration-200;
+    @apply flex items-center text-nav-link transition-colors duration-200;
   }
 
   /* Unified hover style for all social links */
   .social-link:hover {
-    @apply text-[var(--primary)];
+    @apply text-nav-link-hover;
   }
 
   /* Adjustments to ensure icons align properly with text */
   .social-link svg {
-    @apply mr-1 flex-shrink-0;
+    @apply flex-shrink-0;
   }
 
   /* Base editor components */

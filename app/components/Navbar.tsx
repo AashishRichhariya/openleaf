@@ -21,7 +21,7 @@ export default function Navbar() {
           <Link href="/info" target="_blank" rel="noopener noreferrer" className="nav-link">
             info
           </Link>
-          <RedditLink size={24} />
+          <RedditLink />
         </div>
       </div>
     </nav>

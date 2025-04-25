@@ -2,7 +2,7 @@ import { IconProps, SocialLinkProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
-const RedditIcon: React.FC<IconProps> = ({ size = 24 }) => {
+const RedditIcon: React.FC<IconProps> = ({ size = 32 }) => {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
@@ -20,7 +20,6 @@ const RedditIcon: React.FC<IconProps> = ({ size = 24 }) => {
 export const RedditLink: React.FC<SocialLinkProps> = ({ 
   href = "https://www.reddit.com/r/openleafEditor/", 
   label = "r/openleafEditor", 
-  size = 24 
 }) => {
   return (
     <Link 
@@ -30,7 +29,7 @@ export const RedditLink: React.FC<SocialLinkProps> = ({
       className={`nav-link social-link`}
       aria-label={`Visit our Reddit community: ${label}`}
     >
-      <RedditIcon size={size} />
+      <RedditIcon />
     </Link>
   );
 };
