@@ -118,6 +118,21 @@ body {
     @apply text-[var(--primary)] underline;
   }
 
+  /* Social link styles */
+  .social-link {
+    @apply flex items-center text-text-secondary transition-colors duration-200;
+  }
+
+  /* Unified hover style for all social links */
+  .social-link:hover {
+    @apply text-[var(--primary)];
+  }
+
+  /* Adjustments to ensure icons align properly with text */
+  .social-link svg {
+    @apply mr-1 flex-shrink-0;
+  }
+
   /* Base editor components */
   .editor-main {
     @apply flex flex-col min-h-screen;

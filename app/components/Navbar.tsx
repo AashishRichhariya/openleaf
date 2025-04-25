@@ -1,12 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { RedditLink } from './social-links/reddit';
 
 export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <Link href="/" target="_blank">
+          <Link href="/" target="_blank" rel="noopener noreferrer">
             <Image
               src="/logo/animated-logo-minified.svg"
               alt="Openleaf Logo"
@@ -16,9 +17,12 @@ export default function Navbar() {
             />
           </Link>
         </div>
-        <div className="navbar-links"><Link href="/info" target="_blank" className="nav-link">
+        <div className="navbar-links">
+          <Link href="/info" target="_blank" rel="noopener noreferrer" className="nav-link">
             info
-        </Link></div>
+          </Link>
+          <RedditLink size={24} />
+        </div>
       </div>
     </nav>
   );
