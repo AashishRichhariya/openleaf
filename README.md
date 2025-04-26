@@ -117,7 +117,7 @@ This project is open source under the MIT license. Contributions and feedback ar
 
 - 🐛 Found a bug? [Open an issue](https://github.com/AashishRichhariya/openleaf/issues) on GitHub
 - 💡 Have a feature idea? [Share it](https://github.com/AashishRichhariya/openleaf/issues) on GitHub
-- 💻 Want to contribute code? [Submit a pull request](https://github.com/AashishRichhariya/openleaf/pulls)
+- 💻 Want to contribute code? [Check out our guidelines](CONTRIBUTING.md)
 - ⭐ Enjoying openleaf? Spread the word or star us on [GitHub](https://github.com/AashishRichhariya/openleaf)!
 
 ## Technical Details
