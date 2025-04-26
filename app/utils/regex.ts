@@ -7,3 +7,6 @@ export const AUTO_DETECTION_EMAIL_REGEX =
 
 // Validation pattern (more permissive, used when checking manually entered URLs)
 export const URL_VALIDATION_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+
+// Phone number detection pattern
+export const PHONE_NUMBER_REGEX = /^\+?[0-9\s()\-]{5,}$/;
