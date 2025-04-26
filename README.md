@@ -9,7 +9,7 @@
 
 **openleaf** is a minimalist, browser-based text editor that lets you start writing instantly without signup, downloads, or configuration. Just go to any URL and start typing!
 
-<img width="1440" alt="image" src="https://github.com/user-attachments/assets/61fe5463-6b17-4125-925f-187377040dd0" />
+![image](https://github.com/user-attachments/assets/ed490943-4bbf-4513-8ff3-2a60ec40a143)
 
 Check it out: [openleaf.xyz/info](https://openleaf.xyz/info)
 
@@ -115,8 +115,8 @@ By design, **openleaf** is open and accessible. This means:
 
 This project is open source under the MIT license. Contributions and feedback are welcome on [GitHub](https://github.com/AashishRichhariya/openleaf)!
 
-- 🐛 Found a bug? [Open an issue](https://github.com/AashishRichhariya/openleaf/issues) on GitHub
-- 💡 Have a feature idea? [Share it](https://github.com/AashishRichhariya/openleaf/issues) on GitHub
+- 🐛 Found a bug? [Open an issue](https://github.com/AashishRichhariya/openleaf/issues)
+- 💡 Have a feature idea? [Share it with us](https://github.com/AashishRichhariya/openleaf/issues)
 - 💻 Want to contribute code? [Check out our guidelines](CONTRIBUTING.md)
 - ⭐ Enjoying openleaf? Spread the word or star us on [GitHub](https://github.com/AashishRichhariya/openleaf)!
 
