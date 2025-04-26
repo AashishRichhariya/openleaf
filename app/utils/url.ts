@@ -3,7 +3,7 @@
  * across the application.
  */
 
-import { AUTO_DETECTION_EMAIL_REGEX, AUTO_DETECTION_URL_REGEX, PHONE_NUMBER_REGEX, URL_VALIDATION_REGEX } from '@/app/utils';
+import { AUTO_DETECTION_EMAIL_REGEX, PHONE_NUMBER_REGEX, URL_VALIDATION_REGEX } from '@/app/utils';
 
 // Set of supported URL protocols
 export const SUPPORTED_URL_PROTOCOLS = new Set([
@@ -81,11 +81,7 @@ export function formatUrl(url: string): string {
   else if (PHONE_NUMBER_REGEX.test(url)) {
     return `tel:${url}`;
   }
-  // For standard URLs, add https:// prefix
-  else if (AUTO_DETECTION_URL_REGEX.test(url) || URL_VALIDATION_REGEX.test(url)) {
-    return `https://${url}`;
-  }
-  
-  // If nothing matches, return the original URL
-  return url;
+  // For everything else, including standard URLs, add https:// prefix
+  return `https://${url}`;
+
 }
