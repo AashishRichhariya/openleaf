@@ -4,7 +4,6 @@
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
-import { TRANSFORMERS } from '@lexical/markdown';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -29,6 +28,7 @@ import {
   TableActionMenuPlugin,
   TableHoverActionsPlugin,
 } from './custom-plugins';
+import { OPENLEAF_TRANSFORMERS } from './custom-transformers/OpenleafTransformers';
 import DefaultTheme from './themes/DefaultTheme';
 
 interface EditorProps {
@@ -100,7 +100,7 @@ export default function Editor({
           <CheckListPlugin />
           <TablePlugin hasHorizontalScroll={true} />
           <TabIndentationPlugin maxIndent={7} />
-          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+          <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
           <OnChangePlugin
             onChange={onEditorStateChange}
             ignoreSelectionChange={true}
