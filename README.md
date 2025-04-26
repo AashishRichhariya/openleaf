@@ -32,6 +32,8 @@ Check it out: [openleaf.xyz/info](https://openleaf.xyz/info)
 - Type `-` for bullet points
 - Type `1.` for numbered lists
 - Type `>` for blockquotes
+- Type `[]` or `[x]` for checklist items
+- Type `[text](url)` to create links
 
 ### Command Menu
 
@@ -51,6 +53,14 @@ Create tables easily by either:
 
 - Type `/table` and select from the menu
 - Or type `/NxM` where N and M are any numbers (like `/3x4`, `/2x6`, etc.) to instantly create a table with that many rows and columns
+
+### Links
+
+Create links easily in multiple ways:
+
+- Type `[text](url)` using markdown syntax
+- Type any URL, such as `https://openleaf.xyz` or `www.openleaf.xyz`, to have it automatically detected as a link
+- Select text and paste a URL (Cmd+V or Ctrl+V) to turn the selected text into a link
 
 ### Checklists
 
@@ -103,11 +113,12 @@ By design, **openleaf** is open and accessible. This means:
 
 ## Contribute to openleaf
 
-This project is open source under the MIT license. Contributions and feedback are welcome!
+This project is open source under the MIT license. Contributions and feedback are welcome on [GitHub](https://github.com/AashishRichhariya/openleaf)!
 
 - 🐛 Found a bug? [Open an issue](https://github.com/AashishRichhariya/openleaf/issues) on GitHub
 - 💡 Have a feature idea? [Share it](https://github.com/AashishRichhariya/openleaf/issues) on GitHub
 - 💻 Want to contribute code? [Submit a pull request](https://github.com/AashishRichhariya/openleaf/pulls)
+- ⭐ Enjoying openleaf? Spread the word or star us on [GitHub](https://github.com/AashishRichhariya/openleaf)!
 
 ## Technical Details
 
@@ -123,6 +134,8 @@ This project is open source under the MIT license. Contributions and feedback ar
 If interest grows, potential future features might include:
 
 - Optional user accounts
+- Private and published notes
+- Image support
 - Temporary URL leasing (lock a URL for your exclusive use for a set period)
 - More formatting options
 - PDF exporting and printing
