@@ -100,7 +100,7 @@ body {
   }
 
   .navbar-container {
-    @apply flex justify-between items-center mx-auto px-6 h-16 max-w-7xl;
+    @apply flex justify-between items-center mx-auto px-6 h-16 max-w-7xl max-sm:h-14;
   }
 
   .navbar-logo {
@@ -108,7 +108,7 @@ body {
   }
 
   .navbar-links {
-    @apply flex items-center space-x-4;
+    @apply flex items-center space-x-4 max-sm:space-x-3;
   }
 
   /* Nav link styles */
@@ -146,7 +146,7 @@ body {
 
   .editor-area {
     @apply w-full max-w-4xl flex-grow flex flex-col relative
-           bg-editor-bg shadow-lg px-8 py-12 mb-4 cursor-text
+           bg-editor-bg shadow-lg px-8 py-12 mb-4 max-sm:px-6 max-sm:py-8 cursor-text
            rounded-squircle;
   }
 
@@ -159,7 +159,7 @@ body {
   }
 
   .editor-placeholder {
-    @apply absolute top-12 left-8 text-placeholder-text pointer-events-none select-none;
+    @apply absolute top-12 left-8 max-sm:top-8 max-sm:left-4 text-placeholder-text pointer-events-none select-none;
   }
 
   .editor-link {
@@ -172,19 +172,19 @@ body {
 
   /* Node-specific styles */
   .editor-heading-h1 {
-    @apply text-4xl font-bold mt-6 mb-4;
+    @apply text-4xl font-bold mt-6 mb-4 max-sm:text-3xl max-sm:mt-4 max-sm:mb-4;
   }
 
   .editor-heading-h2 {
-    @apply text-3xl font-bold mt-5 mb-3;
+    @apply text-3xl font-bold mt-5 mb-3 max-sm:text-2xl max-sm:mt-3 max-sm:mb-3;
   }
 
   .editor-heading-h3 {
-    @apply text-2xl font-bold mt-4 mb-2;
+    @apply text-2xl font-bold mt-4 mb-2 max-sm:text-xl max-sm:mt-2 max-sm:mb-2;
   }
 
   .editor-quote {
-    @apply border-l-4 border-quote-border pl-4 my-4 italic text-text-secondary rounded-r-squircle-xs;
+    @apply border-l-4 border-quote-border pl-4 my-4 max-sm:pl-2 italic text-text-secondary rounded-r-squircle-xs;
   }
 
   .editor-code {
