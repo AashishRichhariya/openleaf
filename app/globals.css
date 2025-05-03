@@ -309,7 +309,7 @@ body {
 
   /* Typeahead Menu Components */
   .typeahead-popover {
-    @apply fixed bg-surface-medium shadow-lg rounded-squircle-sm py-2;
+    @apply relative bg-surface-medium shadow-lg rounded-squircle-sm py-2;
   }
 
   .typeahead-popover ul {
