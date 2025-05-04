@@ -533,7 +533,7 @@ function TableCellActionMenuContainer({
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
       const anchorRect = anchorElem.getBoundingClientRect();
       const verticalOffset = tableCellRect.top - anchorRect.top;
-      const horizontalOffset = tableCellRect.right - anchorRect.left;
+      const horizontalOffset = tableCellRect.right - anchorRect.right;
       menu.style.transform = `translate(${horizontalOffset}px, ${verticalOffset}px)`;
     }
   }, [editor, anchorElem, getTheme]);

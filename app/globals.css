@@ -468,7 +468,7 @@ body {
 
   /* Cell action button */
   .table-cell-action-button-container {
-    @apply absolute z-10 top-0 left-2 opacity-0 transition-opacity duration-100;
+    @apply absolute z-10 top-0 right-0 opacity-0 m-0.5 transition-opacity duration-100;
   }
 
   .table-cell-action-button-container-active {
@@ -480,7 +480,7 @@ body {
   }
 
   .table-cell-action-button {
-    @apply bg-surface-medium border border-surface-light rounded-squircle-xs w-6 h-6
+    @apply bg-surface-medium border border-surface-light rounded-squircle-xs w-5 h-5
           flex items-center justify-center cursor-pointer;
   }
 
