@@ -120,11 +120,11 @@ function TableActionMenu({
         leftPosition = (position < 0 ? margin : position) + window.pageXOffset;
       }
       dropDownElement.style.left = `${leftPosition + window.pageXOffset}px`;
-
+      
       let topPosition = menuButtonRect.top;
       if (topPosition + dropDownElementRect.height > window.innerHeight) {
         const position = menuButtonRect.bottom - dropDownElementRect.height;
-        topPosition = (position < 0 ? margin : position) + window.pageYOffset;
+        topPosition = position < 0 ? margin : position;
       }
       dropDownElement.style.top = `${topPosition + window.pageYOffset}px`;
     }
@@ -532,8 +532,8 @@ function TableCellActionMenuContainer({
     if (enabled) {
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
       const anchorRect = anchorElem.getBoundingClientRect();
-      const verticalOffset = tableCellRect.top;
-      const horizontalOffset = tableCellRect.right - anchorRect.left;
+      const verticalOffset = tableCellRect.top - anchorRect.top;
+      const horizontalOffset = tableCellRect.right - anchorRect.right;
       menu.style.transform = `translate(${horizontalOffset}px, ${verticalOffset}px)`;
     }
   }, [editor, anchorElem, getTheme]);
