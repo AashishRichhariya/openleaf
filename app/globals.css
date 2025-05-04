@@ -146,12 +146,12 @@ body {
 
   .editor-area {
     @apply w-full max-w-4xl flex-grow flex flex-col relative
-           bg-editor-bg shadow-lg px-8 py-12 mb-4 max-sm:px-6 max-sm:py-8 cursor-text
+           bg-editor-bg shadow-lg cursor-text
            rounded-squircle;
   }
 
   .editor-wrapper {
-    @apply h-full flex flex-col w-full;
+    @apply h-full flex flex-col w-full px-8 py-12 mb-4 max-sm:px-6 max-sm:py-8;
   }
 
   .editor-input {
