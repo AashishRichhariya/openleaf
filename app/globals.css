@@ -497,7 +497,7 @@ body {
   }
 
   .table-action-menu-dropdown {
-    @apply bg-surface-medium rounded-squircle-sm shadow-md fixed z-50 w-52 opacity-0
+    @apply bg-surface-medium rounded-squircle-sm shadow-md absolute z-50 w-52 opacity-0
           transition-opacity duration-100;
   }
 
