@@ -15,7 +15,6 @@ import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPl
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
-import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { EditorState } from 'lexical';
@@ -25,8 +24,7 @@ import { InlineTableInputNode } from './custom-nodes';
 import {
   ComponentPickerPlugin,
   LinksPlugin,
-  TableActionMenuPlugin,
-  TableHoverActionsPlugin,
+  TablePlugin,
 } from './custom-plugins';
 import { OPENLEAF_TRANSFORMERS } from './custom-transformers/OpenleafTransformers';
 import DefaultTheme from './themes/DefaultTheme';
@@ -98,7 +96,6 @@ export default function Editor({
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
-          <TablePlugin hasHorizontalScroll={true} />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
           <OnChangePlugin
@@ -106,13 +103,7 @@ export default function Editor({
             ignoreSelectionChange={true}
           />
           <LinksPlugin/>
-          {/* Add the table-related plugins with the anchor element */}
-          {floatingAnchorElem && (
-            <>
-              <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
-              <TableActionMenuPlugin anchorElem={floatingAnchorElem} />
-            </>
-          )}
+          <TablePlugin anchorElem={floatingAnchorElem} />
         </div>
       </LexicalComposer>
     </div>

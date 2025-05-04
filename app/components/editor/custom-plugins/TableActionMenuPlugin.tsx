@@ -20,7 +20,6 @@ import {
 } from '@lexical/table';
 import { mergeRegister } from '@lexical/utils';
 import {
-  $getRoot,
   $getSelection,
   $isRangeSelection,
   COMMAND_PRIORITY_CRITICAL,
@@ -149,7 +148,7 @@ function TableActionMenu({
     return () => window.removeEventListener('click', handleClickOutside);
   }, [setIsMenuOpen, contextRef]);
 
-  const clearTableSelection = useCallback(() => {
+  const resetTableSelection = useCallback(() => {
     editor.update(() => {
       if (tableCellNode.isAttached()) {
         const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
@@ -169,8 +168,9 @@ function TableActionMenu({
         }
       }
 
-      const rootNode = $getRoot();
-      rootNode.selectStart();
+      if (tableCellNode.isAttached()) {
+        tableCellNode.selectStart();
+      }
     });
   }, [editor, tableCellNode]);
 
@@ -210,10 +210,10 @@ function TableActionMenu({
       const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
       tableNode.remove();
 
-      clearTableSelection();
+      resetTableSelection();
       onClose();
     });
-  }, [editor, tableCellNode, clearTableSelection, onClose]);
+  }, [editor, tableCellNode, resetTableSelection, onClose]);
 
   const deleteTableColumnAtSelection = useCallback(() => {
     editor.update(() => {
@@ -250,10 +250,10 @@ function TableActionMenu({
         tableCell.setHeaderStyles(newStyle, TableCellHeaderStates.ROW);
       });
 
-      clearTableSelection();
+      resetTableSelection();
       onClose();
     });
-  }, [editor, tableCellNode, clearTableSelection, onClose]);
+  }, [editor, tableCellNode, resetTableSelection, onClose]);
 
   const toggleTableColumnIsHeader = useCallback(() => {
     editor.update(() => {
@@ -294,10 +294,10 @@ function TableActionMenu({
 
         tableCell.setHeaderStyles(newStyle, TableCellHeaderStates.COLUMN);
       }
-      clearTableSelection();
+      resetTableSelection();
       onClose();
     });
-  }, [editor, tableCellNode, clearTableSelection, onClose]);
+  }, [editor, tableCellNode, resetTableSelection, onClose]);
 
   return createPortal(
     <div
