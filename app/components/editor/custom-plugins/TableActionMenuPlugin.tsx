@@ -1,14 +1,14 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
 import {
-  $deleteTableColumn__EXPERIMENTAL,
-  $deleteTableRow__EXPERIMENTAL,
+  $deleteTableColumnAtSelection,
+  $deleteTableRowAtSelection,
   $getTableCellNodeFromLexicalNode,
   $getTableColumnIndexFromTableCellNode,
   $getTableNodeFromLexicalNodeOrThrow,
   $getTableRowIndexFromTableCellNode,
-  $insertTableColumn__EXPERIMENTAL,
-  $insertTableRow__EXPERIMENTAL,
+  $insertTableColumnAtSelection,
+  $insertTableRowAtSelection,
   $isTableCellNode,
   $isTableRowNode,
   $isTableSelection,
@@ -20,7 +20,6 @@ import {
 } from '@lexical/table';
 import { mergeRegister } from '@lexical/utils';
 import {
-  $getRoot,
   $getSelection,
   $isRangeSelection,
   COMMAND_PRIORITY_CRITICAL,
@@ -120,11 +119,11 @@ function TableActionMenu({
         leftPosition = (position < 0 ? margin : position) + window.pageXOffset;
       }
       dropDownElement.style.left = `${leftPosition + window.pageXOffset}px`;
-
+      
       let topPosition = menuButtonRect.top;
       if (topPosition + dropDownElementRect.height > window.innerHeight) {
         const position = menuButtonRect.bottom - dropDownElementRect.height;
-        topPosition = (position < 0 ? margin : position) + window.pageYOffset;
+        topPosition = position < 0 ? margin : position;
       }
       dropDownElement.style.top = `${topPosition + window.pageYOffset}px`;
     }
@@ -149,7 +148,7 @@ function TableActionMenu({
     return () => window.removeEventListener('click', handleClickOutside);
   }, [setIsMenuOpen, contextRef]);
 
-  const clearTableSelection = useCallback(() => {
+  const resetTableSelection = useCallback(() => {
     editor.update(() => {
       if (tableCellNode.isAttached()) {
         const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
@@ -169,8 +168,9 @@ function TableActionMenu({
         }
       }
 
-      const rootNode = $getRoot();
-      rootNode.selectStart();
+      if (tableCellNode.isAttached()) {
+        tableCellNode.selectStart();
+      }
     });
   }, [editor, tableCellNode]);
 
@@ -178,7 +178,7 @@ function TableActionMenu({
     (shouldInsertAfter: boolean) => {
       editor.update(() => {
         for (let i = 0; i < selectionCounts.rows; i++) {
-          $insertTableRow__EXPERIMENTAL(shouldInsertAfter);
+          $insertTableRowAtSelection(shouldInsertAfter);
         }
         onClose();
       });
@@ -190,7 +190,7 @@ function TableActionMenu({
     (shouldInsertAfter: boolean) => {
       editor.update(() => {
         for (let i = 0; i < selectionCounts.columns; i++) {
-          $insertTableColumn__EXPERIMENTAL(shouldInsertAfter);
+          $insertTableColumnAtSelection(shouldInsertAfter);
         }
         onClose();
       });
@@ -200,7 +200,7 @@ function TableActionMenu({
 
   const deleteTableRowAtSelection = useCallback(() => {
     editor.update(() => {
-      $deleteTableRow__EXPERIMENTAL();
+      $deleteTableRowAtSelection();
       onClose();
     });
   }, [editor, onClose]);
@@ -210,14 +210,14 @@ function TableActionMenu({
       const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
       tableNode.remove();
 
-      clearTableSelection();
+      resetTableSelection();
       onClose();
     });
-  }, [editor, tableCellNode, clearTableSelection, onClose]);
+  }, [editor, tableCellNode, resetTableSelection, onClose]);
 
   const deleteTableColumnAtSelection = useCallback(() => {
     editor.update(() => {
-      $deleteTableColumn__EXPERIMENTAL();
+      $deleteTableColumnAtSelection();
       onClose();
     });
   }, [editor, onClose]);
@@ -250,10 +250,10 @@ function TableActionMenu({
         tableCell.setHeaderStyles(newStyle, TableCellHeaderStates.ROW);
       });
 
-      clearTableSelection();
+      resetTableSelection();
       onClose();
     });
-  }, [editor, tableCellNode, clearTableSelection, onClose]);
+  }, [editor, tableCellNode, resetTableSelection, onClose]);
 
   const toggleTableColumnIsHeader = useCallback(() => {
     editor.update(() => {
@@ -294,10 +294,10 @@ function TableActionMenu({
 
         tableCell.setHeaderStyles(newStyle, TableCellHeaderStates.COLUMN);
       }
-      clearTableSelection();
+      resetTableSelection();
       onClose();
     });
-  }, [editor, tableCellNode, clearTableSelection, onClose]);
+  }, [editor, tableCellNode, resetTableSelection, onClose]);
 
   return createPortal(
     <div
@@ -532,8 +532,8 @@ function TableCellActionMenuContainer({
     if (enabled) {
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
       const anchorRect = anchorElem.getBoundingClientRect();
-      const verticalOffset = tableCellRect.top;
-      const horizontalOffset = tableCellRect.right - anchorRect.left;
+      const verticalOffset = tableCellRect.top - anchorRect.top;
+      const horizontalOffset = tableCellRect.right - anchorRect.right;
       menu.style.transform = `translate(${horizontalOffset}px, ${verticalOffset}px)`;
     }
   }, [editor, anchorElem, getTheme]);

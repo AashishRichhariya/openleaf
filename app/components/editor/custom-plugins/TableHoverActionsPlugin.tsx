@@ -121,7 +121,8 @@ function TableHoverActionsContainer({
         const parentElement = (tableDOMElement as HTMLTableElement)
           .parentElement;
 
-        const { left: editorElemLeft } = anchorElem.getBoundingClientRect();
+        const { y: editorElemY, left: editorElemLeft } = anchorElem.getBoundingClientRect();
+  
         if (hoveredRowNode) {
           setShownColumn(false);
           setShownRow(true);
@@ -130,7 +131,7 @@ function TableHoverActionsContainer({
             left: parentElement
               ? parentElement.offsetLeft
               : tableElemLeft - editorElemLeft,
-            top: tableElemBottom + 5,
+            top: tableElemBottom - editorElemY + 5 ,
             width: parentElement ? parentElement.offsetWidth : tableElemWidth,
           });
         } else if (hoveredColumnNode) {
@@ -142,7 +143,7 @@ function TableHoverActionsContainer({
               (parentElement
                 ? parentElement.offsetLeft + parentElement.offsetWidth
                 : tableElemRight - editorElemLeft) + 5,
-            top: tableElemY,
+            top: tableElemY - editorElemY,
             width: BUTTON_WIDTH_PX,
           });
         }
