@@ -170,6 +170,23 @@ body {
     @apply text-link-hover underline;
   }
 
+  /* Editor texts */
+  .editor-text-bold {
+    @apply font-bold;
+  }
+
+  .editor-text-italic {
+    @apply italic;
+  }
+
+  .editor-text-underline {
+    @apply underline;
+  }
+
+  .editor-text-code {
+    @apply bg-code-bg px-1 py-[1px] my-[1px] mx-1 rounded-squircle-xs font-mono text-sm border border-surface-light;
+  }
+
   /* Node-specific styles */
   .editor-heading-h1 {
     @apply text-4xl font-bold mt-6 mb-4 max-sm:text-3xl max-sm:mt-4 max-sm:mb-4;
