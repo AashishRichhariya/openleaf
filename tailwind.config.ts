@@ -154,6 +154,7 @@ export default {
         'squircle': '24px 24px 24px 24px / 28px 28px 28px 28px',
         'squircle-sm': '10px 10px 10px 10px / 14px 14px 14px 14px',
         'squircle-xs': '6px 6px 6px 6px / 8px 8px 8px 8px',
+        'squircle-xxs': '4px 4px 4px 4px / 6px 6px 6px 6px',
       },
 
       transitionProperty: {
