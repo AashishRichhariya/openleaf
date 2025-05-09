@@ -1,8 +1,10 @@
 import { CHECK_LIST, ELEMENT_TRANSFORMERS, MULTILINE_ELEMENT_TRANSFORMERS, TEXT_FORMAT_TRANSFORMERS, Transformer } from '@lexical/markdown';
 
+import HORIZONTAL_RULE from './HorizontalRule';
 import LINK from './Link';
 
 export const OPENLEAF_TRANSFORMERS: Array<Transformer> = [
+  HORIZONTAL_RULE,
   CHECK_LIST,
   ...ELEMENT_TRANSFORMERS,
   ...MULTILINE_ELEMENT_TRANSFORMERS,

@@ -159,7 +159,7 @@ body {
   }
 
   .editor-placeholder {
-    @apply absolute top-12 left-8 max-sm:top-8 max-sm:left-4 text-placeholder-text pointer-events-none select-none;
+    @apply absolute top-12 left-8 max-sm:top-8 max-sm:left-6 text-placeholder-text pointer-events-none select-none;
   }
 
   .editor-link {
@@ -639,5 +639,18 @@ body {
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 0;
+  }
+
+  /* Horizontal rule styles */
+  .editor-horizontal-rule {
+    @apply py-1 px-1 border-none my-4 cursor-pointer flex items-center rounded-squircle-xxs;
+  }
+
+  .editor-horizontal-rule::after {
+    @apply content-[''] w-full h-0.5 bg-[--text-tertiary];
+  }
+
+  .editor-horizontal-rule-selected {
+    @apply outline outline-1 outline-accent select-none;
   }
 }

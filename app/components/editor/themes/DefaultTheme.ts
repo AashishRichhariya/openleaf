@@ -36,6 +36,8 @@ const defaultTheme = {
     listitemChecked: 'editor-listitem-checked',
     listitemUnchecked: 'editor-listitem-unchecked',
   },
+  hr: 'editor-horizontal-rule',
+  hrSelected: 'editor-horizontal-rule-selected',
   indent: 'editor-indent',
   image: 'editor-image',
   link: 'editor-link',

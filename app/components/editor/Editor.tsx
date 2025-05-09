@@ -10,6 +10,8 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -72,6 +74,7 @@ export default function Editor({
       AutoLinkNode,
       LinkNode,
       InlineTableInputNode,
+      HorizontalRuleNode,
     ],
     editorState: initialContent,
   };
@@ -98,6 +101,7 @@ export default function Editor({
           <CheckListPlugin />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
+          <HorizontalRulePlugin />
           <OnChangePlugin
             onChange={onEditorStateChange}
             ignoreSelectionChange={true}
