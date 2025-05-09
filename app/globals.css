@@ -643,7 +643,7 @@ body {
 
   /* Horizontal rule styles */
   .editor-horizontal-rule {
-    @apply py-1 px-1 border-none my-4 cursor-pointer flex items-center rounded-squircle-xxs;
+    @apply py-1 px-1 -mx-2 border-none my-4 cursor-pointer flex items-center rounded-squircle-xxs;
   }
 
   .editor-horizontal-rule::after {
