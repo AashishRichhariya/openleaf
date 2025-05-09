@@ -10,6 +10,7 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
@@ -21,7 +22,6 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { EditorState } from 'lexical';
 import { ReactElement, useState } from 'react';
 
-import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { InlineTableInputNode } from './custom-nodes';
 import {
   ComponentPickerPlugin,
@@ -74,7 +74,7 @@ export default function Editor({
       AutoLinkNode,
       LinkNode,
       InlineTableInputNode,
-      HorizontalRuleNode
+      HorizontalRuleNode,
     ],
     editorState: initialContent,
   };
