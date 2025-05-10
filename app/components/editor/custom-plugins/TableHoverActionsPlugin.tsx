@@ -140,7 +140,7 @@ function TableHoverActionsContainer({
               (parentElement
                 ? parentElement.offsetLeft + parentElement.offsetWidth
                 : tableElemRight - editorElemLeft) + 5,
-            top: tableElemY - editorElemY
+            top: tableElemY - editorElemY,
           });
         }
       }
