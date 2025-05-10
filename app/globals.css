@@ -401,12 +401,12 @@ body {
   }
   /* Table wrapper */
   .editor-table-scrollable-wrapper {
-    @apply overflow-x-auto my-0 mr-6 ml-0;
+    @apply overflow-x-auto;
   }
 
   /* Base table */
   .editor-table {
-    @apply relative border-collapse border-0 table-fixed w-full mt-6 mb-8 min-w-[200px] rounded-squircle-sm overflow-hidden;
+    @apply relative border-collapse border-0 table-fixed w-full mt-6 mb-8 min-w-[200px] rounded-squircle-sm overflow-hidden mx-auto;
   }
 
   /* Pseudo-element for the outer border */
@@ -475,12 +475,20 @@ body {
   .editor-table-add-columns,
   .editor-table-add-rows {
     @apply absolute bg-accent animate-[table-controls_0.2s_ease] border-0
-          cursor-pointer hover:bg-accent-80 rounded-squircle-xs;
+          cursor-pointer hover:bg-accent-80 rounded-squircle-xs max-sm:rounded-squircle-xxs z-50;
   }
 
   .editor-table-add-columns::before,
   .editor-table-add-rows::before {
     @apply content-['+'] absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
+  }
+
+  .editor-table-add-columns {
+    @apply w-5 max-sm:w-4;
+  }
+
+  .editor-table-add-rows {
+    @apply h-5 max-sm:h-4;
   }
 
   /* Cell action button */
