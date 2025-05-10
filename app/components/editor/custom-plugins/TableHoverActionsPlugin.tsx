@@ -31,8 +31,6 @@ import { getThemeSelector } from '@/app/utils';
 
 import type { JSX } from 'react';
 
-const BUTTON_WIDTH_PX = 20;
-
 function TableHoverActionsContainer({
   anchorElem,
 }: {
@@ -127,7 +125,6 @@ function TableHoverActionsContainer({
           setShownColumn(false);
           setShownRow(true);
           setPosition({
-            height: BUTTON_WIDTH_PX,
             left: parentElement
               ? parentElement.offsetLeft
               : tableElemLeft - editorElemLeft,
@@ -143,8 +140,7 @@ function TableHoverActionsContainer({
               (parentElement
                 ? parentElement.offsetLeft + parentElement.offsetWidth
                 : tableElemRight - editorElemLeft) + 5,
-            top: tableElemY - editorElemY,
-            width: BUTTON_WIDTH_PX,
+            top: tableElemY - editorElemY
           });
         }
       }
