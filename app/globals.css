@@ -653,4 +653,30 @@ body {
   .editor-horizontal-rule-selected {
     @apply outline outline-1 outline-accent select-none;
   }
+
+  /* Basic equation container styles */
+  .editor-equation {
+    @apply select-none cursor-default min-h-[1em];
+  }
+
+  .editor-equation-inline {
+    @apply inline-block align-middle px-1;
+  }
+
+  .editor-equation-block {
+    @apply block text-center my-4;
+  }
+
+  .equation-renderer {
+    @apply inline-block;
+  }
+
+  /* KaTeX styling overrides */
+  .katex {
+    @apply text-foreground;
+  }
+
+  .katex-error {
+    @apply text-red-500 whitespace-normal;
+  }
 }

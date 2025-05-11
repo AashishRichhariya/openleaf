@@ -7,16 +7,12 @@ import type {
   SerializedLexicalNode,
   Spread,
 } from 'lexical';
-import type { JSX } from 'react';
 
 import katex from 'katex';
 import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
-import * as React from 'react';
+import { ReactElement } from 'react';
 
-const EquationComponent = React.lazy(async () => {
-  const { EquationComponent } = await import('@/app/components/editor/custom-components');
-  return { default: EquationComponent };
-});
+import EquationRenderer from '@/app/components/editor/ui/EquationRenderer';
 
 export type SerializedEquationNode = Spread<
   {
@@ -41,7 +37,7 @@ function $convertEquationElement(
   return null;
 }
 
-export class EquationNode extends DecoratorNode<JSX.Element> {
+export class EquationNode extends DecoratorNode<ReactElement> {
   __equation: string;
   __inline: boolean;
 
@@ -76,7 +72,6 @@ export class EquationNode extends DecoratorNode<JSX.Element> {
 
   createDOM(_config: EditorConfig): HTMLElement {
     const element = document.createElement(this.__inline ? 'span' : 'div');
-    // EquationNodes should implement `user-action:none` in their CSS to avoid issues with deletion on Android.
     element.className = 'editor-equation';
     return element;
   }
@@ -88,7 +83,7 @@ export class EquationNode extends DecoratorNode<JSX.Element> {
     element.setAttribute('data-lexical-equation', equation);
     element.setAttribute('data-lexical-inline', `${this.__inline}`);
     katex.render(this.__equation, element, {
-      displayMode: !this.__inline, // true === block display //
+      displayMode: !this.__inline,
       errorColor: '#cc0000',
       output: 'html',
       strict: 'warn',
@@ -139,12 +134,11 @@ export class EquationNode extends DecoratorNode<JSX.Element> {
     writable.__equation = equation;
   }
 
-  decorate(): JSX.Element {
+  decorate(): ReactElement {
     return (
-      <EquationComponent
+      <EquationRenderer
         equation={this.__equation}
         inline={this.__inline}
-        nodeKey={this.__key}
       />
     );
   }

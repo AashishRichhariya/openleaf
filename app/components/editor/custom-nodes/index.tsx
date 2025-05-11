@@ -4,7 +4,6 @@ export {
 } from './InlineTableInputNode';
 
 export {
-  $createEquationNode,
-  EquationNode
+  $createEquationNode, $isEquationNode, EquationNode
 } from './EquationNode';
 
