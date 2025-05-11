@@ -40,7 +40,7 @@ export default function EquationRenderer({
       />
       <span 
         ref={katexElementRef} 
-        className={inline ? "equation-renderer editor-equation-inline" : "equation-renderer editor-equation-block"} 
+        className={inline ? 'equation-renderer editor-equation-inline' : 'equation-renderer editor-equation-block'} 
       />
       <Image
         src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"

@@ -1,5 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { mergeRegister } from '@lexical/utils';
 import {
   $createNodeSelection,
@@ -18,9 +19,11 @@ import {
 } from 'lexical';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { $isEquationNode } from '.';
+
 import EquationEditor from './EquationEditor';
 import EquationRenderer from './EquationRenderer';
+
+import { $isEquationNode } from '.';
 
 type EquationComponentProps = {
   equation: string;
@@ -31,7 +34,7 @@ type EquationComponentProps = {
 export const SELECT_EQUATION_COMMAND: LexicalCommand<string> = 
   createCommand('SELECT_EQUATION_COMMAND');
 
-  export const EDIT_EQUATION_COMMAND: LexicalCommand<string> = 
+export const EDIT_EQUATION_COMMAND: LexicalCommand<string> = 
   createCommand('EDIT_EQUATION_COMMAND');
 
 
@@ -44,7 +47,7 @@ export default function EquationComponent({
   const isEditable = useLexicalEditable();
   const [equationValue, setEquationValue] = useState(equation);
   const [showEquationEditor, setShowEquationEditor] = useState<boolean>(false);
-  const [isSelected, setIsSelected] = useState(false);
+  const [isSelected] = useLexicalNodeSelection(nodeKey);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   // Handler to save changes and hide editor
@@ -81,16 +84,14 @@ export default function EquationComponent({
     }
   }, [showEquationEditor, equation, equationValue]);
 
-   // This ensures only one equation is selected or edited at a time
-   useEffect(() => {
+  // This ensures only one equation is selected or edited at a time
+  useEffect(() => {
     return mergeRegister(
+      // For selection coordination with other equations
       editor.registerCommand(
         SELECT_EQUATION_COMMAND,
         (selectedNodeKey) => {
-          if (selectedNodeKey === nodeKey) {
-            setIsSelected(true);
-          } else {
-            setIsSelected(false);
+          if (selectedNodeKey !== nodeKey) {
             setShowEquationEditor(false);
           }
           return false;
@@ -98,11 +99,11 @@ export default function EquationComponent({
         COMMAND_PRIORITY_HIGH,
       ),
       
+      // For editing coordination
       editor.registerCommand(
         EDIT_EQUATION_COMMAND,
         (editedNodeKey) => {
           if (editedNodeKey === nodeKey) {
-            setIsSelected(true);
             setShowEquationEditor(true);
           } else {
             setShowEquationEditor(false);
@@ -110,7 +111,7 @@ export default function EquationComponent({
           return false;
         },
         COMMAND_PRIORITY_HIGH,
-      )
+      ),
     );
   }, [editor, nodeKey]);
 
@@ -151,20 +152,7 @@ export default function EquationComponent({
       );
     }
     
-    // Track selection state and enable deletion
     return mergeRegister(
-      editor.registerUpdateListener(({editorState}) => {
-        const isNodeSelected = editorState.read(() => {
-          const selection = $getSelection();
-          return (
-            $isNodeSelection(selection) &&
-            selection.has(nodeKey) &&
-            selection.getNodes().length === 1
-          );
-        });
-        setIsSelected(isNodeSelected);
-      }),
-      
       // Handle delete and backspace keys
       editor.registerCommand(
         KEY_DELETE_COMMAND,
@@ -196,15 +184,25 @@ export default function EquationComponent({
     if (!isEditable) return;
     
     e.stopPropagation();
-    editor.dispatchCommand(SELECT_EQUATION_COMMAND, nodeKey);
     
-    // Also update Lexical's selection state
+    // Notify other equations to close their editors
+    if (!e.shiftKey) {
+      editor.dispatchCommand(SELECT_EQUATION_COMMAND, nodeKey);
+    }
+    
     editor.update(() => {
-      const node = $getNodeByKey(nodeKey);
-      if ($isEquationNode(node)) {
-        const selection = $createNodeSelection();
-        selection.add(nodeKey);
-        $setSelection(selection);
+      const selection = $getSelection();
+      
+      if (e.shiftKey && $isNodeSelection(selection)) {
+        if (selection.has(nodeKey)) {
+          selection.delete(nodeKey);
+        } else {
+          selection.add(nodeKey);
+        }
+      } else {
+        const newSelection = $createNodeSelection();
+        newSelection.add(nodeKey);
+        $setSelection(newSelection);
       }
     });
   }, [editor, isEditable, nodeKey]);

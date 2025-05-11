@@ -27,7 +27,7 @@ import {
   ComponentPickerPlugin,
   EquationPlugin,
   LinksPlugin,
-  TablePlugin
+  TablePlugin,
 } from './custom-plugins';
 import { OPENLEAF_TRANSFORMERS } from './custom-transformers/OpenleafTransformers';
 import DefaultTheme from './themes/DefaultTheme';

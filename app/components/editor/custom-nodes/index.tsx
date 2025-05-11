@@ -1,9 +1,9 @@
 export {
   $createInlineTableInputNode,
-  InlineTableInputNode
+  InlineTableInputNode,
 } from './InlineTableInputNode';
 
 export {
-  $createEquationNode, $isEquationNode, EquationNode
+  $createEquationNode, $isEquationNode, EquationNode,
 } from './EquationNode';
 

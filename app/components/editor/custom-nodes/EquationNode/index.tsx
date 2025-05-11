@@ -1,3 +1,10 @@
+
+import katex from 'katex';
+import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
+import { ReactElement } from 'react';
+
+import EquationComponent from './EquationComponent';
+
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -7,12 +14,6 @@ import type {
   SerializedLexicalNode,
   Spread,
 } from 'lexical';
-
-import katex from 'katex';
-import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
-import { ReactElement } from 'react';
-
-import EquationComponent from './EquationComponent';
 
 export type SerializedEquationNode = Spread<
   {
@@ -73,8 +74,8 @@ export class EquationNode extends DecoratorNode<ReactElement> {
   createDOM(_config: EditorConfig): HTMLElement {
     const element = document.createElement(this.__inline ? 'span' : 'div');
     element.className = this.__inline 
-    ? 'editor-equation editor-equation-inline' 
-    : 'editor-equation editor-equation-block';
+      ? 'editor-equation editor-equation-inline' 
+      : 'editor-equation editor-equation-block';
     return element;
   }
 

@@ -1,5 +1,6 @@
-import { $createEquationNode, $isEquationNode } from '@/app/components/editor/custom-nodes';
 import { TextMatchTransformer } from '@lexical/markdown';
+
+import { $createEquationNode, $isEquationNode } from '@/app/components/editor/custom-nodes';
 
 export const BLOCK_EQUATION: TextMatchTransformer = {
   dependencies: [],
