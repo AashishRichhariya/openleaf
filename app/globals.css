@@ -664,16 +664,16 @@ body {
   }
 
   .editor-equation-block {
-    @apply block text-center my-4;
+    @apply block text-center mx-auto w-fit max-w-full;
   }
 
   /* Equation Wrapper - Container for interactive selection */
   .equation-wrapper {
-    @apply relative rounded-squircle-xs cursor-pointer;
+    @apply relative inline-block w-fit max-w-full rounded-squircle-xs cursor-pointer;
   }
 
   .equation-selected {
-    @apply outline outline-2 outline-accent;
+    @apply border-2 border-surface-light;
   }
 
   /* Delete Button Controls */
@@ -688,9 +688,8 @@ body {
            transition-colors hover:bg-surface-dark-lighter;
   }
 
-  /* Equation Editor Interface - For editing LaTeX source */
   .equation-editor-container {
-    @apply flex items-center bg-surface-dark border border-surface-light rounded-squircle-xs;
+    @apply flex items-center bg-surface-dark border border-surface-light w-fit max-w-full rounded-squircle-xs;
   }
 
   .equation-editor-inline {
@@ -717,7 +716,7 @@ body {
 
   /* Equation Renderer - The actual rendered equation */
   .equation-renderer {
-    @apply inline-block;
+    @apply inline-block w-fit;
   }
 
   /* KaTeX styling overrides */
