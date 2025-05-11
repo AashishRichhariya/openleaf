@@ -654,17 +654,17 @@ body {
     @apply outline outline-1 outline-accent select-none;
   }
 
-  /* 1. Basic equation container styles - node-level */
+  /* Basic equation container styles - node-level */
   .editor-equation {
-    @apply select-none cursor-default min-h-[1em];
+    @apply select-none cursor-default min-h-4;
   }
 
   .editor-equation-inline {
-    @apply inline-block align-middle px-1;
+    @apply inline-block align-middle p-1;
   }
 
   .editor-equation-block {
-    @apply block text-center my-4 mx-auto w-fit max-w-full;
+    @apply block text-center mx-auto w-fit max-w-full px-2 m-2;
   }
 
   /* 2. Equation Wrapper - Interactive container */
@@ -697,7 +697,7 @@ body {
   }
 
   .equation-editor-block {
-    @apply flex-col p-2;
+    @apply flex-col;
   }
 
   .equation-editor-delimiter {
@@ -716,11 +716,11 @@ body {
 
   /* Equation Controls */
   .equation-controls {
-    @apply absolute -top-3 -right-3 z-10;
+    @apply absolute -top-2 -right-2 z-10;
   }
 
   .equation-delete-btn {
-    @apply flex items-center justify-center w-6 h-6 
+    @apply flex items-center justify-center w-4 h-4
          bg-surface-medium border border-surface-light rounded-full 
          text-lg font-bold text-red-500 
          transition-colors hover:bg-surface-dark-lighter;
