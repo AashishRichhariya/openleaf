@@ -1,4 +1,3 @@
-// EquationRenderer.tsx
 import katex from 'katex';
 import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';

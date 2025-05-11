@@ -12,7 +12,7 @@ import katex from 'katex';
 import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
 import { ReactElement } from 'react';
 
-import EquationRenderer from '@/app/components/editor/ui/EquationRenderer';
+import EquationComponent from './EquationComponent';
 
 export type SerializedEquationNode = Spread<
   {
@@ -138,9 +138,10 @@ export class EquationNode extends DecoratorNode<ReactElement> {
 
   decorate(): ReactElement {
     return (
-      <EquationRenderer
+      <EquationComponent
         equation={this.__equation}
         inline={this.__inline}
+        nodeKey={this.__key}
       />
     );
   }
