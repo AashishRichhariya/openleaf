@@ -72,7 +72,9 @@ export class EquationNode extends DecoratorNode<ReactElement> {
 
   createDOM(_config: EditorConfig): HTMLElement {
     const element = document.createElement(this.__inline ? 'span' : 'div');
-    element.className = 'editor-equation';
+    element.className = this.__inline 
+    ? 'editor-equation editor-equation-inline' 
+    : 'editor-equation editor-equation-block';
     return element;
   }
 

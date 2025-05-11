@@ -660,11 +660,11 @@ body {
   }
 
   .editor-equation-inline {
-    @apply inline-block align-middle px-1;
+    @apply inline-block px-1;
   }
 
   .editor-equation-block {
-    @apply block text-center my-4;
+    @apply block text-lg text-center my-4;
   }
 
   .equation-renderer {
