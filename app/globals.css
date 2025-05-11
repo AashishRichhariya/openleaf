@@ -654,7 +654,7 @@ body {
     @apply outline outline-1 outline-accent select-none;
   }
 
-  /* Basic equation container styles */
+  /* 1. Basic equation container styles - node-level */
   .editor-equation {
     @apply select-none cursor-default min-h-[1em];
   }
@@ -664,32 +664,32 @@ body {
   }
 
   .editor-equation-block {
-    @apply block text-center mx-auto w-fit max-w-full;
+    @apply block text-center my-4 mx-auto w-fit max-w-full;
   }
 
-  /* Equation Wrapper - Container for interactive selection */
+  /* 2. Equation Wrapper - Interactive container */
   .equation-wrapper {
-    @apply relative inline-block w-fit max-w-full rounded-squircle-xs cursor-pointer;
+    @apply relative inline-block w-fit max-w-full cursor-pointer rounded-squircle-xs;
+  }
+
+  /* Special handling for block equation wrappers */
+  .editor-equation-block .equation-wrapper {
+    @apply block mx-auto;
   }
 
   .equation-selected {
-    @apply border-2 border-surface-light;
+    @apply border border-surface-light bg-code-bg;
   }
 
-  /* Delete Button Controls */
-  .equation-controls {
-    @apply absolute -top-3 -right-3 z-10;
+  /* 3. Rendered Equation */
+  .equation-renderer {
+    @apply inline-block w-fit;
   }
 
-  .equation-delete-btn {
-    @apply flex items-center justify-center w-6 h-6 
-           bg-surface-medium border border-surface-light rounded-full 
-           text-lg font-bold text-red-500 
-           transition-colors hover:bg-surface-dark-lighter;
-  }
-
+  /* 4. Equation Editor Interface */
   .equation-editor-container {
-    @apply flex items-center bg-surface-dark border border-surface-light w-fit max-w-full rounded-squircle-xs;
+    @apply flex items-center bg-surface-dark border border-surface-light 
+         w-fit max-w-full rounded-squircle-xs;
   }
 
   .equation-editor-inline {
@@ -706,7 +706,7 @@ body {
 
   .equation-editor-input {
     @apply bg-transparent border-none outline-none focus:outline-none 
-           text-foreground min-w-[100px] flex-grow;
+         text-foreground min-w-[100px] flex-grow;
   }
 
   /* Block editor input needs extra styles */
@@ -714,9 +714,16 @@ body {
     @apply min-h-[80px] resize-none w-full p-2;
   }
 
-  /* Equation Renderer - The actual rendered equation */
-  .equation-renderer {
-    @apply inline-block w-fit;
+  /* Equation Controls */
+  .equation-controls {
+    @apply absolute -top-3 -right-3 z-10;
+  }
+
+  .equation-delete-btn {
+    @apply flex items-center justify-center w-6 h-6 
+         bg-surface-medium border border-surface-light rounded-full 
+         text-lg font-bold text-red-500 
+         transition-colors hover:bg-surface-dark-lighter;
   }
 
   /* KaTeX styling overrides */
