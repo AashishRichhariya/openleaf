@@ -48,7 +48,7 @@ export default function EquationComponent({
   const [equationValue, setEquationValue] = useState(equation);
   const [showEquationEditor, setShowEquationEditor] = useState<boolean>(false);
   const [isSelected] = useLexicalNodeSelection(nodeKey);
-  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Handler to save changes and hide editor
   const onHide = useCallback(

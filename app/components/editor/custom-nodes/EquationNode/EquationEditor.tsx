@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref } from 'react';
+import React, { forwardRef, Ref, RefObject } from 'react';
 
 type EquationEditorProps = {
   equation: string;
@@ -8,23 +8,25 @@ type EquationEditorProps = {
 
 function EquationEditor(
   { equation, setEquation, inline }: EquationEditorProps,
-  forwardedRef: Ref<HTMLDivElement>
+  forwardedRef: Ref<HTMLInputElement>,
 ): React.ReactElement {
-  const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
-    setEquation(event.currentTarget.textContent || '');
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEquation(event.target.value);
   };
 
   const delimiter = inline ? '$' : '$$';
+  
   return (
-    <span className={`equation-editor-container equation-editor-inline`}>
+    <span className="equation-editor-container equation-editor-inline">
       <span className="equation-editor-delimiter">{delimiter}</span>
-      <div
-        className="equation-editor-content"
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        ref={forwardedRef}
-        dangerouslySetInnerHTML={{ __html: equation }}
+      <input
+        className="equation-editor-input"
+        value={equation}
+        onChange={handleChange}
+        autoFocus
+        ref={forwardedRef as RefObject<HTMLInputElement>}
+        size={Math.max(equation.length + 2, 5)}
+        placeholder="y=mx+c"
       />
       <span className="equation-editor-delimiter">{delimiter}</span>
     </span>
