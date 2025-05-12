@@ -1,5 +1,4 @@
-import { isHTMLElement } from 'lexical';
-import React, { ChangeEvent, forwardRef, Ref, RefObject } from 'react';
+import React, { forwardRef, Ref } from 'react';
 
 type EquationEditorProps = {
   equation: string;
@@ -9,36 +8,26 @@ type EquationEditorProps = {
 
 function EquationEditor(
   { equation, setEquation, inline }: EquationEditorProps,
-  forwardedRef: Ref<HTMLInputElement | HTMLTextAreaElement>,
+  forwardedRef: Ref<HTMLDivElement>
 ): React.ReactElement {
-  const onChange = (event: ChangeEvent) => {
-    setEquation((event.target as HTMLInputElement).value);
+  const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
+    setEquation(event.currentTarget.textContent || '');
   };
 
-  return inline && isHTMLElement(forwardedRef) ? (
-    <span className="equation-editor-container equation-editor-inline">
-      <span className="equation-editor-delimiter">$</span>
-      <input
-        className="equation-editor-input"
-        value={equation}
-        onChange={onChange}
-        autoFocus={true}
-        ref={forwardedRef as RefObject<HTMLInputElement>}
+  const delimiter = inline ? '$' : '$$';
+  return (
+    <span className={`equation-editor-container equation-editor-inline`}>
+      <span className="equation-editor-delimiter">{delimiter}</span>
+      <div
+        className="equation-editor-content"
+        contentEditable
+        suppressContentEditableWarning
+        onInput={handleInput}
+        ref={forwardedRef}
+        dangerouslySetInnerHTML={{ __html: equation }}
       />
-      <span className="equation-editor-delimiter">$</span>
+      <span className="equation-editor-delimiter">{delimiter}</span>
     </span>
-  ) : (
-    <div className="equation-editor-container equation-editor-block">
-      <span className="equation-editor-delimiter">$$</span>
-      <textarea
-        className="equation-editor-input"
-        value={equation}
-        onChange={onChange}
-        autoFocus={true}
-        ref={forwardedRef as RefObject<HTMLTextAreaElement>}
-      />
-      <span className="equation-editor-delimiter">$$</span>
-    </div>
   );
 }
 
