@@ -239,7 +239,7 @@ export default function EquationComponent({
               <button 
                 className="equation-delete-btn" 
                 onClick={(e) => {
-                  e.stopPropagation(); // NEW: Prevent click from bubbling
+                  e.stopPropagation();
                   onDelete();
                 }}
                 aria-label="Delete equation"

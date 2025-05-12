@@ -660,7 +660,7 @@ body {
   }
 
   .editor-equation-inline {
-    @apply inline-block align-middle p-1;
+    @apply inline-block align-middle p-1 mx-auto w-fit max-w-full;
   }
 
   .editor-equation-block {
