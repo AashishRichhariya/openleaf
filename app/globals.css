@@ -683,7 +683,7 @@ body {
 
   /* 3. Rendered Equation */
   .equation-renderer {
-    @apply inline-block w-fit;
+    @apply inline-block w-fit overflow-x-auto;
   }
 
   /* 4. Equation Editor Interface */
