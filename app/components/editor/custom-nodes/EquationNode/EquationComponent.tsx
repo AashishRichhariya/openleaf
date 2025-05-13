@@ -247,7 +247,16 @@ export default function EquationComponent({
       ),
     );
     
-  }, [editor, nodeKey, exitEditMode, showEquationEditor, isEditable, isSelected, onDelete]);
+  }, [
+    editor, 
+    nodeKey, 
+    exitEditMode, 
+    enterEditMode, 
+    showEquationEditor, 
+    isEditable, 
+    isSelected, 
+    onDelete,
+  ]);
 
   // MOUSE HANDLERS: Handle click events
   const handleClick = useCallback((e: React.MouseEvent) => {
@@ -269,7 +278,6 @@ export default function EquationComponent({
     
     enterEditMode();
   }, [isEditable, enterEditMode]);
-
 
   //  RENDER: Component UI
   return (
