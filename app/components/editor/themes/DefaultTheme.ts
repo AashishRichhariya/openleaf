@@ -108,6 +108,12 @@ const defaultTheme = {
   tableSelection: 'editor-table-selection',
   tableActionMenuDropdown: 'table-action-menu-dropdown',
   tableActionMenuItem: 'table-action-menu-item',
+  equation: {
+    container: 'editor-equation',
+    inline: 'editor-equation-inline',
+    block: 'editor-equation-block',
+    renderer: 'equation-renderer',
+  },
 };
 
 export default defaultTheme;

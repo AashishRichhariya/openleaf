@@ -22,9 +22,10 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { EditorState } from 'lexical';
 import { ReactElement, useState } from 'react';
 
-import { InlineTableInputNode } from './custom-nodes';
+import { EquationNode, InlineTableInputNode } from './custom-nodes';
 import {
   ComponentPickerPlugin,
+  EquationPlugin,
   LinksPlugin,
   TablePlugin,
 } from './custom-plugins';
@@ -75,6 +76,7 @@ export default function Editor({
       LinkNode,
       InlineTableInputNode,
       HorizontalRuleNode,
+      EquationNode,
     ],
     editorState: initialContent,
   };
@@ -108,6 +110,7 @@ export default function Editor({
           />
           <LinksPlugin/>
           <TablePlugin anchorElem={floatingAnchorElem} />
+          <EquationPlugin />
         </div>
       </LexicalComposer>
     </div>

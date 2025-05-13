@@ -661,4 +661,85 @@ body {
   .editor-horizontal-rule-selected {
     @apply outline outline-1 outline-accent select-none;
   }
+
+  /* Basic equation container styles - node-level */
+  .editor-equation {
+    @apply select-none cursor-default min-h-4;
+  }
+
+  .editor-equation-inline {
+    @apply inline-block align-middle p-1 mx-auto w-fit max-w-full;
+  }
+
+  .editor-equation-block {
+    @apply block text-center mx-auto w-fit max-w-full px-2 m-2;
+  }
+
+  /* 2. Equation Wrapper - Interactive container */
+  .equation-wrapper {
+    @apply relative inline-block w-fit max-w-full cursor-pointer rounded-squircle-xs;
+  }
+
+  /* Special handling for block equation wrappers */
+  .editor-equation-block .equation-wrapper {
+    @apply block mx-auto;
+  }
+
+  .equation-selected {
+    @apply border border-surface-light bg-code-bg;
+  }
+
+  /* 3. Rendered Equation */
+  .equation-renderer {
+    @apply inline-block w-fit overflow-x-auto;
+  }
+
+  /* 4. Equation Editor Interface */
+  .equation-editor-container {
+    @apply flex items-center bg-surface-dark border border-surface-light 
+        max-w-full rounded-squircle-xs;
+  }
+
+  .equation-editor-inline {
+    @apply inline-flex;
+  }
+
+  .equation-editor-wrapper {
+    @apply inline;
+  }
+
+  .equation-editor-delimiter {
+    @apply text-text-tertiary text-xs font-mono px-1 flex-shrink-0;
+  }
+
+  .equation-editor-input {
+    @apply bg-transparent outline-none text-foreground text-center font-mono 
+            border-0 text-sm px-2 py-1 mx-1 rounded-squircle-xs min-w-[10ch] max-w-[80ch] 
+            placeholder:text-text-tertiary placeholder:font-mono;
+  }
+
+  /* Equation Controls */
+  .equation-controls {
+    @apply absolute -top-2 -right-2 z-10;
+  }
+
+  .equation-delete-btn {
+    @apply flex items-center justify-center w-4 h-4
+         bg-surface-medium border border-surface-light rounded-full 
+         text-lg font-bold text-red-500 
+         transition-colors hover:bg-surface-dark-lighter;
+  }
+
+  /* KaTeX styling overrides */
+  .katex {
+    @apply text-foreground;
+  }
+
+  .katex-display {
+    @apply block text-center overflow-x-auto overflow-y-hidden;
+  }
+
+  .katex-error {
+    @apply text-red-500 whitespace-normal;
+  }
 }
