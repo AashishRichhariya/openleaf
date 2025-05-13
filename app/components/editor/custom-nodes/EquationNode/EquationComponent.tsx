@@ -12,6 +12,7 @@ import {
   createCommand,
   KEY_BACKSPACE_COMMAND,
   KEY_DELETE_COMMAND,
+  KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
   LexicalCommand,
   NodeKey,
@@ -65,6 +66,11 @@ export default function EquationComponent({
       
       if (shiftKey && $isNodeSelection(selection)) {
         // Multi-select logic
+        if (selection.has(nodeKey)) {
+          selection.delete(nodeKey);  // Remove if already selected
+        } else {
+          selection.add(nodeKey);     // Add if not selected
+        }
       } else {
         // Single select
         const newSelection = $createNodeSelection();
@@ -176,6 +182,19 @@ export default function EquationComponent({
           },
           COMMAND_PRIORITY_HIGH,
         ),
+        editor.registerCommand(
+          KEY_ENTER_COMMAND,
+          () => {
+            const activeElement = document.activeElement;
+            const inputElem = inputRef.current;
+            if (inputElem === activeElement) {
+              exitEditMode({ restoreSelection: true });
+              return true;
+            }
+            return false;
+          },
+          COMMAND_PRIORITY_HIGH,
+        ),
       );
     }
     
@@ -204,7 +223,30 @@ export default function EquationComponent({
         },
         COMMAND_PRIORITY_HIGH,
       ),
+      editor.registerCommand(
+        KEY_ENTER_COMMAND,
+        () => {
+          if (isSelected) {
+            // Check for multiple selection - ignore Enter if multiple nodes selected
+            let shouldEdit = true;
+            editor.getEditorState().read(() => {
+              const selection = $getSelection();
+              if ($isNodeSelection(selection) && selection.getNodes().length > 1) {
+                shouldEdit = false;
+              }
+            });
+            
+            if (shouldEdit) {
+              enterEditMode();
+              return true;
+            }
+          }
+          return false;
+        },
+        COMMAND_PRIORITY_HIGH,
+      ),
     );
+    
   }, [editor, nodeKey, exitEditMode, showEquationEditor, isEditable, isSelected, onDelete]);
 
   // MOUSE HANDLERS: Handle click events
