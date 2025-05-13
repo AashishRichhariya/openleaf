@@ -55,7 +55,7 @@ export default function EquationComponent({
     
     const { shiftKey = false } = options || {};
     
-    // Notify other equations to close their editors (unless shift-clicking)
+    // Notify other equations to close their editors
     if (!shiftKey) {
       editor.dispatchCommand(SELECT_EQUATION_COMMAND, nodeKey);
     }
@@ -64,12 +64,7 @@ export default function EquationComponent({
       const selection = $getSelection();
       
       if (shiftKey && $isNodeSelection(selection)) {
-        // Multi-select with shift
-        if (selection.has(nodeKey)) {
-          selection.delete(nodeKey);
-        } else {
-          selection.add(nodeKey);
-        }
+        // Multi-select logic
       } else {
         // Single select
         const newSelection = $createNodeSelection();
@@ -212,15 +207,20 @@ export default function EquationComponent({
     );
   }, [editor, nodeKey, exitEditMode, showEquationEditor, isEditable, isSelected, onDelete]);
 
-  
   // MOUSE HANDLERS: Handle click events
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (!isEditable) return;
     e.stopPropagation();
+
+    // If already selected and not shift-clicking, enter edit mode
+    if (isSelected && !e.shiftKey && !showEquationEditor) {
+      enterEditMode();
+      return;
+    }
     
     enterSelectMode({ shiftKey: e.shiftKey });
-  }, [isEditable, enterSelectMode]);
-  
+  }, [isEditable, enterSelectMode, isSelected, showEquationEditor, enterEditMode]);
+
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     if (!isEditable) return;
     e.stopPropagation();
