@@ -1,9 +1,9 @@
 
 import katex from 'katex';
 import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
-import EquationComponent from './EquationComponent';
+const EquationComponent = React.lazy(() => import('./EquationComponent'));
 
 import type {
   DOMConversionMap,
