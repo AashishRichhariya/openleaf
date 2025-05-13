@@ -14,6 +14,12 @@ function EquationEditor(
     setEquation(event.target.value);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+      event.stopPropagation();
+    }
+  };
+
   const delimiter = inline ? '$' : '$$';
   
   return (
@@ -23,6 +29,7 @@ function EquationEditor(
         className="equation-editor-input"
         value={equation ?? ''}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
         autoFocus
         ref={forwardedRef as RefObject<HTMLInputElement>}
         size={Math.max((equation ?? '').length + 2, 5)}
