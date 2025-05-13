@@ -50,22 +50,54 @@ export default function EquationComponent({
   const [isSelected] = useLexicalNodeSelection(nodeKey);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Handler to save changes and hide editor
-  const onHide = useCallback(
-    (restoreSelection?: boolean) => {
-      setShowEquationEditor(false);
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isEquationNode(node)) {
-          node.setEquation(equationValue);
-          if (restoreSelection) {
-            node.selectNext(0, 0);
-          }
+  const enterSelectMode = useCallback((options?: { shiftKey?: boolean }) => {
+    if (!isEditable) return;
+    
+    const { shiftKey = false } = options || {};
+    
+    // Notify other equations to close their editors (unless shift-clicking)
+    if (!shiftKey) {
+      editor.dispatchCommand(SELECT_EQUATION_COMMAND, nodeKey);
+    }
+    
+    editor.update(() => {
+      const selection = $getSelection();
+      
+      if (shiftKey && $isNodeSelection(selection)) {
+        // Multi-select with shift
+        if (selection.has(nodeKey)) {
+          selection.delete(nodeKey);
+        } else {
+          selection.add(nodeKey);
         }
-      });
-    },
-    [editor, equationValue, nodeKey],
-  );
+      } else {
+        // Single select
+        const newSelection = $createNodeSelection();
+        newSelection.add(nodeKey);
+        $setSelection(newSelection);
+      }
+    });
+  }, [editor, isEditable, nodeKey]);
+
+  const enterEditMode = useCallback(() => {
+    if (!isEditable) return;
+    editor.dispatchCommand(EDIT_EQUATION_COMMAND, nodeKey);
+  }, [editor, isEditable, nodeKey]);
+
+  const exitEditMode = useCallback((options?: { restoreSelection?: boolean }) => {
+    const { restoreSelection = false } = options || {};
+    
+    setShowEquationEditor(false);
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isEquationNode(node)) {
+        node.setEquation(equationValue);
+        if (restoreSelection) {
+          node.selectNext(0, 0);
+        }
+      }
+    });
+  }, [editor, equationValue, nodeKey]);
 
   // Handle deletion
   const onDelete = useCallback(() => {
@@ -84,7 +116,7 @@ export default function EquationComponent({
     }
   }, [showEquationEditor, equation, equationValue]);
 
-  // This ensures only one equation is selected or edited at a time
+  // COMMAND COORDINATION: Manage selection and editing coordination between equations
   useEffect(() => {
     return mergeRegister(
       // For selection coordination with other equations
@@ -115,7 +147,7 @@ export default function EquationComponent({
     );
   }, [editor, nodeKey]);
 
-  // Register selection and key command handlers
+  // KEYBOARD HANDLERS: Register keyboard event handlers
   useEffect(() => {
     if (!isEditable) {
       return;
@@ -130,7 +162,7 @@ export default function EquationComponent({
             const activeElement = document.activeElement;
             const inputElem = inputRef.current;
             if (inputElem !== activeElement) {
-              onHide();
+              exitEditMode();
             }
             return false;
           },
@@ -142,7 +174,7 @@ export default function EquationComponent({
             const activeElement = document.activeElement;
             const inputElem = inputRef.current;
             if (inputElem === activeElement) {
-              onHide(true);
+              exitEditMode({ restoreSelection: true });
               return true;
             }
             return false;
@@ -152,6 +184,7 @@ export default function EquationComponent({
       );
     }
     
+    // Handlers for when in select mode
     return mergeRegister(
       // Handle delete and backspace keys
       editor.registerCommand(
@@ -177,47 +210,26 @@ export default function EquationComponent({
         COMMAND_PRIORITY_HIGH,
       ),
     );
-  }, [editor, nodeKey, onHide, showEquationEditor, isEditable, isSelected, onDelete]);
+  }, [editor, nodeKey, exitEditMode, showEquationEditor, isEditable, isSelected, onDelete]);
 
-
+  
+  // MOUSE HANDLERS: Handle click events
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (!isEditable) return;
-    
     e.stopPropagation();
     
-    // Notify other equations to close their editors
-    if (!e.shiftKey) {
-      editor.dispatchCommand(SELECT_EQUATION_COMMAND, nodeKey);
-    }
-    
-    editor.update(() => {
-      const selection = $getSelection();
-      
-      if (e.shiftKey && $isNodeSelection(selection)) {
-        if (selection.has(nodeKey)) {
-          selection.delete(nodeKey);
-        } else {
-          selection.add(nodeKey);
-        }
-      } else {
-        const newSelection = $createNodeSelection();
-        newSelection.add(nodeKey);
-        $setSelection(newSelection);
-      }
-    });
-  }, [editor, isEditable, nodeKey]);
+    enterSelectMode({ shiftKey: e.shiftKey });
+  }, [isEditable, enterSelectMode]);
   
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     if (!isEditable) return;
-    
     e.stopPropagation();
     
-    // Dispatch command to edit this equation and close other editors
-    editor.dispatchCommand(EDIT_EQUATION_COMMAND, nodeKey);
-  }, [editor, isEditable, nodeKey]);
+    enterEditMode();
+  }, [isEditable, enterEditMode]);
 
 
-  // Render based on state
+  //  RENDER: Component UI
   return (
     <div 
       className={`equation-wrapper ${isSelected ? 'equation-selected' : ''}`}
