@@ -17,6 +17,7 @@ import { $createEquationNode, EquationNode } from '@/app/components/editor/custo
 type CommandPayload = {
   equation: string;
   inline: boolean;
+  startInEditMode?: boolean;
 };
 
 export const INSERT_EQUATION_COMMAND: LexicalCommand<CommandPayload> =
@@ -36,8 +37,8 @@ export function EquationPlugin(): React.ReactElement | null {
     return editor.registerCommand<CommandPayload>(
       INSERT_EQUATION_COMMAND,
       (payload) => {
-        const {equation, inline} = payload;
-        const equationNode = $createEquationNode(equation, inline);
+        const {equation, inline, startInEditMode} = payload;
+        const equationNode = $createEquationNode(equation, inline, startInEditMode);
 
         $insertNodes([equationNode]);
         if ($isRootOrShadowRoot(equationNode.getParentOrThrow())) {

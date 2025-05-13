@@ -27,6 +27,8 @@ import * as ReactDOM from 'react-dom';
 
 import { $createInlineTableInputNode } from '../custom-nodes';
 
+import { INSERT_EQUATION_COMMAND } from './EquationPlugin';
+
 import type { JSX } from 'react';
 
 class ComponentPickerOption extends MenuOption {
@@ -213,6 +215,26 @@ function getBaseOptions(editor: LexicalEditor) {
           if ($isRangeSelection(selection)) {
             $setBlocksType(selection, () => $createQuoteNode());
           }
+        }),
+    }),
+    new ComponentPickerOption('Inline Equation', {
+      icon: <i className="icon equation" />,
+      keywords: ['equation', 'inline', 'inline equation', 'math', 'formula', 'inline math', '$'],
+      onSelect: () =>
+        editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
+          equation: '',
+          inline: true,
+          startInEditMode: true,
+        }),
+    }),
+    new ComponentPickerOption('Block Equation', {
+      icon: <i className="icon equation" />,
+      keywords: ['equation', 'block', 'block equation', 'display', 'display equation', 'math', 'formula', '$$', 'centered'],
+      onSelect: () =>
+        editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
+          equation: '',
+          inline: false,
+          startInEditMode: true,
         }),
     }),
     new ComponentPickerOption('Code', {

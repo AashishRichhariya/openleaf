@@ -7,7 +7,7 @@ type EquationEditorProps = {
 };
 
 function EquationEditor(
-  { equation, setEquation, inline }: EquationEditorProps,
+  { equation = '', setEquation, inline }: EquationEditorProps,
   forwardedRef: Ref<HTMLInputElement>,
 ): React.ReactElement {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,11 +21,11 @@ function EquationEditor(
       <span className="equation-editor-delimiter">{delimiter}</span>
       <input
         className="equation-editor-input"
-        value={equation}
+        value={equation ?? ''}
         onChange={handleChange}
         autoFocus
         ref={forwardedRef as RefObject<HTMLInputElement>}
-        size={Math.max(equation.length + 2, 5)}
+        size={Math.max((equation ?? '').length + 2, 5)}
         placeholder="y=mx+c"
       />
       <span className="equation-editor-delimiter">{delimiter}</span>

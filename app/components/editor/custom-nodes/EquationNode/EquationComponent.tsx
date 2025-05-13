@@ -30,6 +30,7 @@ type EquationComponentProps = {
   equation: string;
   inline: boolean;
   nodeKey: NodeKey;
+  startInEditMode?: boolean;
 };
 
 export const SELECT_EQUATION_COMMAND: LexicalCommand<string> = 
@@ -43,11 +44,12 @@ export default function EquationComponent({
   equation,
   inline,
   nodeKey,
+  startInEditMode = false,
 }: EquationComponentProps): React.ReactElement {
   const [editor] = useLexicalComposerContext();
   const isEditable = useLexicalEditable();
   const [equationValue, setEquationValue] = useState(equation);
-  const [showEquationEditor, setShowEquationEditor] = useState<boolean>(false);
+  const [showEquationEditor, setShowEquationEditor] = useState<boolean>(startInEditMode);
   const [isSelected] = useLexicalNodeSelection(nodeKey);
   const inputRef = useRef<HTMLInputElement>(null);
 

@@ -8,7 +8,7 @@ interface EquationRendererProps {
 }
 
 export default function EquationRenderer({
-  equation,
+  equation = '',
   inline,
 }: EquationRendererProps): React.ReactElement {
   const katexElementRef = useRef<HTMLSpanElement>(null);
@@ -17,7 +17,7 @@ export default function EquationRenderer({
     const katexElement = katexElementRef.current;
 
     if (katexElement !== null) {
-      katex.render(equation, katexElement, {
+      katex.render(equation ?? '', katexElement, {
         displayMode: !inline, 
         errorColor: '#cc0000',
         output: 'html',
