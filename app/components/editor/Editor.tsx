@@ -24,6 +24,7 @@ import { ReactElement, useState } from 'react';
 
 import { EquationNode, InlineTableInputNode } from './custom-nodes';
 import {
+  CodeHighlightPlugin,
   ComponentPickerPlugin,
   EquationPlugin,
   LinksPlugin,
@@ -101,6 +102,7 @@ export default function Editor({
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
+          <CodeHighlightPlugin />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
           <HorizontalRulePlugin />
