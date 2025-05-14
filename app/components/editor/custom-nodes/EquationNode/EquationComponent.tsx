@@ -95,6 +95,7 @@ export default function EquationComponent({
       const node = $getNodeByKey(nodeKey);
       if ($isEquationNode(node)) {
         node.setEquation(equationValue);
+        node.clearStartInEditMode();
         if (restoreSelection) {
           node.selectNext(0, 0);
         }

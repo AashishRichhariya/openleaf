@@ -131,6 +131,13 @@ export class EquationNode extends DecoratorNode<ReactElement> {
     return this.__inline !== prevNode.__inline;
   }
 
+  clearStartInEditMode(): void {
+    if (this.__startInEditMode) {
+      const writable = this.getWritable();
+      writable.__startInEditMode = false;
+    }
+  }
+
   getTextContent(): string {
     return this.__equation;
   }
