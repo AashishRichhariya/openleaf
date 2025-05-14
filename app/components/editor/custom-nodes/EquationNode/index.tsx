@@ -1,8 +1,9 @@
 
 import katex from 'katex';
 import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
-import dynamic from 'next/dynamic';
 import { ReactElement } from 'react';
+
+import EquationComponent from './EquationComponent';
 
 import type {
   DOMConversionMap,
@@ -13,10 +14,6 @@ import type {
   SerializedLexicalNode,
   Spread,
 } from 'lexical';
-
-const EquationComponent = dynamic(() => import('./EquationComponent'), {
-  ssr: false,  
-});
 
 export type SerializedEquationNode = Spread<
   {
