@@ -30,7 +30,7 @@ export default function EditorContainer({
       const currentContent = JSON.stringify(editorStateJson);
       if (currentContent !== lastSavedContentRef.current) {
         await saveDocument(slug, editorStateJson, isReadOnly, isNewDocument);
-        console.log('Document saved successfully');
+        process.env.NODE_ENV === 'development' && console.log('Document saved successfully');
         isNewDocument = false;
         lastSavedContentRef.current = currentContent;
       }
