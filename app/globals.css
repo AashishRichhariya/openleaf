@@ -742,4 +742,104 @@ body {
   .katex-error {
     @apply text-red-500 whitespace-normal;
   }
+
+  /* Code Block Component */
+  /* Main code block container */
+  .editor-code {
+    @apply bg-code-bg font-mono block relative overflow-x-auto
+           mt-4 mb-4 text-sm leading-normal border border-surface-light
+           rounded-squircle-sm p-2 pl-14 ml-0 mr-0;
+    tab-size: 2;
+  }
+
+  /* Line numbers gutter */
+  .editor-code::before {
+    content: attr(data-gutter);
+    @apply absolute bg-surface-medium-darker left-0 top-0 
+           border-r border-surface-light p-2 text-text-tertiary
+           whitespace-pre-wrap text-right min-w-[40px] h-full
+           text-xs leading-normal;
+  }
+
+  /* Inline code styling (keeping your existing style) */
+  .editor-text-code {
+    @apply bg-code-bg px-1 py-[1px] my-[1px] mx-1 rounded-squircle-xs 
+           font-mono text-sm border border-surface-light;
+  }
+
+  /* Syntax highlighting tokens - Snake case naming */
+  .editor-token-comment {
+    @apply text-text-tertiary italic;
+  }
+
+  .editor-token-punctuation {
+    @apply text-text-secondary;
+  }
+
+  .editor-token-property {
+    @apply text-purple-300;
+  }
+
+  .editor-token-selector {
+    @apply text-green-300;
+  }
+
+  .editor-token-operator {
+    @apply text-orange-300;
+  }
+
+  .editor-token-attr {
+    @apply text-blue-300;
+  }
+
+  .editor-token-variable {
+    @apply text-yellow-300;
+  }
+
+  .editor-token-function {
+    @apply text-pink-300;
+  }
+
+  /* Additional token types */
+  .editor-token-boolean,
+  .editor-token-constant,
+  .editor-token-deleted,
+  .editor-token-number,
+  .editor-token-symbol,
+  .editor-token-tag {
+    @apply text-purple-300;
+  }
+
+  .editor-token-builtin,
+  .editor-token-char,
+  .editor-token-inserted,
+  .editor-token-string {
+    @apply text-green-300;
+  }
+
+  .editor-token-class,
+  .editor-token-class-name {
+    @apply text-pink-300;
+  }
+
+  .editor-token-prolog,
+  .editor-token-doctype,
+  .editor-token-cdata {
+    @apply text-text-tertiary italic;
+  }
+
+  .editor-token-keyword {
+    @apply text-blue-300;
+  }
+
+  .editor-token-namespace,
+  .editor-token-regex,
+  .editor-token-important {
+    @apply text-yellow-300;
+  }
+
+  .editor-token-entity,
+  .editor-token-url {
+    @apply text-orange-300;
+  }
 }
