@@ -24,10 +24,11 @@ import { ReactElement, useState } from 'react';
 
 import { EquationNode, InlineTableInputNode } from './custom-nodes';
 import {
+  CodeHighlightPlugin,
   ComponentPickerPlugin,
   EquationPlugin,
   LinksPlugin,
-  TablePlugin,
+  TablePlugin
 } from './custom-plugins';
 import { OPENLEAF_TRANSFORMERS } from './custom-transformers/OpenleafTransformers';
 import DefaultTheme from './themes/DefaultTheme';
@@ -101,6 +102,7 @@ export default function Editor({
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
+          <CodeHighlightPlugin />
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
           <HorizontalRulePlugin />
