@@ -326,7 +326,7 @@ body {
 
   /* Typeahead Menu Components */
   .typeahead-popover {
-    @apply relative bg-surface-medium shadow-lg rounded-squircle-sm py-2;
+    @apply relative bg-surface-medium shadow-lg rounded-squircle-sm py-2 border border-surface-light;
   }
 
   .typeahead-popover ul {
@@ -340,7 +340,7 @@ body {
   }
 
   .typeahead-popover ul li {
-    @apply m-0 min-w-[180px] text-sm outline-none cursor-pointer rounded-lg;
+    @apply m-0 min-w-[180px] text-sm outline-none cursor-pointer rounded-squircle-xxs;
   }
 
   .typeahead-popover ul li.selected {
@@ -348,7 +348,7 @@ body {
   }
 
   .typeahead-popover li {
-    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-surface-medium rounded-lg border-0;
+    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-surface-medium rounded-squircle-xxs border-0;
   }
 
   .typeahead-popover li.active {
@@ -381,7 +381,7 @@ body {
   }
 
   .component-picker-menu .item {
-    @apply items-center cursor-pointer flex flex-row p-2 mx-2 rounded;
+    @apply items-center cursor-pointer flex flex-row p-2 mx-2 rounded-squircle-xxs;
   }
 
   .component-picker-menu .item.selected {
@@ -522,12 +522,12 @@ body {
   }
 
   .table-action-menu-dropdown {
-    @apply bg-surface-medium rounded-squircle-sm shadow-md absolute z-50 w-52 opacity-0
-          transition-opacity duration-100;
+    @apply bg-surface-medium rounded-squircle-sm shadow-lg absolute z-50 w-52 opacity-0
+          transition-opacity duration-100 p-2 m-2 border border-surface-light;
   }
 
   .table-action-menu-dropdown .table-action-menu-item {
-    @apply flex items-center px-3 py-2 border-0 bg-transparent
+    @apply flex items-center rounded-squircle-xxs px-2 py-2 border-0 bg-transparent
           w-full text-left cursor-pointer text-sm text-foreground;
   }
 
@@ -538,6 +538,15 @@ body {
   .table-action-menu-dropdown hr {
     @apply my-1 border-0 border-t border-surface-light;
   }
+
+  .table-action-menu-dropdown .table-action-menu-item:first-of-type {
+    @apply rounded-t-lg;
+  }
+
+  .table-action-menu-dropdown .table-action-menu-item:last-of-type {
+    @apply rounded-b-lg;
+  }
+
   /* Selection handling */
   .editor-table-selection *::selection {
     @apply bg-transparent;
