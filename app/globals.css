@@ -370,10 +370,13 @@ body {
   .typeahead-popover li .text {
     @apply flex leading-5 flex-grow min-w-[150px];
   }
-
+  /* 
   .typeahead-popover li .icon {
     @apply flex w-5 h-5 select-none mr-2 leading-4 bg-contain bg-no-repeat bg-center;
-  }
+  } */
+  /* .typeahead-popover li .icon {
+    @apply flex mr-2;
+  } */
 
   /* Component Picker Specific */
   .component-picker-menu {
@@ -392,9 +395,13 @@ body {
     @apply bg-surface-light;
   }
 
-  .component-picker-menu .item .icon {
+  /* .component-picker-menu .item .icon {
     @apply flex mr-2 w-5 h-5 select-none;
-  }
+  } */
+
+  /* .component-picker-menu .item .icon {
+    @apply flex mr-2;
+  } */
 
   .component-picker-menu .item .text {
     @apply flex leading-5 flex-grow min-w-[150px];
@@ -850,5 +857,18 @@ body {
   .editor-token-entity,
   .editor-token-url {
     @apply text-orange-300;
+  }
+
+  /* icons */
+  .icon {
+    @apply inline-block bg-center bg-no-repeat bg-contain w-5 h-5 select-none;
+  }
+
+  .icon.table {
+    @apply bg-[url('assets/icons/table.svg')];
+  }
+
+  .icon.h1 {
+    @apply bg-[url('assets/icons/type-h1.svg')];
   }
 }
