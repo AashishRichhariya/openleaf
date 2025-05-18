@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { GitHubLink } from './social-links/github';
-import { InfoLink } from './social-links/info';
-import { RedditLink } from './social-links/reddit';
+import { GitHubLink } from './icons/social-links/github';
+import { InfoLink } from './icons/social-links/info';
+import { RedditLink } from './icons/social-links/reddit';
 
 export default function Navbar() {
   return (
