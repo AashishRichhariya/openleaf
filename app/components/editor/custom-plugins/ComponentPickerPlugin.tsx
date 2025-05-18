@@ -160,7 +160,27 @@ function getBaseOptions(editor: LexicalEditor) {
     new ComponentPickerOption('Paragraph', {
       icon: <Icon name="paragraph"/>,
       keywords: ['normal', 'paragraph', 'p', 'text'],
-      shortcut: '⮐', 
+      shortcut: (() => {
+        function isSupported(char: string): string | null {
+          try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            if (ctx === null) {
+              return null; 
+            }
+            ctx.font = '16px sans-serif';
+            const fallbackWidth = ctx.measureText('□').width;
+            const testWidth = ctx.measureText(char).width;
+            return testWidth !== fallbackWidth ? char : null;
+          } catch (e) {
+            return null;
+          }
+        }
+        return isSupported('\u2B90') ?? // ⮐ 
+              isSupported('\u21B5') ?? // ↵
+              isSupported('\u23CE') ?? // ⏎ 
+              'enter';        
+      })(),
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();

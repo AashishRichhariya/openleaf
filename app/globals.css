@@ -183,10 +183,6 @@ body {
     @apply underline;
   }
 
-  .editor-text-code {
-    @apply bg-code-bg px-1 py-[1px] my-[1px] mx-1 rounded-squircle-xs font-mono text-sm border border-surface-light;
-  }
-
   /* Node-specific styles */
   .editor-heading-h1 {
     @apply text-4xl font-bold mt-6 mb-4 max-sm:text-3xl max-sm:mt-4 max-sm:mb-4;
@@ -768,11 +764,10 @@ body {
     content: attr(data-gutter);
     @apply absolute bg-surface-medium-darker left-0 top-0 
            border-r border-surface-light p-2 text-text-tertiary
-           whitespace-pre-wrap text-right min-w-[40px] h-full
-           text-xs leading-normal;
+           whitespace-pre-wrap text-right min-w-10 h-full;
   }
 
-  /* Inline code styling (keeping your existing style) */
+  /* Inline code styling */
   .editor-text-code {
     @apply bg-code-bg px-1 py-[1px] my-[1px] mx-1 rounded-squircle-xs 
            font-mono text-sm border border-surface-light;
