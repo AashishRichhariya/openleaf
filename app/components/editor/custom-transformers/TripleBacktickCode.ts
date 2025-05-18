@@ -1,5 +1,5 @@
-import { $createCodeNode, CodeNode } from "@lexical/code";
-import { TextMatchTransformer } from "@lexical/markdown";
+import { $createCodeNode, CodeNode } from '@lexical/code';
+import { TextMatchTransformer } from '@lexical/markdown';
 
 export const TRIPLE_BACKTICK_CODE: TextMatchTransformer = {
   dependencies: [CodeNode],
