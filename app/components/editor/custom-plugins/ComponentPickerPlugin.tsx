@@ -25,9 +25,10 @@ import {
 import { ReactElement, useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { Icon } from '@/app/components/icons';
+
 import { $createInlineTableInputNode } from '../custom-nodes';
 
-import { Icon } from '@/app/components/icons';
 import { INSERT_EQUATION_COMMAND } from './EquationPlugin';
 
 
@@ -151,7 +152,7 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
 function getBaseOptions(editor: LexicalEditor) {
   return [
     new ComponentPickerOption('Paragraph', {
-      icon: <i className="icon paragraph" />,
+      icon: <Icon name="paragraph"/>,
       keywords: ['normal', 'paragraph', 'p', 'text'],
       onSelect: () =>
         editor.update(() => {
@@ -164,7 +165,7 @@ function getBaseOptions(editor: LexicalEditor) {
     ...([1, 2, 3] as const).map(
       (n) =>
         new ComponentPickerOption(`Heading ${n}`, {
-          icon: <i className={`icon h${n}`} />,
+          icon: <Icon name={`h${n}`}/>,
           keywords: ['heading', 'header', `h${n}`],
           onSelect: () =>
             editor.update(() => {
@@ -189,25 +190,25 @@ function getBaseOptions(editor: LexicalEditor) {
       },
     }),
     new ComponentPickerOption('Numbered List', {
-      icon: <i className="icon number" />,
+      icon: <Icon name="number"/>,
       keywords: ['numbered list', 'ordered list', 'ol'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
     }),
     new ComponentPickerOption('Bulleted List', {
-      icon: <i className="icon bullet" />,
+      icon: <Icon name="bullet"/>,
       keywords: ['bulleted list', 'unordered list', 'ul'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
     }),
     new ComponentPickerOption('Check List', {
-      icon: <i className="icon check" />,
+      icon: <Icon name="check"/>,
       keywords: ['check list', 'todo list'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
     }),
     new ComponentPickerOption('Quote', {
-      icon: <i className="icon quote" />,
+      icon: <Icon name="quote"/>,
       keywords: ['block quote'],
       onSelect: () =>
         editor.update(() => {
@@ -218,7 +219,7 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Inline Equation', {
-      icon: <i className="icon equation" />,
+      icon: <Icon name="equation"/>,
       keywords: ['equation', 'inline', 'inline equation', 'math', 'formula', 'inline math', '$'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
@@ -228,7 +229,7 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Block Equation', {
-      icon: <i className="icon equation" />,
+      icon: <Icon name="equation"/>,
       keywords: ['equation', 'block', 'block equation', 'display', 'display equation', 'math', 'formula', '$$', 'centered'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
@@ -238,7 +239,7 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Code', {
-      icon: <i className="icon code" />,
+      icon: <Icon name="code"/>,
       keywords: ['javascript', 'python', 'js', 'codeblock'],
       onSelect: () =>
         editor.update(() => {
@@ -258,7 +259,7 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Divider', {
-      icon: <i className="icon horizontal-rule" />,
+      icon: <Icon name="horizontal-rule"/>,
       keywords: ['horizontal rule', 'divider', 'hr'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
@@ -266,7 +267,7 @@ function getBaseOptions(editor: LexicalEditor) {
     ...(['left', 'center', 'right', 'justify'] as const).map(
       (alignment) =>
         new ComponentPickerOption(`Align ${alignment}`, {
-          icon: <i className={`icon ${alignment}-align`} />,
+          icon: <Icon name={`align-${alignment}`}/>,
           keywords: ['align', 'justify', alignment],
           onSelect: () =>
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
