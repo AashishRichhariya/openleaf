@@ -27,17 +27,15 @@ import * as ReactDOM from 'react-dom';
 
 import { $createInlineTableInputNode } from '../custom-nodes';
 
+import { Icon } from '@/app/components/icons';
 import { INSERT_EQUATION_COMMAND } from './EquationPlugin';
 
-import { Icon } from '@/app/components/icons';
-
-import type { JSX } from 'react';
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
   title: string;
   // Icon for display
-  icon?: JSX.Element;
+  icon?: ReactElement;
   // For extra searching.
   keywords: Array<string>;
   // What happens when you select this option?
@@ -46,7 +44,7 @@ class ComponentPickerOption extends MenuOption {
   constructor(
     title: string,
     options: {
-      icon?: JSX.Element;
+      icon?: ReactElement;
       keywords?: Array<string>;
       onSelect: (queryString: string) => void;
     },
@@ -133,12 +131,11 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
     const colOptions = tableMatch[2]
       ? [tableMatch[2]]
       : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(String);
-
+      
     options.push(
       ...colOptions.map(
         (columns) =>
           new ComponentPickerOption(`${rows}x${columns} Table`, {
-            //  icon: <i className="icon table" />,
             icon: <Icon name="table"/>,
             keywords: ['table'],
             onSelect: () =>
@@ -179,7 +176,7 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     ),
     new ComponentPickerOption('Table', {
-      icon: <i className="icon table" />,
+      icon: <Icon name="table"/>,
       keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
       onSelect: () => {
         editor.update(() => {

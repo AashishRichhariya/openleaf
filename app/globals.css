@@ -850,14 +850,6 @@ body {
 
   /* icons */
   .icon {
-    @apply inline-block bg-center bg-no-repeat bg-contain w-5 h-5 select-none;
-  }
-
-  /* .icon.table {
-    @apply bg-[url('assets/icons/table.svg')];
-  } */
-
-  .icon.h1 {
-    @apply bg-[url('assets/icons/type-h1.svg')];
+    @apply inline-block w-5 h-5 select-none text-text-secondary;
   }
 }

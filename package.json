@@ -34,6 +34,7 @@
     "@eslint/eslintrc": "^3",
     "@eslint/js": "^9.26.0",
     "@next/bundle-analyzer": "^15.3.1",
+    "@svgr/webpack": "^8.1.0",
     "@types/katex": "^0.16.7",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^22",
