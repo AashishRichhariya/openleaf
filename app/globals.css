@@ -377,11 +377,15 @@ body {
 
   /* Component Picker Specific */
   .component-picker-menu {
-    @apply w-[200px] rounded-squircle-sm overflow-hidden;
+    @apply w-64 rounded-squircle-sm overflow-hidden;
   }
 
   .component-picker-menu .item {
-    @apply items-center cursor-pointer flex flex-row p-2 mx-2 rounded-squircle-xxs;
+    @apply items-center cursor-pointer flex flex-row p-2 mx-2 rounded-squircle-xxs justify-between;
+  }
+
+  .component-picker-menu .item .shortcut {
+    @apply text-text-tertiary text-xs ml-auto flex-shrink-0 font-mono;
   }
 
   .component-picker-menu .item.selected {
@@ -393,7 +397,7 @@ body {
   }
 
   .component-picker-menu .item .text {
-    @apply flex leading-5 flex-grow min-w-[150px];
+    @apply flex leading-5 flex-grow min-w-32 mr-2;
   }
   /* Table wrapper */
   .editor-table-scrollable-wrapper {
