@@ -381,11 +381,12 @@ body {
   }
 
   .component-picker-menu .item {
-    @apply items-center cursor-pointer flex flex-row p-2 px-2 mx-2 rounded-squircle-xxs justify-between;
+    @apply items-center cursor-pointer flex flex-row justify-between
+         p-2 mx-2 rounded-squircle-xxs;
   }
 
   .component-picker-menu .item .shortcut {
-    @apply text-text-tertiary text-sm ml-auto flex-shrink-0 font-mono font-bold;
+    @apply text-text-tertiary text-sm font-mono ml-auto font-bold flex-shrink-0;
   }
 
   .component-picker-menu .item.selected {
@@ -397,8 +398,9 @@ body {
   }
 
   .component-picker-menu .item .text {
-    @apply flex leading-5 flex-grow min-w-32 mr-2;
+    @apply flex leading-5 flex-grow min-w-32 mr-auto;
   }
+
   /* Table wrapper */
   .editor-table-scrollable-wrapper {
     @apply overflow-x-auto;
