@@ -29,6 +29,8 @@ import { $createInlineTableInputNode } from '../custom-nodes';
 
 import { INSERT_EQUATION_COMMAND } from './EquationPlugin';
 
+import { Icon } from '@/app/components/icons';
+
 import type { JSX } from 'react';
 
 class ComponentPickerOption extends MenuOption {
@@ -136,7 +138,8 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
       ...colOptions.map(
         (columns) =>
           new ComponentPickerOption(`${rows}x${columns} Table`, {
-            icon: <i className="icon table" />,
+            //  icon: <i className="icon table" />,
+            icon: <Icon name="table"/>,
             keywords: ['table'],
             onSelect: () =>
               editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
