@@ -25,27 +25,31 @@ import {
 import { ReactElement, useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { Icon } from '@/app/components/icons';
+
 import { $createInlineTableInputNode } from '../custom-nodes';
 
 import { INSERT_EQUATION_COMMAND } from './EquationPlugin';
 
-import type { JSX } from 'react';
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
   title: string;
   // Icon for display
-  icon?: JSX.Element;
+  icon?: ReactElement;
   // For extra searching.
   keywords: Array<string>;
+  // Keyboard shortcut
+  shortcut?: string;
   // What happens when you select this option?
   onSelect: (queryString: string) => void;
 
   constructor(
     title: string,
     options: {
-      icon?: JSX.Element;
+      icon?: ReactElement;
       keywords?: Array<string>;
+      shortcut?: string; 
       onSelect: (queryString: string) => void;
     },
   ) {
@@ -53,6 +57,7 @@ class ComponentPickerOption extends MenuOption {
     this.title = title;
     this.keywords = options.keywords || [];
     this.icon = options.icon;
+    this.shortcut = options.shortcut;
     this.onSelect = options.onSelect.bind(this);
   }
 }
@@ -113,6 +118,7 @@ function ComponentPickerMenuItem({
     >
       {option.icon}
       <span className="text">{option.title}</span>
+      {option.shortcut && <span className="shortcut">{option.shortcut}</span>}
     </li>
   );
 }
@@ -131,13 +137,14 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
     const colOptions = tableMatch[2]
       ? [tableMatch[2]]
       : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(String);
-
+      
     options.push(
       ...colOptions.map(
         (columns) =>
           new ComponentPickerOption(`${rows}x${columns} Table`, {
-            icon: <i className="icon table" />,
+            icon: <Icon name="table"/>,
             keywords: ['table'],
+            shortcut: '/N×M',
             onSelect: () =>
               editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
           }),
@@ -151,8 +158,9 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
 function getBaseOptions(editor: LexicalEditor) {
   return [
     new ComponentPickerOption('Paragraph', {
-      icon: <i className="icon paragraph" />,
+      icon: <Icon name="paragraph"/>,
       keywords: ['normal', 'paragraph', 'p', 'text'],
+      shortcut: '⮐', 
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -164,8 +172,9 @@ function getBaseOptions(editor: LexicalEditor) {
     ...([1, 2, 3] as const).map(
       (n) =>
         new ComponentPickerOption(`Heading ${n}`, {
-          icon: <i className={`icon h${n}`} />,
+          icon: <Icon name={`h${n}`}/>,
           keywords: ['heading', 'header', `h${n}`],
+          shortcut: '#'.repeat(n),
           onSelect: () =>
             editor.update(() => {
               const selection = $getSelection();
@@ -176,8 +185,9 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     ),
     new ComponentPickerOption('Table', {
-      icon: <i className="icon table" />,
+      icon: <Icon name="table"/>,
       keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
+      shortcut: '/N×M',
       onSelect: () => {
         editor.update(() => {
           const selection = $getSelection();
@@ -189,26 +199,30 @@ function getBaseOptions(editor: LexicalEditor) {
       },
     }),
     new ComponentPickerOption('Numbered List', {
-      icon: <i className="icon number" />,
+      icon: <Icon name="number"/>,
       keywords: ['numbered list', 'ordered list', 'ol'],
+      shortcut: '1.',
       onSelect: () =>
         editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
     }),
     new ComponentPickerOption('Bulleted List', {
-      icon: <i className="icon bullet" />,
+      icon: <Icon name="bullet"/>,
       keywords: ['bulleted list', 'unordered list', 'ul'],
+      shortcut: '-',
       onSelect: () =>
         editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
     }),
     new ComponentPickerOption('Check List', {
-      icon: <i className="icon check" />,
+      icon: <Icon name="check"/>,
       keywords: ['check list', 'todo list'],
+      shortcut: '[x]',
       onSelect: () =>
         editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
     }),
     new ComponentPickerOption('Quote', {
-      icon: <i className="icon quote" />,
+      icon: <Icon name="quote"/>,
       keywords: ['block quote'],
+      shortcut: '>',
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -218,7 +232,7 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Inline Equation', {
-      icon: <i className="icon equation" />,
+      icon: <Icon name="equation"/>,
       keywords: ['equation', 'inline', 'inline equation', 'math', 'formula', 'inline math', '$'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
@@ -228,7 +242,7 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Block Equation', {
-      icon: <i className="icon equation" />,
+      icon: <Icon name="equation"/>,
       keywords: ['equation', 'block', 'block equation', 'display', 'display equation', 'math', 'formula', '$$', 'centered'],
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
@@ -238,8 +252,9 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Code', {
-      icon: <i className="icon code" />,
+      icon: <Icon name="code"/>,
       keywords: ['javascript', 'python', 'js', 'codeblock'],
+      shortcut: '```',
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -258,15 +273,16 @@ function getBaseOptions(editor: LexicalEditor) {
         }),
     }),
     new ComponentPickerOption('Divider', {
-      icon: <i className="icon horizontal-rule" />,
+      icon: <Icon name="horizontal-rule"/>,
       keywords: ['horizontal rule', 'divider', 'hr'],
+      shortcut: '---',
       onSelect: () =>
         editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
     }),
     ...(['left', 'center', 'right', 'justify'] as const).map(
       (alignment) =>
         new ComponentPickerOption(`Align ${alignment}`, {
-          icon: <i className={`icon ${alignment}-align`} />,
+          icon: <Icon name={`align-${alignment}`}/>,
           keywords: ['align', 'justify', alignment],
           onSelect: () =>
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
