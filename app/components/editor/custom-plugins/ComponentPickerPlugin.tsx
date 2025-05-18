@@ -144,7 +144,7 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
           new ComponentPickerOption(`${rows}x${columns} Table`, {
             icon: <Icon name="table"/>,
             keywords: ['table'],
-            shortcut: '/NxM',
+            shortcut: '/N×M',
             onSelect: () =>
               editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
           }),
@@ -160,7 +160,7 @@ function getBaseOptions(editor: LexicalEditor) {
     new ComponentPickerOption('Paragraph', {
       icon: <Icon name="paragraph"/>,
       keywords: ['normal', 'paragraph', 'p', 'text'],
-      shortcut: 'enter',
+      shortcut: '⮐', 
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -187,7 +187,7 @@ function getBaseOptions(editor: LexicalEditor) {
     new ComponentPickerOption('Table', {
       icon: <Icon name="table"/>,
       keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
-      shortcut: '/NxM',
+      shortcut: '/N×M',
       onSelect: () => {
         editor.update(() => {
           const selection = $getSelection();

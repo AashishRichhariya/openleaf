@@ -340,7 +340,7 @@ body {
   }
 
   .typeahead-popover ul li {
-    @apply m-0 min-w-[180px] text-sm outline-none cursor-pointer rounded-squircle-xxs;
+    @apply m-0 min-w-[180px] text-base outline-none cursor-pointer rounded-squircle-xxs;
   }
 
   .typeahead-popover ul li.selected {
@@ -377,15 +377,15 @@ body {
 
   /* Component Picker Specific */
   .component-picker-menu {
-    @apply w-64 rounded-squircle-sm overflow-hidden;
+    @apply w-60 rounded-squircle-sm overflow-hidden;
   }
 
   .component-picker-menu .item {
-    @apply items-center cursor-pointer flex flex-row p-2 mx-2 rounded-squircle-xxs justify-between;
+    @apply items-center cursor-pointer flex flex-row p-2 px-2 mx-2 rounded-squircle-xxs justify-between;
   }
 
   .component-picker-menu .item .shortcut {
-    @apply text-text-tertiary text-xs ml-auto flex-shrink-0 font-mono;
+    @apply text-text-tertiary text-sm ml-auto flex-shrink-0 font-mono font-bold;
   }
 
   .component-picker-menu .item.selected {

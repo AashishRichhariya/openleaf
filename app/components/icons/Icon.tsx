@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Quote from '@/app/assets/icons/chat-square-quote.svg';
-import Code from '@/app/assets/icons/code.svg';
+import Code from '@/app/assets/icons/code-slash.svg';
 import HorizontalRule from '@/app/assets/icons/horizontal-rule.svg';
 import AlignJustify from '@/app/assets/icons/justify.svg';
 import Number from '@/app/assets/icons/list-ol.svg';
