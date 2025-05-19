@@ -7,7 +7,7 @@
 
 ## The minimalist web-based editor
 
-**openleaf** is a minimalist, browser-based text editor that lets you start writing instantly without signup, downloads, or configuration. Just go to any URL and start typing!
+**openleaf** is a minimalist, browser-based rich text editor that lets you start writing instantly without signup, downloads, or configuration. Just go to any URL and start typing!
 
 ![image](https://github.com/user-attachments/assets/ed490943-4bbf-4513-8ff3-2a60ec40a143)
 
@@ -34,6 +34,11 @@ Check it out: [openleaf.xyz/info](https://openleaf.xyz/info)
 - Type `>` for blockquotes
 - Type `[]` or `[x]` for checklist items
 - Type `[text](url)` to create links
+- Type `` ` `` around text (like `` `code` ``) for inline code formatting
+- Type ` ``` ` and press Space for code block
+- Type `---` for a horizontal divider
+- Type `$` around text (like `$ equation=inline $`) for inline equations
+- Type `$$` around text (like `$$ equation=block $$`) for block equations
 
 ### Command Menu
 
@@ -43,8 +48,9 @@ Press `/` to access the command menu with all available formatting options:
 - Lists (numbered, bulleted, checklist)
 - Tables
 - Quotes
-- Code blocks (coming soon!)
-- Text alignment (coming soon!)
+- Text alignment
+- Code blocks
+- Mathematical expressions
 - And more!
 
 ### Tables
@@ -61,6 +67,23 @@ Create links easily in multiple ways:
 - Type `[text](url)` using markdown syntax
 - Type any URL, such as `https://openleaf.xyz` or `www.openleaf.xyz`, to have it automatically detected as a link
 - Select text and paste a URL (Cmd+V or Ctrl+V) to turn the selected text into a link
+
+### Code Blocks
+
+Format code with syntax highlighting:
+
+- Type ` ``` ` and press Space to create a code block
+- Access code blocks via the command menu
+- View line numbers for easier reference
+
+### Equations
+
+Create mathematical expressions using LaTeX syntax:
+
+- Click or press Enter to select an equation
+- Double click or press Enter while in select mode to edit an equation
+- Press Enter or click outside to save the changes
+- Supports both inline and block equations
 
 ### Checklists
 
@@ -129,17 +152,20 @@ This project is open source under the MIT license. Contributions and feedback ar
 - [Tailwind CSS](https://tailwindcss.com/) - For styling
 - [DynamoDB](https://aws.amazon.com/dynamodb/) - For storage
 
-## Future Possibilities
+## Feature Roadmap
 
-If interest grows, potential future features might include:
-
-- Optional user accounts
-- Private and published notes
-- Image support
-- Temporary URL leasing (lock a URL for your exclusive use for a set period)
-- More formatting options
-- PDF exporting and printing
-- Real-time collaboration indicators
+| Feature                     | Status      |
+| --------------------------- | ----------- |
+| Enhanced UI                 | Developing  |
+| Advanced Formatting Options | Developing  |
+| Private Notes               | Planned     |
+| Media Support               | Planned     |
+| Encrypted Notes             | Exploring   |
+| Real-time Collaboration     | Exploring   |
+| Document History            | Exploring   |
+| Self-Hosting                | Exploring   |
+| Export Options              | Considering |
+| CMS Integration             | Considering |
 
 ## Installation
 
@@ -156,7 +182,3 @@ pnpm install
 # Run the development server
 pnpm dev
 ```
-
-## License
-
-**openleaf** is licensed under the [MIT License](LICENSE).
