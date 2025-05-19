@@ -2,6 +2,37 @@
 
 All notable changes to openleaf will be documented in this file.
 
+## [0.3.0] - 2025-05-19
+
+### Added
+
+- Code component with syntax highlighting and line numbers
+- LaTeX equation support (inline and block) with KaTeX integration
+- Triple backtick code block trigger (```)
+- Horizontal divider component via component picker and markdown syntax
+- SVG icons component and dedicated icons folder
+- Keyboard shortcuts in command menu
+
+### Changed
+
+- Improved dropdown UI with borders, icons and shortcut commands
+- Enhanced text formatting for bold, italic, underline, and inline-code
+- Upgraded Lexical packages and removed custom link transformer
+- Improved mobile UI margins and sizes
+
+### Fixed
+
+- Table component improvements:
+  - Fixed row/column hover button positioning
+  - Fixed vertical rendering of menu action buttons
+  - Combined table plugins into a single custom plugin
+  - Fixed scrolling to page top on clearTableSelection
+- Fixed editor placeholder positioning in smaller screens
+- Fixed typeahead popover rendering on scrolled windows
+- Fixed server not saving empty nodes
+- Fixed equation alignments and overflow
+- Fixed number lines height in code blocks
+
 ## [0.2.0] - 2025-04-26
 
 ### Added
