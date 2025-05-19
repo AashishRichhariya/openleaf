@@ -254,6 +254,7 @@ function getBaseOptions(editor: LexicalEditor) {
     new ComponentPickerOption('Inline Equation', {
       icon: <Icon name="equation"/>,
       keywords: ['equation', 'inline', 'inline equation', 'math', 'formula', 'inline math', '$'],
+      shortcut: '$.$',
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
           equation: '',
@@ -264,6 +265,7 @@ function getBaseOptions(editor: LexicalEditor) {
     new ComponentPickerOption('Block Equation', {
       icon: <Icon name="equation"/>,
       keywords: ['equation', 'block', 'block equation', 'display', 'display equation', 'math', 'formula', '$$', 'centered'],
+      shortcut: '$$.$$',
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
           equation: '',
