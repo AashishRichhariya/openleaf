@@ -5,7 +5,6 @@ import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
@@ -13,7 +12,6 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
@@ -23,13 +21,17 @@ import { ReactElement, useState } from 'react';
 import { EquationNode, InlineTableInputNode } from './custom-nodes';
 import {
   AutosavePlugin,
+  BehaviorParityPlugin,
+  CheckListPlugin,
   CodeHighlightPlugin,
   ComponentPickerPlugin,
   EquationPlugin,
   LinksPlugin,
+  MarkdownShortcutPlugin,
   TablePlugin,
 } from './custom-plugins';
 import { OPENLEAF_TRANSFORMERS } from './custom-transformers/OpenleafTransformers';
+import { HTML_IMPORT } from './custom-utils/htmlImport';
 import DefaultTheme from './themes/DefaultTheme';
 
 import type { SavedDocument } from './autosave/DocumentSaver';
@@ -41,6 +43,7 @@ interface EditorProps {
 }
 
 const theme = DefaultTheme;
+const MAX_INDENT = 7;
 
 function onError(error: Error) {
   console.error(error);
@@ -84,6 +87,7 @@ export default function Editor({
     ],
     editorState: initialContent,
     editable: !isReadOnly,
+    html: { import: HTML_IMPORT },
   };
 
   return (
@@ -108,12 +112,13 @@ export default function Editor({
           <ComponentPickerPlugin />
           <CheckListPlugin />
           <CodeHighlightPlugin />
-          <TabIndentationPlugin maxIndent={7} />
+          <TabIndentationPlugin maxIndent={MAX_INDENT} />
           <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
           <HorizontalRulePlugin />
           <LinksPlugin/>
           <TablePlugin anchorElem={floatingAnchorElem} />
           <EquationPlugin />
+          <BehaviorParityPlugin maxIndent={MAX_INDENT} />
           {/* Last, so that it sees the document as the other plugins set it up */}
           {!isReadOnly && <AutosavePlugin savedDocument={savedDocument} />}
         </div>

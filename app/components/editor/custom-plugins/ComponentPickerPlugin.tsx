@@ -14,15 +14,28 @@ import {
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
+import { mergeRegister } from '@lexical/utils';
 import {
   $createParagraphNode,
   $getSelection,
   $isRangeSelection,
+  COMMAND_PRIORITY_NORMAL,
   FORMAT_ELEMENT_COMMAND,
+  KEY_ARROW_DOWN_COMMAND,
+  KEY_ARROW_UP_COMMAND,
+  KEY_ENTER_COMMAND,
   LexicalEditor,
   TextNode,
 } from 'lexical';
-import { ReactElement, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { Icon } from '@/app/components/icons';
@@ -324,6 +337,7 @@ function getBaseOptions(editor: LexicalEditor) {
 export function ComponentPickerPlugin(): ReactElement {
   const [editor] = useLexicalComposerContext();
   const [queryString, setQueryString] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
     minLength: 0,
@@ -348,6 +362,27 @@ export function ComponentPickerPlugin(): ReactElement {
     ];
   }, [editor, queryString]);
 
+  // Keys as Lexical 0.31 handled them while the menu is open
+  useEffect(() => {
+    if (!isOpen) return;
+    // With nothing to choose from, the arrows move the caret
+    const moveCaret = () => options.length === 0;
+    return mergeRegister(
+      editor.registerCommand(KEY_ARROW_DOWN_COMMAND, moveCaret, COMMAND_PRIORITY_NORMAL),
+      editor.registerCommand(KEY_ARROW_UP_COMMAND, moveCaret, COMMAND_PRIORITY_NORMAL),
+      // Shift+Enter picks the option, as Enter does
+      editor.registerCommand(
+        KEY_ENTER_COMMAND,
+        (event) => {
+          if (!event?.shiftKey || options.length === 0) return false;
+          event.preventDefault();
+          return editor.dispatchCommand(KEY_ENTER_COMMAND, null);
+        },
+        COMMAND_PRIORITY_NORMAL,
+      ),
+    );
+  }, [editor, isOpen, options]);
+
   const onSelectOption = useCallback(
     (
       selectedOption: ComponentPickerOption,
@@ -367,6 +402,8 @@ export function ComponentPickerPlugin(): ReactElement {
   return (
     <LexicalTypeaheadMenuPlugin<ComponentPickerOption>
       onQueryChange={setQueryString}
+      onOpen={() => setIsOpen(true)}
+      onClose={() => setIsOpen(false)}
       onSelectOption={onSelectOption}
       triggerFn={checkForTriggerMatch}
       options={options}

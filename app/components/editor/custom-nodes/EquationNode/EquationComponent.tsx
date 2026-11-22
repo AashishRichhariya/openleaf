@@ -15,6 +15,8 @@ import {
   KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
   LexicalCommand,
+  MOVE_TO_END,
+  MOVE_TO_START,
   NodeKey,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
@@ -157,7 +159,12 @@ export default function EquationComponent({
 
     // When in editing mode
     if (showEquationEditor) {
+      const isInputFocused = () =>
+        inputRef.current !== null && document.activeElement === inputRef.current;
       return mergeRegister(
+        // Deleting and moving to the line's edges act on the text in the input, not on the node
+        ...[KEY_BACKSPACE_COMMAND, KEY_DELETE_COMMAND, MOVE_TO_START, MOVE_TO_END].map((command) =>
+          editor.registerCommand(command, isInputFocused, COMMAND_PRIORITY_HIGH)),
         editor.registerCommand(
           SELECTION_CHANGE_COMMAND,
           () => {

@@ -18,15 +18,18 @@ const MATCHERS = [
   }),
 ];
 
+// A constant: a new object on each render would make Lexical re-register and touch every link
+const LINK_ATTRIBUTES = {
+  rel: 'noopener',
+  target: '_blank',
+};
+
 export function LinksPlugin(): React.ReactElement {
   return (
     <>
       <LexicalLinkPlugin
         validateUrl={validateUrl}
-        attributes={{
-          rel: 'noopener',
-          target: '_blank',
-        }}
+        attributes={LINK_ATTRIBUTES}
       />
       
       {/* Auto-link detection */}
