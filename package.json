@@ -40,7 +40,7 @@
     "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.26.0",
+    "@eslint/js": "^9.39.5",
     "@next/bundle-analyzer": "^16.4.6",
     "@playwright/test": "1.65.1",
     "@svgr/webpack": "^8.1.0",
@@ -48,13 +48,13 @@
     "@types/node": "^22",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9",
+    "@typescript-eslint/parser": "^8.73.0",
+    "eslint": "^9.39.5",
     "eslint-config-next": "16.4.6",
-    "eslint-import-resolver-typescript": "^4.3.4",
+    "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-unused-imports": "^4.1.4",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
