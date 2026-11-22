@@ -1,6 +1,102 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * No cascade layers: unlayered styles, like those of KaTeX, would then win over all of ours.
+ * So order decides: base, then components, then utilities at the end of this file.
+ */
+@import "tailwindcss/theme.css";
+@import "./preflight.css";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Core palette and semantic colors */
+  --color-primary: var(--primary);
+  --color-primary-10: var(--primary-10);
+  --color-primary-20: var(--primary-20);
+  --color-primary-50: var(--primary-50);
+  --color-primary-80: var(--primary-80);
+  --color-surface-dark: var(--surface-dark);
+  --color-surface-medium: var(--surface-medium);
+  --color-surface-light: var(--surface-light);
+  --color-surface-dark-lighter: var(--surface-dark-lighter);
+  --color-surface-dark-darker: var(--surface-dark-darker);
+  --color-surface-medium-lighter: var(--surface-medium-lighter);
+  --color-surface-medium-darker: var(--surface-medium-darker);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-editor-bg: var(--editor-bg);
+  --color-editor-border: var(--editor-border);
+  --color-nav-link: var(--nav-link);
+  --color-nav-link-hover: var(--nav-link-hover);
+  --color-placeholder-text: var(--placeholder-text);
+  --color-quote-border: var(--quote-border);
+  --color-checkbox-border: var(--checkbox-border);
+  --color-checkbox-checked-bg: var(--checkbox-checked-bg);
+  --color-checkbox-checkmark: var(--checkbox-checkmark);
+  --color-code-bg: var(--code-bg);
+  --color-dropdown-chevron: var(--dropdown-chevron);
+  --color-table-border: var(--table-border);
+  --color-table-cell-bg: var(--table-cell-bg);
+  --color-table-header-bg: var(--table-header-bg);
+  --color-table-selected-bg: var(--table-selected-bg);
+  --color-table-striping: var(--table-striping);
+  --color-input-border: var(--input-border);
+  --color-input-text: var(--input-text);
+  --color-input-bg: var(--input-bg);
+  --color-input-focus-border: var(--input-focus-border);
+  --color-input-focus-bg: var(--input-focus-bg);
+  --color-input-focus-shadow: var(--input-focus-shadow);
+  --color-input-placeholder: var(--input-placeholder);
+  --color-link: var(--text-link);
+  --color-link-hover: var(--text-link-hover);
+
+  /* Accent colors with opacity variants */
+  --color-accent: var(--accent);
+  --color-accent-10: var(--primary-10);
+  --color-accent-20: var(--primary-20);
+  --color-accent-50: var(--primary-50);
+  --color-accent-80: var(--primary-80);
+
+  --radius-squircle: 24px 24px 24px 24px / 28px 28px 28px 28px;
+  --radius-squircle-sm: 10px 10px 10px 10px / 14px 14px 14px 14px;
+  --radius-squircle-xs: 6px 6px 6px 6px / 8px 8px 8px 8px;
+  --radius-squircle-xxs: 4px 4px 4px 4px / 6px 6px 6px 6px;
+
+  /* sRGB, as the default palette is oklch and renders differently */
+  --color-red-500: #ef4444;
+  --color-purple-300: #d8b4fe;
+  --color-green-300: #86efac;
+  --color-orange-300: #fdba74;
+  --color-blue-300: #93c5fd;
+  --color-yellow-300: #fde047;
+  --color-pink-300: #f9a8d4;
+
+  /* In px, as the window's width is */
+  --breakpoint-sm: 640px;
+
+  /* Absolute line heights, as nested elements of another font size inherit them */
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+}
+
+/* Hover also applies on touch devices */
+@custom-variant hover (&:hover);
+
+/* Invisible, but still shown in forced colors mode */
+@utility outline-invisible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
 
 :root {
   /* Core palette */
@@ -93,780 +189,782 @@ body {
   font-family: var(--font-geist-sans);
 }
 
-@layer components {
-  /* Navbar Components */
-  .navbar {
-    @apply w-full bg-transparent;
-  }
-
-  .navbar-container {
-    @apply flex justify-between items-center mx-auto px-6 h-16 max-w-7xl max-sm:h-14;
-  }
-
-  .navbar-logo {
-    @apply flex items-center;
-  }
-
-  .navbar-links {
-    @apply flex items-center space-x-4 max-sm:space-x-3;
-  }
-
-  /* Nav link styles */
-  .nav-link {
-    @apply text-nav-link no-underline text-lg rounded transition-colors duration-200;
-  }
-
-  .nav-link:hover {
-    @apply text-nav-link-hover underline;
-  }
-
-  /* Social link styles */
-  .social-link {
-    @apply flex items-center text-nav-link transition-colors duration-200;
-  }
-
-  /* Unified hover style for all social links */
-  .social-link:hover {
-    @apply text-nav-link-hover;
-  }
-
-  /* Adjustments to ensure icons align properly with text */
-  .social-link svg {
-    @apply flex-shrink-0;
-  }
-
-  /* Base editor components */
-  .editor-main {
-    @apply flex flex-col min-h-screen;
-  }
-
-  .editor-root {
-    @apply flex-grow w-full flex justify-center bg-background;
-  }
-
-  .editor-area {
-    @apply w-full max-w-4xl flex-grow flex flex-col relative
-           bg-editor-bg shadow-lg cursor-text
-           rounded-squircle;
-  }
-
-  .editor-wrapper {
-    @apply h-full flex flex-col w-full px-8 py-12 mb-4 max-sm:px-6 max-sm:py-8;
-  }
-
-  .editor-input {
-    @apply flex-1 resize-none outline-none caret-accent min-h-full;
-  }
-
-  .editor-read-only {
-    @apply absolute top-3 right-6 max-sm:top-2 max-sm:right-4 px-2 text-xs leading-5
-           text-text-secondary border border-surface-light rounded-squircle-xxs
-           pointer-events-none select-none;
-  }
-
-  .editor-notice {
-    @apply fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3
-           w-max max-w-[calc(100vw-2rem)] px-4 py-2 text-sm text-text cursor-default
-           bg-surface-dark border border-surface-light rounded-squircle-sm shadow-lg;
-  }
-
-  .editor-notice-dismiss {
-    @apply border-0 bg-transparent text-text-secondary text-lg leading-none cursor-pointer;
-  }
-
-  .editor-placeholder {
-    @apply absolute top-12 left-8 max-sm:top-8 max-sm:left-6 text-placeholder-text pointer-events-none select-none;
-  }
-
-  .editor-link {
-    @apply text-link cursor-pointer transition-colors duration-200;
-  }
-
-  .editor-link:hover {
-    @apply text-link-hover underline;
-  }
-
-  /* Editor texts */
-  .editor-text-bold {
-    @apply font-bold;
-  }
-
-  .editor-text-italic {
-    @apply italic;
-  }
-
-  .editor-text-underline {
-    @apply underline;
-  }
-
-  /* Node-specific styles */
-  .editor-heading-h1 {
-    @apply text-4xl font-bold mt-6 mb-4 max-sm:text-3xl max-sm:mt-4 max-sm:mb-4;
-  }
-
-  .editor-heading-h2 {
-    @apply text-3xl font-bold mt-5 mb-3 max-sm:text-2xl max-sm:mt-3 max-sm:mb-3;
-  }
-
-  .editor-heading-h3 {
-    @apply text-2xl font-bold mt-4 mb-2 max-sm:text-xl max-sm:mt-2 max-sm:mb-2;
-  }
-
-  .editor-quote {
-    @apply border-l-4 border-quote-border pl-4 my-4 max-sm:pl-2 italic text-text-secondary rounded-r-squircle-xs;
-  }
-
-  .editor-code {
-    @apply bg-code-bg p-2 rounded-squircle-sm font-mono text-sm;
-  }
-
-  /* Base list styles */
-  .editor-list-ul {
-    @apply p-0 m-0 list-disc list-outside;
-  }
-
-  .editor-list-ol {
-    @apply p-0 m-0 list-decimal list-outside;
-  }
-
-  /* List item styles */
-  .editor-listitem {
-    @apply mx-8;
-  }
-
-  /* Nested list item */
-  .editor-nested-listitem {
-    @apply list-none;
-  }
-
-  /* Different depth ordered lists styles */
-  .editor-list-ol1 {
-    @apply p-0 m-0 list-decimal list-outside;
-  }
-
-  .editor-list-ol2 {
-    @apply p-0 m-0 list-[upper-roman] list-outside;
-  }
-
-  .editor-list-ol3 {
-    @apply p-0 m-0 list-[lower-roman] list-outside;
-  }
-
-  .editor-list-ol4 {
-    @apply p-0 m-0 list-[upper-alpha] list-outside;
-  }
-
-  .editor-list-ol5 {
-    @apply p-0 m-0 list-[lower-alpha] list-outside;
-  }
-
-  /* Different depth unordered lists styles */
-  .editor-list-ul1 {
-    @apply p-0 m-0 list-disc list-outside;
-  }
-
-  .editor-list-ul2 {
-    @apply p-0 m-0 list-[circle] list-outside;
-  }
-
-  .editor-list-ul3 {
-    @apply p-0 m-0 list-[square] list-outside;
-  }
-
-  /* Checkbox list styles */
-  .editor-checklist {
-    @apply p-0 m-0 list-none;
-  }
-
-  /* Base checkbox item styles */
-  .editor-listitem-checked,
-  .editor-listitem-unchecked {
-    @apply relative mx-2 px-6 list-none outline-none;
-  }
-
-  /* Checked state */
-  .editor-listitem-checked {
-    @apply line-through;
-  }
-
-  /* Checkbox appearance */
-  .editor-listitem-checked::before,
-  .editor-listitem-unchecked::before {
-    @apply content-[''] absolute w-4 h-4 top-0.5 left-0 cursor-pointer block bg-cover;
-  }
-
-  .editor-listitem-unchecked::before {
-    @apply border border-checkbox-border rounded;
-  }
-
-  .editor-listitem-checked::before {
-    @apply border border-checkbox-checked-bg rounded bg-checkbox-checked-bg bg-no-repeat;
-  }
-
-  /* Checkmark */
-  .editor-listitem-checked::after {
-    @apply content-[''] cursor-pointer border-checkbox-checkmark border-solid absolute block top-1.5 w-[3px] left-[7px] right-[7px] h-1.5 rotate-45 border-0 border-r-2 border-b-2;
-  }
-
-  /* Hide original checkbox for nested items */
-  .editor-nested-listitem::before,
-  .editor-nested-listitem::after {
-    @apply hidden;
-  }
-
-  /* Ensure nested checkboxes maintain proper positioning */
-  .editor-nested-listitem .editor-listitem-checked,
-  .editor-nested-listitem .editor-listitem-unchecked {
-    @apply relative mx-2;
-  }
-
-  /* RTL support */
-  .editor-listitem-checked[dir="rtl"]::before,
-  .editor-listitem-unchecked[dir="rtl"]::before {
-    @apply left-auto right-0;
-  }
-
-  /* Focus styles */
-  .editor-listitem-checked:focus::before,
-  .editor-listitem-unchecked:focus::before {
-    @apply outline-none;
-  }
-  /* Indentation support */
-  .editor-indent {
-    --indent-base-value: 40px;
-  }
-
-  /* Typeahead Menu Components */
-  .typeahead-popover {
-    @apply relative bg-surface-medium shadow-lg rounded-squircle-sm py-2 border border-surface-light;
-  }
-
-  .typeahead-popover ul {
-    @apply p-0 m-0 list-none rounded-squircle-sm max-h-64 overflow-y-scroll;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .typeahead-popover ul::-webkit-scrollbar {
-    @apply hidden;
-  }
-
-  .typeahead-popover ul li {
-    @apply m-0 min-w-[180px] text-base outline-none cursor-pointer rounded-squircle-xxs;
-  }
-
-  .typeahead-popover ul li.selected {
-    @apply bg-surface-medium-lighter;
-  }
-
-  .typeahead-popover li {
-    @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row flex-shrink-0 bg-surface-medium rounded-squircle-xxs border-0;
-  }
-
-  .typeahead-popover li.active {
-    @apply flex w-5 h-5 bg-contain;
-  }
-
-  .typeahead-popover li:first-child {
-    @apply rounded-t-lg;
-  }
-
-  .typeahead-popover li:last-child {
-    @apply rounded-b-lg;
-  }
-
-  .typeahead-popover li:hover {
-    @apply bg-surface-medium-lighter;
-  }
-
-  .typeahead-popover li .text {
-    @apply flex leading-5 flex-grow min-w-[150px];
-  }
-
-  .typeahead-popover li .icon {
-    @apply flex flex-shrink-0 mr-2;
-  }
-
-  /* Component Picker Specific */
-  .component-picker-menu {
-    @apply w-60 rounded-squircle-sm overflow-hidden;
-  }
-
-  .component-picker-menu .item {
-    @apply items-center cursor-pointer flex flex-row justify-between
-         p-2 mx-2 rounded-squircle-xxs;
-  }
-
-  .component-picker-menu .item .shortcut {
-    @apply text-text-tertiary text-sm font-mono ml-auto font-bold flex-shrink-0;
-  }
-
-  .component-picker-menu .item.selected {
-    @apply bg-surface-light;
-  }
-
-  .component-picker-menu .item:hover {
-    @apply bg-surface-light;
-  }
-
-  .component-picker-menu .item .text {
-    @apply flex leading-5 flex-grow min-w-32 mr-auto;
-  }
-
-  /* Table wrapper */
-  .editor-table-scrollable-wrapper {
-    @apply overflow-x-auto;
-  }
-
-  /* Base table */
-  .editor-table {
-    @apply relative border-collapse border-0 table-fixed w-full mt-6 mb-8 min-w-[200px] rounded-squircle-sm overflow-hidden mx-auto;
-  }
-
-  /* Pseudo-element for the outer border */
-  .editor-table::after {
-    content: "";
-    @apply absolute inset-0 pointer-events-none border border-table-border rounded-squircle-sm;
-  }
-
-  /* Table alignment */
-  .editor-table-align-center {
-    @apply mx-auto;
-  }
-
-  .editor-table-align-right {
-    @apply ml-auto;
-  }
-
-  /* Table cells */
-  .editor-table-cell {
-    @apply border border-table-border align-top text-center p-2 relative outline-none bg-table-cell-bg;
-  }
-
-  /* Table header cells */
-  .editor-table-cell-header {
-    @apply border border-table-border bg-table-header-bg text-center;
-  }
-
-  /* Selected states */
-  .editor-table-selected {
-    @apply outline-2 outline outline-accent;
-  }
-
-  .editor-table-cell-selected {
-    @apply caret-transparent relative;
-  }
-
-  .editor-table-cell-selected::after {
-    @apply absolute inset-0 bg-table-selected-bg mix-blend-multiply
-           content-[''] pointer-events-none;
-  }
-
-  /* Row striping */
-  .editor-table-row-striping tr:nth-child(even) {
-    @apply bg-table-striping;
-  }
-
-  /* Frozen columns/rows */
-  .editor-table-frozen-row {
-    @apply overflow-x-clip;
-  }
-
-  .editor-table-frozen-row tr:first-child > td {
-    @apply overflow-clip bg-table-header-bg sticky z-10 top-[44px];
-  }
-
-  .editor-table-frozen-row tr:first-child > th {
-    @apply overflow-clip bg-table-header-bg sticky z-10 top-[44px];
-  }
-
-  /* Cell resizer */
-  .editor-table-cell-resizer {
-    @apply absolute -right-1 h-full w-2 cursor-ew-resize z-10 top-0;
-  }
-
-  /* Add columns/rows buttons */
-  .editor-table-add-columns,
-  .editor-table-add-rows {
-    @apply absolute bg-accent animate-[table-controls_0.2s_ease] border-0
-          cursor-pointer hover:bg-accent-80 rounded-squircle-xs max-sm:rounded-squircle-xxs z-50;
-  }
-
-  .editor-table-add-columns::before,
-  .editor-table-add-rows::before {
-    @apply content-['+'] absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
-  }
-
-  .editor-table-add-columns {
-    @apply w-5 max-sm:w-4;
-  }
-
-  .editor-table-add-rows {
-    @apply h-5 max-sm:h-4;
-  }
-
-  /* Cell action button */
-  .table-cell-action-button-container {
-    @apply absolute z-10 top-0 right-0 opacity-0 m-0.5 transition-opacity duration-100;
-  }
-
-  .table-cell-action-button-container-active {
-    @apply opacity-100 pointer-events-auto;
-  }
-
-  .table-cell-action-button-container-inactive {
-    @apply opacity-0 pointer-events-none;
-  }
-
-  .table-cell-action-button {
-    @apply bg-surface-medium border border-surface-light rounded-squircle-xs w-5 h-5
-          flex items-center justify-center cursor-pointer;
-  }
-
-  .table-cell-action-button:hover {
-    @apply bg-surface-dark-lighter;
-  }
-
-  .table-cell-action-button i.table-cell-action-button-icon {
-    @apply inline-block;
-    /* Custom chevron - can't convert directly to Tailwind */
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid var(--text-secondary);
-  }
-
-  .table-action-menu-dropdown {
-    @apply bg-surface-medium rounded-squircle-sm shadow-lg absolute z-50 w-52 opacity-0
-          transition-opacity duration-100 p-2 m-2 border border-surface-light;
-  }
-
-  .table-action-menu-dropdown .table-action-menu-item {
-    @apply flex items-center rounded-squircle-xxs px-2 py-2 border-0 bg-transparent
-          w-full text-left cursor-pointer text-sm text-foreground;
-  }
-
-  .table-action-menu-dropdown .table-action-menu-item:hover {
-    @apply bg-surface-light;
-  }
-
-  .table-action-menu-dropdown hr {
-    @apply my-1 border-0 border-t border-surface-light;
-  }
-
-  .table-action-menu-dropdown .table-action-menu-item:first-of-type {
-    @apply rounded-t-lg;
-  }
-
-  .table-action-menu-dropdown .table-action-menu-item:last-of-type {
-    @apply rounded-b-lg;
-  }
-
-  /* Selection handling */
-  .editor-table-selection *::selection {
-    @apply bg-transparent;
-  }
-
-  /* Animation for controls */
-  @keyframes table-controls {
-    from {
-      @apply opacity-0;
-    }
-    to {
-      @apply opacity-100;
-    }
-  }
-
-  /* Inline Table Input styles */
-  .editor-table-input-wrapper {
-    @apply inline-block;
-  }
-
-  .editor-table-input {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: inherit;
-    line-height: inherit;
-    user-select: none;
-  }
-
-  /* Style for the "/table" prefix */
-  .editor-table-input .table-command-text {
-    @apply text-placeholder-text;
-  }
-
-  /* Input styles */
-  .editor-table-input input {
-    @apply w-12 h-7 py-0.5 px-1
-          border border-input-border
-          rounded-squircle-xs bg-input-bg text-input-text text-center;
-  }
-
-  .editor-table-input input:focus {
-    @apply outline-none border-input-focus-border bg-input-focus-bg;
-    /* We can't use @apply for complex shadows with variables, so keeping this direct */
-    box-shadow: 0 0 0 2px var(--input-focus-shadow);
-  }
-
-  .editor-table-input input::placeholder {
-    @apply text-input-placeholder;
-  }
-
-  /* Dimension separator × symbol */
-  .editor-table-input .dimension-separator {
-    @apply text-text-secondary;
-  }
-
-  /* Insert button */
-  .editor-table-button {
-    @apply bg-primary text-text px-2 py-1 ml-2 rounded-squircle-xs text-sm
-          border-0 cursor-pointer;
-    transition: background-color 0.2s ease;
-  }
-
-  .editor-table-button:hover {
-    @apply bg-primary;
-  }
-
-  .editor-table-button:focus {
-    @apply outline-none;
-    box-shadow: 0 0 0 2px var(--input-focus-shadow);
-  }
-
-  .editor-table-button:disabled {
-    @apply bg-primary-50 cursor-not-allowed;
-  }
-
-  /* Hide number input spinner buttons */
-  .editor-table-input input::-webkit-outer-spin-button,
-  .editor-table-input input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  .editor-table-input input[type="number"] {
-    -moz-appearance: textfield;
-  }
-
-  /* Active input highlight */
-  .editor-table-input input.active {
-    @apply border-input-focus-border;
-    box-shadow: 0 0 0 2px var(--input-focus-shadow);
-  }
-
-  /* Simple scrollbar color styling */
-  * {
-    scrollbar-color: var(--surface-light) transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--surface-light);
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 0;
-  }
-
-  /* Horizontal rule styles */
-  .editor-horizontal-rule {
-    @apply py-1 px-1 -mx-2 border-none my-4 cursor-pointer flex items-center rounded-squircle-xxs;
-  }
-
-  .editor-horizontal-rule::after {
-    @apply content-[''] w-full h-0.5 bg-[--text-tertiary];
-  }
-
-  .editor-horizontal-rule-selected {
-    @apply outline outline-1 outline-accent select-none;
-  }
-
-  /* Basic equation container styles - node-level */
-  .editor-equation {
-    @apply select-none cursor-default min-h-4;
-  }
-
-  .editor-equation-inline {
-    @apply inline-block align-middle p-1 mx-auto w-fit max-w-full;
-  }
-
-  .editor-equation-block {
-    @apply block text-center mx-auto w-fit max-w-full px-2 m-2;
-  }
-
-  /* 2. Equation Wrapper - Interactive container */
-  .equation-wrapper {
-    @apply relative inline-block w-fit max-w-full cursor-pointer rounded-squircle-xs;
-  }
-
-  /* Special handling for block equation wrappers */
-  .editor-equation-block .equation-wrapper {
-    @apply block mx-auto;
-  }
-
-  .equation-selected {
-    @apply border border-surface-light bg-code-bg;
-  }
-
-  /* 3. Rendered Equation */
-  .equation-renderer {
-    @apply inline-block w-fit overflow-x-auto;
-  }
-
-  /* 4. Equation Editor Interface */
-  .equation-editor-container {
-    @apply flex items-center bg-surface-dark border border-surface-light 
-        max-w-full rounded-squircle-xs;
-  }
-
-  .equation-editor-inline {
-    @apply inline-flex;
-  }
-
-  .equation-editor-wrapper {
-    @apply inline;
-  }
-
-  .equation-editor-delimiter {
-    @apply text-text-tertiary text-xs font-mono px-1 flex-shrink-0;
-  }
-
-  .equation-editor-input {
-    @apply bg-transparent outline-none text-foreground text-center font-mono 
-            border-0 text-sm px-2 py-1 mx-1 rounded-squircle-xs min-w-[10ch] max-w-[80ch] 
-            placeholder:text-text-tertiary placeholder:font-mono;
-  }
-
-  /* Equation Controls */
-  .equation-controls {
-    @apply absolute -top-2 -right-2 z-10;
-  }
-
-  .equation-delete-btn {
-    @apply flex items-center justify-center w-4 h-4
-         bg-surface-medium border border-surface-light rounded-full 
-         text-lg font-bold text-red-500 
-         transition-colors hover:bg-surface-dark-lighter;
-  }
-
-  /* KaTeX styling overrides */
-  .katex {
-    @apply text-foreground;
-  }
-
-  .katex-display {
-    @apply block text-center overflow-x-auto overflow-y-hidden;
-  }
-
-  .katex-error {
-    @apply text-red-500 whitespace-normal;
-  }
-
-  /* Code Block Component */
-  /* Main code block container */
-  .editor-code {
-    @apply bg-code-bg font-mono block relative overflow-x-auto
-           mt-4 mb-4 text-sm leading-normal border border-surface-light
-           rounded-squircle-sm p-2 pl-14 ml-0 mr-0;
-    tab-size: 2;
-  }
-
-  /* Line numbers gutter */
-  .editor-code::before {
-    content: attr(data-gutter);
-    @apply absolute bg-surface-medium-darker left-0 top-0 
-           border-r border-surface-light p-2 text-text-tertiary
-           whitespace-pre-wrap text-right min-w-10 h-full;
-  }
-
-  /* Inline code styling */
-  .editor-text-code {
-    @apply bg-code-bg px-1 py-[1px] my-[1px] mx-1 rounded-squircle-xs 
-           font-mono text-sm border border-surface-light;
-  }
-
-  /* Syntax highlighting tokens - Snake case naming */
-  .editor-token-comment {
-    @apply text-text-tertiary italic;
-  }
-
-  .editor-token-punctuation {
-    @apply text-text-secondary;
-  }
-
-  .editor-token-property {
-    @apply text-purple-300;
-  }
-
-  .editor-token-selector {
-    @apply text-green-300;
-  }
-
-  .editor-token-operator {
-    @apply text-orange-300;
-  }
-
-  .editor-token-attr {
-    @apply text-blue-300;
-  }
-
-  .editor-token-variable {
-    @apply text-yellow-300;
-  }
-
-  .editor-token-function {
-    @apply text-pink-300;
-  }
-
-  /* Additional token types */
-  .editor-token-boolean,
-  .editor-token-constant,
-  .editor-token-deleted,
-  .editor-token-number,
-  .editor-token-symbol,
-  .editor-token-tag {
-    @apply text-purple-300;
-  }
-
-  .editor-token-builtin,
-  .editor-token-char,
-  .editor-token-inserted,
-  .editor-token-string {
-    @apply text-green-300;
-  }
-
-  .editor-token-class,
-  .editor-token-class-name {
-    @apply text-pink-300;
-  }
-
-  .editor-token-prolog,
-  .editor-token-doctype,
-  .editor-token-cdata {
-    @apply text-text-tertiary italic;
-  }
-
-  .editor-token-keyword {
-    @apply text-blue-300;
-  }
-
-  .editor-token-namespace,
-  .editor-token-regex,
-  .editor-token-important {
-    @apply text-yellow-300;
-  }
-
-  .editor-token-entity,
-  .editor-token-url {
-    @apply text-orange-300;
-  }
-
-  /* icons */
-  .icon {
-    @apply inline-block w-5 h-5 select-none text-text-secondary;
+/* Navbar Components */
+.navbar {
+  @apply w-full bg-transparent;
+}
+
+.navbar-container {
+  @apply flex justify-between items-center mx-auto px-6 h-16 max-w-7xl max-sm:h-14;
+}
+
+.navbar-logo {
+  @apply flex items-center;
+}
+
+.navbar-links {
+  @apply flex items-center;
+}
+
+.navbar-links > :not([hidden]) ~ :not([hidden]) {
+  @apply mr-0 ml-4 max-sm:ml-3;
+}
+
+/* Nav link styles */
+.nav-link {
+  @apply text-nav-link no-underline text-lg rounded transition-[color,background-color,border-color,text-decoration-color,fill,stroke] duration-200;
+}
+
+.nav-link:hover {
+  @apply text-nav-link-hover underline;
+}
+
+/* Social link styles */
+.social-link {
+  @apply flex items-center text-nav-link transition-[color,background-color,border-color,text-decoration-color,fill,stroke] duration-200;
+}
+
+/* Unified hover style for all social links */
+.social-link:hover {
+  @apply text-nav-link-hover;
+}
+
+/* Adjustments to ensure icons align properly with text */
+.social-link svg {
+  @apply shrink-0;
+}
+
+/* Base editor components */
+.editor-main {
+  @apply flex flex-col min-h-screen;
+}
+
+.editor-root {
+  @apply grow w-full flex justify-center bg-background;
+}
+
+.editor-area {
+  @apply w-full max-w-4xl grow flex flex-col relative
+         bg-editor-bg shadow-lg cursor-text
+         rounded-squircle;
+}
+
+.editor-wrapper {
+  @apply h-full flex flex-col w-full px-8 py-12 mb-4 max-sm:px-6 max-sm:py-8;
+}
+
+.editor-input {
+  @apply flex-1 resize-none outline-invisible caret-accent min-h-full;
+}
+
+.editor-read-only {
+  @apply absolute top-3 right-6 max-sm:top-2 max-sm:right-4 px-2 text-xs leading-5
+         text-text-secondary border border-surface-light rounded-squircle-xxs
+         pointer-events-none select-none;
+}
+
+.editor-notice {
+  @apply fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3
+         w-max max-w-[calc(100vw-2rem)] px-4 py-2 text-sm text-text cursor-default
+         bg-surface-dark border border-surface-light rounded-squircle-sm shadow-lg;
+}
+
+.editor-notice-dismiss {
+  @apply border-0 bg-transparent text-text-secondary text-lg leading-none cursor-pointer;
+}
+
+.editor-placeholder {
+  @apply absolute top-12 left-8 max-sm:top-8 max-sm:left-6 text-placeholder-text pointer-events-none select-none;
+}
+
+.editor-link {
+  @apply text-link cursor-pointer transition-[color,background-color,border-color,text-decoration-color,fill,stroke] duration-200;
+}
+
+.editor-link:hover {
+  @apply text-link-hover underline;
+}
+
+/* Editor texts */
+.editor-text-bold {
+  @apply font-bold;
+}
+
+.editor-text-italic {
+  @apply italic;
+}
+
+.editor-text-underline {
+  @apply underline;
+}
+
+/* Node-specific styles */
+.editor-heading-h1 {
+  @apply text-4xl font-bold mt-6 mb-4 max-sm:text-3xl max-sm:mt-4 max-sm:mb-4;
+}
+
+.editor-heading-h2 {
+  @apply text-3xl font-bold mt-5 mb-3 max-sm:text-2xl max-sm:mt-3 max-sm:mb-3;
+}
+
+.editor-heading-h3 {
+  @apply text-2xl font-bold mt-4 mb-2 max-sm:text-xl max-sm:mt-2 max-sm:mb-2;
+}
+
+.editor-quote {
+  @apply border-l-4 border-quote-border pl-4 my-4 max-sm:pl-2 italic text-text-secondary rounded-r-squircle-xs;
+}
+
+.editor-code {
+  @apply bg-code-bg p-2 rounded-squircle-sm font-mono text-sm;
+}
+
+/* Base list styles */
+.editor-list-ul {
+  @apply p-0 m-0 list-disc list-outside;
+}
+
+.editor-list-ol {
+  @apply p-0 m-0 list-decimal list-outside;
+}
+
+/* List item styles */
+.editor-listitem {
+  @apply mx-8;
+}
+
+/* Nested list item */
+.editor-nested-listitem {
+  @apply list-none;
+}
+
+/* Different depth ordered lists styles */
+.editor-list-ol1 {
+  @apply p-0 m-0 list-decimal list-outside;
+}
+
+.editor-list-ol2 {
+  @apply p-0 m-0 list-[upper-roman] list-outside;
+}
+
+.editor-list-ol3 {
+  @apply p-0 m-0 list-[lower-roman] list-outside;
+}
+
+.editor-list-ol4 {
+  @apply p-0 m-0 list-[upper-alpha] list-outside;
+}
+
+.editor-list-ol5 {
+  @apply p-0 m-0 list-[lower-alpha] list-outside;
+}
+
+/* Different depth unordered lists styles */
+.editor-list-ul1 {
+  @apply p-0 m-0 list-disc list-outside;
+}
+
+.editor-list-ul2 {
+  @apply p-0 m-0 list-[circle] list-outside;
+}
+
+.editor-list-ul3 {
+  @apply p-0 m-0 list-[square] list-outside;
+}
+
+/* Checkbox list styles */
+.editor-checklist {
+  @apply p-0 m-0 list-none;
+}
+
+/* Base checkbox item styles */
+.editor-listitem-checked,
+.editor-listitem-unchecked {
+  @apply relative mx-2 px-6 list-none outline-invisible;
+}
+
+/* Checked state */
+.editor-listitem-checked {
+  @apply line-through;
+}
+
+/* Checkbox appearance */
+.editor-listitem-checked::before,
+.editor-listitem-unchecked::before {
+  @apply content-[''] absolute w-4 h-4 top-0.5 left-0 cursor-pointer block bg-cover;
+}
+
+.editor-listitem-unchecked::before {
+  @apply border border-checkbox-border rounded;
+}
+
+.editor-listitem-checked::before {
+  @apply border border-checkbox-checked-bg rounded bg-checkbox-checked-bg bg-no-repeat;
+}
+
+/* Checkmark */
+.editor-listitem-checked::after {
+  @apply content-[''] cursor-pointer border-checkbox-checkmark border-solid absolute block top-1.5 w-[3px] left-[7px] right-[7px] h-1.5 [transform:rotate(45deg)] border-0 border-r-2 border-b-2;
+}
+
+/* Hide original checkbox for nested items */
+.editor-nested-listitem::before,
+.editor-nested-listitem::after {
+  @apply hidden;
+}
+
+/* Ensure nested checkboxes maintain proper positioning */
+.editor-nested-listitem .editor-listitem-checked,
+.editor-nested-listitem .editor-listitem-unchecked {
+  @apply relative mx-2;
+}
+
+/* RTL support */
+.editor-listitem-checked[dir="rtl"]::before,
+.editor-listitem-unchecked[dir="rtl"]::before {
+  @apply left-auto right-0;
+}
+
+/* Focus styles */
+.editor-listitem-checked:focus::before,
+.editor-listitem-unchecked:focus::before {
+  @apply outline-invisible;
+}
+/* Indentation support */
+.editor-indent {
+  --indent-base-value: 40px;
+}
+
+/* Typeahead Menu Components */
+.typeahead-popover {
+  @apply relative bg-surface-medium shadow-lg rounded-squircle-sm py-2 border border-surface-light;
+}
+
+.typeahead-popover ul {
+  @apply p-0 m-0 list-none rounded-squircle-sm max-h-64 overflow-y-scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.typeahead-popover ul::-webkit-scrollbar {
+  @apply hidden;
+}
+
+.typeahead-popover ul li {
+  @apply m-0 min-w-[180px] text-base leading-6 outline-invisible cursor-pointer rounded-squircle-xxs;
+}
+
+.typeahead-popover ul li.selected {
+  @apply bg-surface-medium-lighter;
+}
+
+.typeahead-popover li {
+  @apply mx-2 p-2 text-foreground cursor-pointer leading-4 text-sm flex items-center flex-row shrink-0 bg-surface-medium rounded-squircle-xxs border-0;
+}
+
+.typeahead-popover li.active {
+  @apply flex w-5 h-5 bg-contain;
+}
+
+.typeahead-popover li:first-child {
+  @apply rounded-t-lg;
+}
+
+.typeahead-popover li:last-child {
+  @apply rounded-b-lg;
+}
+
+.typeahead-popover li:hover {
+  @apply bg-surface-medium-lighter;
+}
+
+.typeahead-popover li .text {
+  @apply flex leading-5 grow min-w-[150px];
+}
+
+.typeahead-popover li .icon {
+  @apply flex shrink-0 mr-2;
+}
+
+/* Component Picker Specific */
+.component-picker-menu {
+  @apply w-60 rounded-squircle-sm overflow-hidden;
+}
+
+.component-picker-menu .item {
+  @apply items-center cursor-pointer flex flex-row justify-between
+       p-2 mx-2 rounded-squircle-xxs;
+}
+
+.component-picker-menu .item .shortcut {
+  @apply text-text-tertiary text-sm font-mono ml-auto font-bold shrink-0;
+}
+
+.component-picker-menu .item.selected {
+  @apply bg-surface-light;
+}
+
+.component-picker-menu .item:hover {
+  @apply bg-surface-light;
+}
+
+.component-picker-menu .item .text {
+  @apply flex leading-5 grow min-w-32 mr-auto;
+}
+
+/* Table wrapper */
+.editor-table-scrollable-wrapper {
+  @apply overflow-x-auto;
+}
+
+/* Base table */
+.editor-table {
+  @apply relative border-collapse border-0 table-fixed w-full mt-6 mb-8 min-w-[200px] rounded-squircle-sm overflow-hidden mx-auto;
+}
+
+/* Pseudo-element for the outer border */
+.editor-table::after {
+  content: "";
+  @apply absolute inset-0 pointer-events-none border border-table-border rounded-squircle-sm;
+}
+
+/* Table alignment */
+.editor-table-align-center {
+  @apply mx-auto;
+}
+
+.editor-table-align-right {
+  @apply ml-auto;
+}
+
+/* Table cells */
+.editor-table-cell {
+  @apply border border-table-border align-top text-center p-2 relative outline-invisible bg-table-cell-bg;
+}
+
+/* Table header cells */
+.editor-table-cell-header {
+  @apply border border-table-border bg-table-header-bg text-center;
+}
+
+/* Selected states */
+.editor-table-selected {
+  @apply outline-2 outline-accent;
+}
+
+.editor-table-cell-selected {
+  @apply caret-transparent relative;
+}
+
+.editor-table-cell-selected::after {
+  @apply absolute inset-0 bg-table-selected-bg mix-blend-multiply
+         content-[''] pointer-events-none;
+}
+
+/* Row striping */
+.editor-table-row-striping tr:nth-child(even) {
+  @apply bg-table-striping;
+}
+
+/* Frozen columns/rows */
+.editor-table-frozen-row {
+  @apply overflow-x-clip;
+}
+
+.editor-table-frozen-row tr:first-child > td {
+  @apply overflow-clip bg-table-header-bg sticky z-10 top-[44px];
+}
+
+.editor-table-frozen-row tr:first-child > th {
+  @apply overflow-clip bg-table-header-bg sticky z-10 top-[44px];
+}
+
+/* Cell resizer */
+.editor-table-cell-resizer {
+  @apply absolute -right-1 h-full w-2 cursor-ew-resize z-10 top-0;
+}
+
+/* Add columns/rows buttons */
+.editor-table-add-columns,
+.editor-table-add-rows {
+  @apply absolute bg-accent animate-[table-controls_0.2s_ease] border-0
+        cursor-pointer hover:bg-accent-80 rounded-squircle-xs max-sm:rounded-squircle-xxs z-50;
+}
+
+.editor-table-add-columns::before,
+.editor-table-add-rows::before {
+  @apply content-['+'] absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
+}
+
+.editor-table-add-columns {
+  @apply w-5 max-sm:w-4;
+}
+
+.editor-table-add-rows {
+  @apply h-5 max-sm:h-4;
+}
+
+/* Cell action button */
+.table-cell-action-button-container {
+  @apply absolute z-10 top-0 right-0 opacity-0 m-0.5 transition-opacity duration-100;
+}
+
+.table-cell-action-button-container-active {
+  @apply opacity-100 pointer-events-auto;
+}
+
+.table-cell-action-button-container-inactive {
+  @apply opacity-0 pointer-events-none;
+}
+
+.table-cell-action-button {
+  @apply bg-surface-medium border border-surface-light rounded-squircle-xs w-5 h-5
+        flex items-center justify-center cursor-pointer;
+}
+
+.table-cell-action-button:hover {
+  @apply bg-surface-dark-lighter;
+}
+
+.table-cell-action-button i.table-cell-action-button-icon {
+  @apply inline-block;
+  /* Custom chevron - can't convert directly to Tailwind */
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary);
+}
+
+.table-action-menu-dropdown {
+  @apply bg-surface-medium rounded-squircle-sm shadow-lg absolute z-50 w-52 opacity-0
+        transition-opacity duration-100 p-2 m-2 border border-surface-light;
+}
+
+.table-action-menu-dropdown .table-action-menu-item {
+  @apply flex items-center rounded-squircle-xxs px-2 py-2 border-0 bg-transparent
+        w-full text-left cursor-pointer text-sm text-foreground;
+}
+
+.table-action-menu-dropdown .table-action-menu-item:hover {
+  @apply bg-surface-light;
+}
+
+.table-action-menu-dropdown hr {
+  @apply my-1 border-0 border-t border-surface-light;
+}
+
+.table-action-menu-dropdown .table-action-menu-item:first-of-type {
+  @apply rounded-t-lg;
+}
+
+.table-action-menu-dropdown .table-action-menu-item:last-of-type {
+  @apply rounded-b-lg;
+}
+
+/* Selection handling */
+.editor-table-selection *::selection {
+  @apply bg-transparent;
+}
+
+/* Animation for controls */
+@keyframes table-controls {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
+
+/* Inline Table Input styles */
+.editor-table-input-wrapper {
+  @apply inline-block;
+}
+
+.editor-table-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: inherit;
+  line-height: inherit;
+  user-select: none;
+}
+
+/* Style for the "/table" prefix */
+.editor-table-input .table-command-text {
+  @apply text-placeholder-text;
+}
+
+/* Input styles */
+.editor-table-input input {
+  @apply w-12 h-7 py-0.5 px-1
+        border border-input-border
+        rounded-squircle-xs bg-input-bg text-input-text text-center;
+}
+
+.editor-table-input input:focus {
+  @apply outline-invisible border-input-focus-border bg-input-focus-bg;
+  /* We can't use @apply for complex shadows with variables, so keeping this direct */
+  box-shadow: 0 0 0 2px var(--input-focus-shadow);
+}
+
+.editor-table-input input::placeholder {
+  @apply text-input-placeholder;
+}
+
+/* Dimension separator × symbol */
+.editor-table-input .dimension-separator {
+  @apply text-text-secondary;
+}
+
+/* Insert button */
+.editor-table-button {
+  @apply bg-primary text-text px-2 py-1 ml-2 rounded-squircle-xs text-sm
+        border-0 cursor-pointer;
+  transition: background-color 0.2s ease;
+}
+
+.editor-table-button:hover {
+  @apply bg-primary;
+}
+
+.editor-table-button:focus {
+  @apply outline-invisible;
+  box-shadow: 0 0 0 2px var(--input-focus-shadow);
+}
+
+.editor-table-button:disabled {
+  @apply bg-primary-50 cursor-not-allowed;
+}
+
+/* Hide number input spinner buttons */
+.editor-table-input input::-webkit-outer-spin-button,
+.editor-table-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.editor-table-input input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Active input highlight */
+.editor-table-input input.active {
+  @apply border-input-focus-border;
+  box-shadow: 0 0 0 2px var(--input-focus-shadow);
+}
+
+/* Simple scrollbar color styling */
+* {
+  scrollbar-color: var(--surface-light) transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-light);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 0;
+}
+
+/* Horizontal rule styles */
+.editor-horizontal-rule {
+  @apply py-1 px-1 -mx-2 border-none my-4 cursor-pointer flex items-center rounded-squircle-xxs;
+}
+
+.editor-horizontal-rule::after {
+  @apply content-[''] w-full h-0.5 bg-(--text-tertiary);
+}
+
+.editor-horizontal-rule-selected {
+  @apply outline-1 outline-accent select-none;
+}
+
+/* Basic equation container styles - node-level */
+.editor-equation {
+  @apply select-none cursor-default min-h-4;
+}
+
+.editor-equation-inline {
+  @apply inline-block align-middle p-1 mx-auto w-fit max-w-full;
+}
+
+.editor-equation-block {
+  @apply block text-center mx-auto w-fit max-w-full px-2 m-2;
+}
+
+/* 2. Equation Wrapper - Interactive container */
+.equation-wrapper {
+  @apply relative inline-block w-fit max-w-full cursor-pointer rounded-squircle-xs;
+}
+
+/* Special handling for block equation wrappers */
+.editor-equation-block .equation-wrapper {
+  @apply block mx-auto;
+}
+
+.equation-selected {
+  @apply border border-surface-light bg-code-bg;
+}
+
+/* 3. Rendered Equation */
+.equation-renderer {
+  @apply inline-block w-fit overflow-x-auto;
+}
+
+/* 4. Equation Editor Interface */
+.equation-editor-container {
+  @apply flex items-center bg-surface-dark border border-surface-light 
+      max-w-full rounded-squircle-xs;
+}
+
+.equation-editor-inline {
+  @apply inline-flex;
+}
+
+.equation-editor-wrapper {
+  @apply inline;
+}
+
+.equation-editor-delimiter {
+  @apply text-text-tertiary text-xs font-mono px-1 shrink-0;
+}
+
+.equation-editor-input {
+  @apply bg-transparent outline-invisible text-foreground text-center font-mono 
+          border-0 text-sm px-2 py-1 mx-1 rounded-squircle-xs min-w-[10ch] max-w-[80ch] 
+          placeholder:text-text-tertiary placeholder:font-mono;
+}
+
+/* Equation Controls */
+.equation-controls {
+  @apply absolute -top-2 -right-2 z-10;
+}
+
+.equation-delete-btn {
+  @apply flex items-center justify-center w-4 h-4
+       bg-surface-medium border border-surface-light rounded-full 
+       text-lg font-bold text-red-500 
+       transition-[color,background-color,border-color,text-decoration-color,fill,stroke] hover:bg-surface-dark-lighter;
+}
+
+/* KaTeX styling overrides */
+.katex {
+  @apply text-foreground;
+}
+
+/* Code Block Component */
+/* Main code block container */
+.editor-code {
+  @apply bg-code-bg font-mono block relative overflow-x-auto
+         mt-4 mb-4 text-sm leading-normal border border-surface-light
+         rounded-squircle-sm p-2 pl-14 ml-0 mr-0;
+  tab-size: 2;
+}
+
+/* Line numbers gutter */
+.editor-code::before {
+  content: attr(data-gutter);
+  @apply absolute bg-surface-medium-darker left-0 top-0 
+         border-r border-surface-light p-2 text-text-tertiary
+         whitespace-pre-wrap text-right min-w-10 h-full;
+}
+
+/* Inline code styling */
+.editor-text-code {
+  @apply bg-code-bg px-1 py-[1px] my-[1px] mx-1 rounded-squircle-xs 
+         font-mono text-sm border border-surface-light;
+}
+
+/* Syntax highlighting tokens - Snake case naming */
+.editor-token-comment {
+  @apply text-text-tertiary italic;
+}
+
+.editor-token-punctuation {
+  @apply text-text-secondary;
+}
+
+.editor-token-property {
+  @apply text-purple-300;
+}
+
+.editor-token-selector {
+  @apply text-green-300;
+}
+
+.editor-token-operator {
+  @apply text-orange-300;
+}
+
+.editor-token-attr {
+  @apply text-blue-300;
+}
+
+.editor-token-variable {
+  @apply text-yellow-300;
+}
+
+.editor-token-function {
+  @apply text-pink-300;
+}
+
+/* Additional token types */
+.editor-token-boolean,
+.editor-token-constant,
+.editor-token-deleted,
+.editor-token-number,
+.editor-token-symbol,
+.editor-token-tag {
+  @apply text-purple-300;
+}
+
+.editor-token-builtin,
+.editor-token-char,
+.editor-token-inserted,
+.editor-token-string {
+  @apply text-green-300;
+}
+
+.editor-token-class,
+.editor-token-class-name {
+  @apply text-pink-300;
+}
+
+.editor-token-prolog,
+.editor-token-doctype,
+.editor-token-cdata {
+  @apply text-text-tertiary italic;
+}
+
+.editor-token-keyword {
+  @apply text-blue-300;
+}
+
+.editor-token-namespace,
+.editor-token-regex,
+.editor-token-important {
+  @apply text-yellow-300;
+}
+
+.editor-token-entity,
+.editor-token-url {
+  @apply text-orange-300;
+}
+
+/* icons */
+.icon {
+  @apply inline-block w-5 h-5 select-none text-text-secondary;
+}
+
+.text {
+  @apply text-foreground;
+}
+
+/* Utilities, from the classes used in app/ */
+@tailwind utilities source(none);
+@source "./**/*.{js,ts,jsx,tsx,mdx}";
