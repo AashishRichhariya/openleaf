@@ -1,0 +1,5 @@
+# Install scripts of dependencies only run if listed as true. Neither is needed: next/image is
+# only used for SVG and data URLs, and unrs-resolver ships prebuilt binaries.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false

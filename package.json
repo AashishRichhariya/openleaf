@@ -2,6 +2,13 @@
   "name": "openleaf",
   "version": "0.3.0",
   "private": true,
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": "26.x"
+  },
+  "volta": {
+    "node": "26.13.1"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
