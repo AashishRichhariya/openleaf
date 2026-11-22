@@ -24,6 +24,27 @@ export type SerializedEquationNode = Spread<
   SerializedLexicalNode
 >;
 
+// btoa only takes Latin-1. Such equations are copied as before, which older versions can
+// paste, and others as UTF-8 that says so.
+function encodeEquation(equation: string): { data: string; encoding?: 'utf-8' } {
+  if (![...equation].some((char) => char.charCodeAt(0) > 0xff)) {
+    return { data: btoa(equation) };
+  }
+  const bytes = new TextEncoder().encode(equation);
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
+  return { data: btoa(binary), encoding: 'utf-8' };
+}
+
+function decodeEquation(data: string, encoding: string | null): string {
+  try {
+    const binary = atob(data);
+    if (encoding !== 'utf-8') return binary;
+    return new TextDecoder().decode(Uint8Array.from(binary, (char) => char.charCodeAt(0)));
+  } catch {
+    return '';
+  }
+}
+
 function $convertEquationElement(
   domNode: HTMLElement,
 ): null | DOMConversionOutput {
@@ -31,7 +52,10 @@ function $convertEquationElement(
   const inline = domNode.getAttribute('data-lexical-inline') === 'true';
   const startInEditMode = domNode.getAttribute('data-lexical-start-edit') === 'true';
   // Decode the equation from base64
-  equation = atob(equation || '');
+  equation = decodeEquation(
+    equation || '',
+    domNode.getAttribute('data-lexical-equation-encoding'),
+  );
   if (equation) {
     const node = $createEquationNode(equation, inline, startInEditMode);
     return {node};
@@ -89,8 +113,9 @@ export class EquationNode extends DecoratorNode<ReactElement> {
   exportDOM(): DOMExportOutput {
     const element = document.createElement(this.__inline ? 'span' : 'div');
     // Encode the equation as base64 to avoid issues with special characters
-    const equation = btoa(this.__equation);
-    element.setAttribute('data-lexical-equation', equation);
+    const { data, encoding } = encodeEquation(this.__equation);
+    element.setAttribute('data-lexical-equation', data);
+    if (encoding) element.setAttribute('data-lexical-equation-encoding', encoding);
     element.setAttribute('data-lexical-inline', `${this.__inline}`);
     element.setAttribute('data-lexical-start-edit', `${this.__startInEditMode}`);
     katex.render(this.__equation, element, {

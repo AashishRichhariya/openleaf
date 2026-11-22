@@ -298,6 +298,14 @@ body {
   @apply underline;
 }
 
+.editor-text-strikethrough {
+  @apply line-through;
+}
+
+.editor-text-underlineStrikethrough {
+  text-decoration-line: underline line-through;
+}
+
 /* Node-specific styles */
 .editor-heading-h1 {
   @apply text-4xl font-bold mt-6 mb-4 max-sm:text-3xl max-sm:mt-4 max-sm:mb-4;
@@ -309,6 +317,14 @@ body {
 
 .editor-heading-h3 {
   @apply text-2xl font-bold mt-4 mb-2 max-sm:text-xl max-sm:mt-2 max-sm:mb-2;
+}
+
+.editor-heading-h4 {
+  @apply text-xl font-bold mt-3 mb-2 max-sm:text-lg max-sm:mt-2 max-sm:mb-2;
+}
+
+.editor-heading-h5 {
+  @apply text-lg font-bold mt-3 mb-1 max-sm:text-base max-sm:mt-2 max-sm:mb-1;
 }
 
 .editor-quote {

@@ -1,5 +1,5 @@
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
-import { $getNodeByKey, DecoratorNode, LexicalEditor, NodeKey } from 'lexical';
+import { $getNodeByKey, $isTextNode, DecoratorNode, LexicalEditor, NodeKey } from 'lexical';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 
 interface InlineTableInputProps {
@@ -101,10 +101,29 @@ export function InlineTableInput({ editor, nodeKey }: InlineTableInputProps) {
   };
 
   const removeNode = () => {
+    // After this key event: Lexical's own Escape handling would blur the editor again
+    setTimeout(placeCaretWhereWidgetWas, 0);
+  };
+
+  const placeCaretWhereWidgetWas = () => {
+    // Lexical doesn't move the caret while one of these inputs has focus
+    editor.getRootElement()?.focus({ preventScroll: true });
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
-      if (node) {
-        node.remove();
+      if (!node) return;
+      const parent = node.getParentOrThrow();
+      const index = node.getIndexWithinParent();
+      const previous = node.getPreviousSibling();
+      const next = node.getNextSibling();
+      node.remove(true);
+      // Put the caret where the widget was
+      if ($isTextNode(previous)) {
+        const end = previous.getTextContentSize();
+        previous.select(end, end);
+      } else if ($isTextNode(next)) {
+        next.select(0, 0);
+      } else {
+        parent.select(index, index);
       }
     });
   };

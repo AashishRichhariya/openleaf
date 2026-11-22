@@ -32,6 +32,33 @@ export function sanitizeUrl(url: string): string {
   return url;
 }
 
+const WRAPPED = /^[([{<"'“‘«]/;
+const CONTACT_WITH_SPACES = /^(?:mailto:\S+\?|(?:sms|tel):[\d\s()+.-]+$)/i;
+const WEB_URL_WITH_PATH = /^(?:https?:\/\/|www\.)[^\s/]+\//i;
+const FREE_TEXT_PARAMETER = /[?&](?:q|query|search|text|subject|body)=[^&\s]*$/i;
+const FILE_OR_PATH = /\/|\.[A-Za-z][A-Za-z0-9]{1,4}$/;
+const ANOTHER_URL = /:\/\/|\bwww\./i;
+
+/**
+ * Whether text is prose around a URL rather than a URL. Spaces are only fine where real
+ * URLs have them: in mail subjects, phone numbers, searches and file paths.
+ *
+ * @param text - Text to check
+ * @returns Boolean indicating if the text is prose
+ */
+function isProse(text: string): boolean {
+  const trimmed = text.trim();
+  if (WRAPPED.test(trimmed)) return true;
+  if (!/\s/.test(trimmed)) return false;
+  if (/[\r\n]/.test(trimmed)) return true;
+  if (CONTACT_WITH_SPACES.test(trimmed)) return false;
+  if (!WEB_URL_WITH_PATH.test(trimmed)) return true;
+
+  const [first, ...rest] = trimmed.split(/\s+/);
+  if (rest.some((word) => ANOTHER_URL.test(word))) return true;
+  return !FREE_TEXT_PARAMETER.test(first) && !FILE_OR_PATH.test(rest[rest.length - 1]);
+}
+
 /**
  * Validates a URL string
  * 
@@ -39,6 +66,7 @@ export function sanitizeUrl(url: string): string {
  * @returns Boolean indicating if URL is valid
  */
 export function validateUrl(url: string): boolean {
+  if (isProse(url)) return false;
   const sanitizedURL = sanitizeUrl(url);
   
   // Check if URL starts with a supported protocol prefix for user starting to type a URL

@@ -42,7 +42,8 @@ function TableHoverActionsContainer({
   const [isShownColumn, setShownColumn] = useState<boolean>(false);
   const [shouldListenMouseMove, setShouldListenMouseMove] =
     useState<boolean>(false);
-  const [position, setPosition] = useState({});
+  const [rowPosition, setRowPosition] = useState({});
+  const [columnPosition, setColumnPosition] = useState({});
   const tableSetRef = useRef<Set<NodeKey>>(new Set());
   const tableCellDOMNodeRef = useRef<HTMLElement | null>(null);
 
@@ -95,9 +96,11 @@ function TableHoverActionsContainer({
               const colIndex =
                 $getTableColumnIndexFromTableCellNode(maybeTableCell);
 
+              // The bottom-right cell offers both
               if (rowIndex === rowCount - 1) {
                 hoveredRowNode = maybeTableCell;
-              } else if (colIndex === colCount - 1) {
+              }
+              if (colIndex === colCount - 1) {
                 hoveredColumnNode = maybeTableCell;
               }
             }
@@ -122,19 +125,20 @@ function TableHoverActionsContainer({
         const { y: editorElemY, left: editorElemLeft } = anchorElem.getBoundingClientRect();
   
         if (hoveredRowNode) {
-          setShownColumn(false);
+          setShownColumn(!!hoveredColumnNode);
           setShownRow(true);
-          setPosition({
+          setRowPosition({
             left: parentElement
               ? parentElement.offsetLeft
               : tableElemLeft - editorElemLeft,
             top: tableElemBottom - editorElemY + 5 ,
             width: parentElement ? parentElement.offsetWidth : tableElemWidth,
           });
-        } else if (hoveredColumnNode) {
+        }
+        if (hoveredColumnNode) {
           setShownColumn(true);
-          setShownRow(false);
-          setPosition({
+          setShownRow(!!hoveredRowNode);
+          setColumnPosition({
             height: tableElemHeight,
             left:
               (parentElement
@@ -242,14 +246,14 @@ function TableHoverActionsContainer({
       {isShownRow && (
         <button
           className={`${getTheme()?.tableAddRows}`}
-          style={{ ...position }}
+          style={{ ...rowPosition }}
           onClick={() => insertAction(true)}
         />
       )}
       {isShownColumn && (
         <button
           className={`${getTheme()?.tableAddColumns}`}
-          style={{ ...position }}
+          style={{ ...columnPosition }}
           onClick={() => insertAction(false)}
         />
       )}

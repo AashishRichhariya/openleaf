@@ -1,6 +1,7 @@
 export { AutosavePlugin } from './AutosavePlugin';
 export { BehaviorParityPlugin } from './BehaviorParityPlugin';
 export { CheckListPlugin } from './CheckListPlugin';
+export { CodeBlockPlacementPlugin } from './CodeBlockPlacementPlugin';
 export { CodeHighlightPlugin } from './CodeHighlightPlugin';
 export { ComponentPickerPlugin } from './ComponentPickerPlugin';
 export { EquationPlugin } from './EquationPlugin';

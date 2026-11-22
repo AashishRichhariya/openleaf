@@ -41,9 +41,23 @@ import * as ReactDOM from 'react-dom';
 import { Icon } from '@/app/components/icons';
 
 import { $createInlineTableInputNode } from '../custom-nodes';
+import { $liftCaretLine } from '../custom-utils/codeBlockPlacement';
 
 import { INSERT_EQUATION_COMMAND } from './EquationPlugin';
 
+
+// /NxM: any size of up to two digits each, and longer tables up to 500 rows. A table much
+// over 1000 cells is too large to be saved, as DynamoDB items stop at 400 KB.
+const MAX_TABLE_ROWS = 500;
+const MAX_TABLE_COLUMNS = 500;
+const MAX_LARGE_TABLE_CELLS = 1000;
+
+function isAllowedTableSize(rows: number, columns: number): boolean {
+  if (rows < 100 && columns < 100) return true;
+  return rows <= MAX_TABLE_ROWS
+    && columns <= MAX_TABLE_COLUMNS
+    && rows * columns <= MAX_LARGE_TABLE_CELLS;
+}
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
@@ -54,6 +68,8 @@ class ComponentPickerOption extends MenuOption {
   keywords: Array<string>;
   // Keyboard shortcut
   shortcut?: string;
+  // Whether it makes a block, which can't go inside another block
+  createsBlock: boolean;
   // What happens when you select this option?
   onSelect: (queryString: string) => void;
 
@@ -63,6 +79,7 @@ class ComponentPickerOption extends MenuOption {
       icon?: ReactElement;
       keywords?: Array<string>;
       shortcut?: string; 
+      createsBlock?: boolean;
       onSelect: (queryString: string) => void;
     },
   ) {
@@ -71,6 +88,7 @@ class ComponentPickerOption extends MenuOption {
     this.keywords = options.keywords || [];
     this.icon = options.icon;
     this.shortcut = options.shortcut;
+    this.createsBlock = options.createsBlock ?? true;
     this.onSelect = options.onSelect.bind(this);
   }
 }
@@ -151,13 +169,14 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
     return options;
   }
 
-  const tableMatch = queryString.match(/^([1-9]\d?)(?:x([1-9]\d?)?)?$/);
+  const tableMatch = queryString.match(/^([1-9]\d{0,2})(?:x([1-9]\d{0,2})?)?$/);
 
   if (tableMatch !== null) {
     const rows = tableMatch[1];
-    const colOptions = tableMatch[2]
+    const colOptions = (tableMatch[2]
       ? [tableMatch[2]]
-      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(String);
+      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(String)
+    ).filter((columns) => isAllowedTableSize(Number(rows), Number(columns)));
       
     options.push(
       ...colOptions.map(
@@ -276,6 +295,7 @@ function getBaseOptions(editor: LexicalEditor) {
       icon: <Icon name="equation"/>,
       keywords: ['equation', 'inline', 'inline equation', 'math', 'formula', 'inline math', '$'],
       shortcut: '$.$',
+      createsBlock: false,
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
           equation: '',
@@ -287,6 +307,7 @@ function getBaseOptions(editor: LexicalEditor) {
       icon: <Icon name="equation"/>,
       keywords: ['equation', 'block', 'block equation', 'display', 'display equation', 'math', 'formula', '$$', 'centered'],
       shortcut: '$$.$$',
+      createsBlock: false,
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
           equation: '',
@@ -327,11 +348,24 @@ function getBaseOptions(editor: LexicalEditor) {
         new ComponentPickerOption(`Align ${alignment}`, {
           icon: <Icon name={`align-${alignment}`}/>,
           keywords: ['align', 'justify', alignment],
+          createsBlock: false,
           onSelect: () =>
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
         }),
     ),
   ];
+}
+
+// Block Equation is listed first and matches these through its keyword 'centered'
+function putAlignCenterFirst(
+  options: Array<ComponentPickerOption>,
+  queryString: string,
+): Array<ComponentPickerOption> {
+  const query = queryString.toLowerCase();
+  if (query.length < 2 || !'center'.startsWith(query)) return options;
+  const alignCenter = options.find((option) => option.title === 'Align center');
+  if (!alignCenter) return options;
+  return [alignCenter, ...options.filter((option) => option !== alignCenter)];
 }
 
 export function ComponentPickerPlugin(): ReactElement {
@@ -352,14 +386,14 @@ export function ComponentPickerPlugin(): ReactElement {
 
     const regex = new RegExp(queryString, 'i');
 
-    return [
+    return putAlignCenterFirst([
       ...getDynamicOptions(editor, queryString),
       ...baseOptions.filter(
         (option) =>
           regex.test(option.title) ||
           option.keywords.some((keyword) => regex.test(keyword)),
       ),
-    ];
+    ], queryString);
   }, [editor, queryString]);
 
   // Keys as Lexical 0.31 handled them while the menu is open
@@ -392,6 +426,7 @@ export function ComponentPickerPlugin(): ReactElement {
     ) => {
       editor.update(() => {
         nodeToRemove?.remove();
+        if (selectedOption.createsBlock) $liftCaretLine();
         selectedOption.onSelect(matchingString);
         closeMenu();
       });

@@ -94,7 +94,15 @@ function compare(actual: Recorded, wanted: Recorded, changedBy?: ChangedBy): voi
   expect.soft(actual.focus, 'focus').toBe(wanted.focus);
   expect.soft(actual.note, 'reported by the steps').toBe(wanted.note);
   expect.soft(Math.abs(actual.scroll - wanted.scroll), 'page scroll moved').toBeLessThanOrEqual(1);
-  compareBoxes(actual.floating, wanted.floating, 'floating UI');
+  // B16: where the last row's add-row button shows, the bottom-right cell now also offers
+  // add-column. Only that button, and only then, may be new.
+  const addColumn = 'button.editor-table-add-columns';
+  const rowButtonShown = wanted.floating.some((box) => box.el === 'button.editor-table-add-rows');
+  const columnButtonWas = wanted.floating.some((box) => box.el === addColumn);
+  const floating = rowButtonShown && !columnButtonWas
+    ? actual.floating.filter((box) => box.el !== addColumn)
+    : actual.floating;
+  compareBoxes(floating, wanted.floating, 'floating UI');
   // The first line: stack traces name the build's own chunk files.
   const firstLine = (problem: string) => problem.split('\n')[0];
   const known = wanted.problems.map(firstLine);

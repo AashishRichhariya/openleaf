@@ -71,7 +71,7 @@ function transformersByType(transformers: Array<Transformer>) {
   };
 }
 
-function runElementTransformers(
+export function runElementTransformers(
   parentNode: ElementNode,
   anchorNode: TextNode,
   anchorOffset: number,
@@ -121,7 +121,7 @@ function runElementTransformers(
   return false;
 }
 
-function runMultilineElementTransformers(
+export function runMultilineElementTransformers(
   parentNode: ElementNode,
   anchorNode: TextNode,
   anchorOffset: number,

@@ -23,6 +23,7 @@ import {
   AutosavePlugin,
   BehaviorParityPlugin,
   CheckListPlugin,
+  CodeBlockPlacementPlugin,
   CodeHighlightPlugin,
   ComponentPickerPlugin,
   EquationPlugin,
@@ -112,6 +113,7 @@ export default function Editor({
           <ComponentPickerPlugin />
           <CheckListPlugin />
           <CodeHighlightPlugin />
+          <CodeBlockPlacementPlugin />
           <TabIndentationPlugin maxIndent={MAX_INDENT} />
           <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
           <HorizontalRulePlugin />

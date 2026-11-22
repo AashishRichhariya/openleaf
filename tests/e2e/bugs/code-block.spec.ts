@@ -270,12 +270,19 @@ for (const [where, saved] of Object.entries(OLD)) {
   for (const [name, trigger, type] of SHORTCUTS) {
     test(`B8: old nesting in ${where}, the ${name} shortcut works`, async ({ ed }) => {
       await ed.open({ content: doc(saved) });
-      await ed.caretBefore('tail');
+      // As on a normal line: the rule needs a line of its own, the others go before text.
+      const rule = type === 'horizontalrule';
+      if (rule) {
+        // Typing over it keeps the line
+        await ed.select('tail');
+      } else {
+        await ed.caretBefore('tail');
+      }
       await ed.type(trigger);
       const now = await ed.state();
       expect(tree(now)).toMatch(new RegExp(`(^|\\n)${type}( |\\n|$)`));
-      // The typed shortcut is consumed, and nothing is lost.
-      expect(plainText(now).replace(/\|/g, '')).toBe('old codetail');
+      // The typed shortcut is consumed, and nothing else is lost.
+      expect(plainText(now).replace(/\|/g, '')).toBe(rule ? 'old code' : 'old codetail');
     });
   }
 
