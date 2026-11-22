@@ -17,6 +17,8 @@ import { tree } from './tree';
 export type ChangedBy =
   // The tree is fixed, the look is not allowed to move.
   | 'B8'
+  // The table size widget is no longer saved.
+  | 'B13'
   // Strikethrough, H4 and H5 gain styling.
   | 'B15';
 
@@ -92,7 +94,10 @@ function compare(actual: Recorded, wanted: Recorded, changedBy?: ChangedBy): voi
   expect.soft(actual.note, 'reported by the steps').toBe(wanted.note);
   expect.soft(Math.abs(actual.scroll - wanted.scroll), 'page scroll moved').toBeLessThanOrEqual(1);
   compareBoxes(actual.floating, wanted.floating, 'floating UI');
-  const newProblems = actual.problems.filter((problem) => !wanted.problems.includes(problem));
+  // The first line: stack traces name the build's own chunk files.
+  const firstLine = (problem: string) => problem.split('\n')[0];
+  const known = wanted.problems.map(firstLine);
+  const newProblems = actual.problems.filter((problem) => !known.includes(firstLine(problem)));
   expect.soft(newProblems, 'console and page errors').toEqual([]);
 
   if (changedBy === 'B8') {
@@ -112,14 +117,16 @@ function compare(actual: Recorded, wanted: Recorded, changedBy?: ChangedBy): voi
 
   if (wanted.saved !== undefined) {
     // Where 0.3.0 lost the document (B3), not losing it is the only acceptable difference.
-    const lostByBaseline = wanted.saved === 'paragraph' && wanted.tree !== 'paragraph';
-    const want = lostByBaseline
-      ? { saved: actual.saved === wanted.saved ? wanted.saved : actual.tree }
-      : { saved: wanted.saved, reloaded: wanted.reloaded };
-    expect.soft(actual.saved, 'saved document').toBe(want.saved);
-    if (want.reloaded !== undefined) {
-      expect.soft(actual.reloaded, 'reloaded document').toBe(want.reloaded);
-    }
+    const lostByBaseline = wanted.reloaded === 'paragraph' && wanted.tree !== 'paragraph';
+    const orKept = (was?: string, now?: string) =>
+      (lostByBaseline && now === actual.tree ? actual.tree : was);
+    const withoutWidget = (value?: string) =>
+      (changedBy === 'B13' ? value?.replace(/\n *inline-table-input-node/g, '') : value);
+    // Without the widget there can be nothing to save.
+    const saved = changedBy === 'B13' && actual.saved === '(no row)' ? 'paragraph' : actual.saved;
+    expect.soft(saved, 'saved document').toBe(orKept(withoutWidget(wanted.saved), actual.saved));
+    expect.soft(actual.reloaded, 'reloaded document')
+      .toBe(orKept(withoutWidget(wanted.reloaded), actual.reloaded));
   }
 }
 

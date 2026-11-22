@@ -1,0 +1,56 @@
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
+
+import { DocumentSaver, SavedDocument, SaveProblem, SaveStatus } from '../autosave/DocumentSaver';
+
+const PROBLEMS: Record<SaveProblem, string> = {
+  'failed': 'Changes not saved. Retrying…',
+  'too-large': 'Changes not saved: this document is too large or too deeply nested.',
+  'read-only': 'Changes not saved: this document is now read-only.',
+};
+
+interface AutosavePluginProps {
+  savedDocument: SavedDocument;
+}
+
+export function AutosavePlugin({ savedDocument }: AutosavePluginProps): ReactElement {
+  const [editor] = useLexicalComposerContext();
+  const [status, setStatus] = useState<SaveStatus>({ problem: null, conflict: false });
+  const saver = useMemo(
+    () => new DocumentSaver(editor, savedDocument, setStatus),
+    [editor, savedDocument],
+  );
+
+  useEffect(() => saver.start(), [saver]);
+
+  return (
+    <>
+      <OnChangePlugin
+        onChange={(editorState, _editor, tags) => saver.onChange(editorState, tags)}
+        ignoreSelectionChange={true}
+      />
+      {(status.problem || status.conflict) && (
+        <div className="editor-notice" role="status">
+          <span>
+            {status.problem
+              ? PROBLEMS[status.problem]
+              : 'This document was also edited elsewhere. Both versions were kept.'}
+          </span>
+          {!status.problem && (
+            <button
+              type="button"
+              className="editor-notice-dismiss"
+              onClick={() => saver.dismissConflict()}
+              aria-label="Dismiss"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
+export default AutosavePlugin;

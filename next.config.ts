@@ -7,6 +7,18 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return {
+      // Tabs opened on 0.3.0 save through a server action whose id this build can't know
+      beforeFiles: [
+        {
+          source: '/:slug',
+          has: [{ type: 'header', key: 'next-action' }],
+          destination: '/api/legacy-save',
+        },
+      ],
+    };
+  },
    webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule: { test: { test: (arg0: string) => any; }; }) =>

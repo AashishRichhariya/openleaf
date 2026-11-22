@@ -14,16 +14,15 @@ import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
-import { EditorState } from 'lexical';
 import { ReactElement, useState } from 'react';
 
 import { EquationNode, InlineTableInputNode } from './custom-nodes';
 import {
+  AutosavePlugin,
   CodeHighlightPlugin,
   ComponentPickerPlugin,
   EquationPlugin,
@@ -33,9 +32,12 @@ import {
 import { OPENLEAF_TRANSFORMERS } from './custom-transformers/OpenleafTransformers';
 import DefaultTheme from './themes/DefaultTheme';
 
+import type { SavedDocument } from './autosave/DocumentSaver';
+
 interface EditorProps {
   initialContent: string | null;
-  onEditorStateChange: (editorState: EditorState) => void;
+  isReadOnly: boolean;
+  savedDocument: SavedDocument;
 }
 
 const theme = DefaultTheme;
@@ -46,7 +48,8 @@ function onError(error: Error) {
 
 export default function Editor({
   initialContent,
-  onEditorStateChange,
+  isReadOnly,
+  savedDocument,
 }: EditorProps): ReactElement {
   // Create a ref for the floating anchor element
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -80,12 +83,14 @@ export default function Editor({
       EquationNode,
     ],
     editorState: initialContent,
+    editable: !isReadOnly,
   };
 
   return (
     <div className="editor-root">
       <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-area">
+          {isReadOnly && <div className="editor-read-only">Read-only</div>}
           <RichTextPlugin
             contentEditable={
               <div ref={onRef} className="editor-wrapper">
@@ -98,7 +103,7 @@ export default function Editor({
             ErrorBoundary={LexicalErrorBoundary}
           />
           <HistoryPlugin />
-          {!initialContent && <AutoFocusPlugin />}
+          {!initialContent && !isReadOnly && <AutoFocusPlugin />}
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
@@ -106,13 +111,11 @@ export default function Editor({
           <TabIndentationPlugin maxIndent={7} />
           <MarkdownShortcutPlugin transformers={OPENLEAF_TRANSFORMERS} />
           <HorizontalRulePlugin />
-          <OnChangePlugin
-            onChange={onEditorStateChange}
-            ignoreSelectionChange={true}
-          />
           <LinksPlugin/>
           <TablePlugin anchorElem={floatingAnchorElem} />
           <EquationPlugin />
+          {/* Last, so that it sees the document as the other plugins set it up */}
+          {!isReadOnly && <AutosavePlugin savedDocument={savedDocument} />}
         </div>
       </LexicalComposer>
     </div>

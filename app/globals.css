@@ -158,6 +158,22 @@ body {
     @apply flex-1 resize-none outline-none caret-accent min-h-full;
   }
 
+  .editor-read-only {
+    @apply absolute top-3 right-6 max-sm:top-2 max-sm:right-4 px-2 text-xs leading-5
+           text-text-secondary border border-surface-light rounded-squircle-xxs
+           pointer-events-none select-none;
+  }
+
+  .editor-notice {
+    @apply fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3
+           w-max max-w-[calc(100vw-2rem)] px-4 py-2 text-sm text-text cursor-default
+           bg-surface-dark border border-surface-light rounded-squircle-sm shadow-lg;
+  }
+
+  .editor-notice-dismiss {
+    @apply border-0 bg-transparent text-text-secondary text-lg leading-none cursor-pointer;
+  }
+
   .editor-placeholder {
     @apply absolute top-12 left-8 max-sm:top-8 max-sm:left-6 text-placeholder-text pointer-events-none select-none;
   }

@@ -57,7 +57,7 @@ scenario('table widget: ArrowRight, then Space', async (ed) => {
   await ed.type('2');
   await ed.press('Space');
   await ed.page.waitForTimeout(100);
-});
+}, { changedBy: 'B13' });
 
 scenario('table widget: Insert button', async (ed) => {
   await widget(ed);

@@ -1,3 +1,4 @@
+export { AutosavePlugin } from './AutosavePlugin';
 export { CodeHighlightPlugin } from './CodeHighlightPlugin';
 export { ComponentPickerPlugin } from './ComponentPickerPlugin';
 export { EquationPlugin } from './EquationPlugin';
