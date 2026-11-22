@@ -19,8 +19,8 @@
     "test:e2e": "playwright test -c tests/e2e/playwright.config.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.799.0",
-    "@aws-sdk/lib-dynamodb": "^3.799.0",
+    "@aws-sdk/client-dynamodb": "^3.1175.0",
+    "@aws-sdk/lib-dynamodb": "^3.1175.0",
     "@lexical/code": "^0.31.1",
     "@lexical/link": "^0.31.1",
     "@lexical/list": "^0.31.1",
