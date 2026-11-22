@@ -62,7 +62,8 @@ export class EquationNode extends DecoratorNode<ReactElement> {
 
   static importJSON(serializedNode: SerializedEquationNode): EquationNode {
     return $createEquationNode(
-      serializedNode.equation,
+      // Up to 0.3.0 empty strings were stored as null
+      serializedNode.equation ?? '',
       serializedNode.inline,
       serializedNode.startInEditMode ?? false, 
     ).updateFromJSON(serializedNode);
