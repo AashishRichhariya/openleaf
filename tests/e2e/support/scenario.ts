@@ -72,7 +72,8 @@ function record(project: string, name: string, value: Recorded): void {
 const B8_DRAWN = /^(code|span.*"|.*katex)/;
 
 function compareBoxes(actual: Box[], wanted: Box[], label: string): void {
-  expect.soft(actual.map((box) => box.el), `${label}: elements`).toEqual(wanted.map((box) => box.el));
+  const names = (boxes: Box[]) => boxes.map((box) => box.el);
+  expect.soft(names(actual), `${label}: elements`).toEqual(names(wanted));
   if (actual.length !== wanted.length) return;
   const differences: string[] = [];
   wanted.forEach((want, index) => {
@@ -104,7 +105,8 @@ function compare(actual: Recorded, wanted: Recorded, changedBy?: ChangedBy): voi
     const drawn = (boxes: Box[]) => boxes.filter((box) => B8_DRAWN.test(box.el));
     compareBoxes(drawn(actual.boxes), drawn(wanted.boxes), 'editor');
     // Compared with itself, as the tree differs by design, wherever 0.3.0 saved what it showed.
-    if (wanted.saved !== undefined && wanted.saved === wanted.tree && wanted.reloaded === wanted.tree) {
+    const wasKept = wanted.saved === wanted.tree && wanted.reloaded === wanted.tree;
+    if (wanted.saved !== undefined && wasKept) {
       expect.soft(actual.saved ?? actual.tree, 'saved document').toBe(actual.tree);
       expect.soft(actual.reloaded ?? actual.tree, 'reloaded document').toBe(actual.tree);
     }

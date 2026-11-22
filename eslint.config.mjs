@@ -1,20 +1,19 @@
-import { FlatCompat } from "@eslint/eslintrc";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 
 const config = [
-  ...compat.extends("next/core-web-vitals"),
+  ...nextCoreWebVitals,
+  {
+    ignores: [
+      ".next/**",
+      "next-env.d.ts",
+      "tests/e2e/test-results/**",
+      "tests/e2e/.recording/**",
+    ],
+  },
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     plugins: {
-      import: (await import("eslint-plugin-import")).default,
+      // eslint-config-next provides the import plugin
       "unused-imports": (await import("eslint-plugin-unused-imports")).default
     },
     rules: {
@@ -85,7 +84,6 @@ const config = [
         }
       }
     },
-    ignores: ["./*.next*", "*next-env.d.ts*"]
   }
 ];
 

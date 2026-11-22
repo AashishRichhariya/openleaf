@@ -23,7 +23,9 @@ export async function captureSave(
   return {
     url: sent.url(),
     method: sent.method(),
-    headers: Object.fromEntries(Object.entries(sent.headers()).filter(([key]) => keep.includes(key))),
+    headers: Object.fromEntries(
+      Object.entries(sent.headers()).filter(([key]) => keep.includes(key)),
+    ),
     body: sent.postData()!,
   };
 }

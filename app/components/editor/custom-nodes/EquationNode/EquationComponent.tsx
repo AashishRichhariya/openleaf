@@ -114,11 +114,9 @@ export default function EquationComponent({
   }, [editor, nodeKey]);
 
   // Reset equation value when editor is closed
-  useEffect(() => {
-    if (!showEquationEditor && equationValue !== equation) {
-      setEquationValue(equation);
-    }
-  }, [showEquationEditor, equation, equationValue]);
+  if (!showEquationEditor && equationValue !== equation) {
+    setEquationValue(equation);
+  }
 
   // COMMAND COORDINATION: Manage selection and editing coordination between equations
   useEffect(() => {

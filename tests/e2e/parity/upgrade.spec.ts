@@ -145,7 +145,7 @@ for (const [name, block] of Object.entries(CONTAINERS)) {
 
 const MARKDOWN = [
   'a ` then **bold** ', 'a ` then _it_ ', '* [ ] item', '+ [ ] item', '- [X] item', '[a](google.com) ',
-  '[]() ', '[a]() ', '[a]( b ) ', '[a [b]](https://example.com) ', "[a](https://example.com 't') ",
+  '[]() ', '[a]() ', '[a]( b ) ', '[a [b]](https://example.com) ', '[a](https://example.com \'t\') ',
   ':smile: ', '__init__ ', 'x**y**z ', '~~a~~~ ',
 ];
 

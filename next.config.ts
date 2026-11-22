@@ -1,4 +1,5 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+
 import type { NextConfig } from 'next';
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -19,10 +20,21 @@ const nextConfig: NextConfig = {
       ],
     };
   },
-   webpack(config) {
+  turbopack: {
+    rules: {
+      // *.svg imports are React components, *.svg?url imports are URLs
+      '*.svg': {
+        condition: { not: { query: /[?&]url(?=&|$)/ } },
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
+  // For builds with --webpack, which the bundle analyzer needs
+  webpack(config) {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule: { test: { test: (arg0: string) => any; }; }) =>
-      rule.test?.test?.('.svg'),
+    const fileLoaderRule = config.module.rules.find(
+      (rule: { test?: { test?: (path: string) => boolean } }) => rule.test?.test?.('.svg'),
     );
 
     config.module.rules.push(

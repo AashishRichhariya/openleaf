@@ -22,7 +22,7 @@ import {
   LexicalEditor,
   TextNode,
 } from 'lexical';
-import { ReactElement, useCallback, useMemo, useState } from 'react';
+import { ReactElement, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { Icon } from '@/app/components/icons';
@@ -75,6 +75,15 @@ function ComponentPickerMenuItem({
   onMouseEnter: () => void;
   option: ComponentPickerOption;
 }) {
+  const itemRef = useRef<HTMLLIElement | null>(null);
+  const { setRefElement } = option;
+  const setItem = useCallback(
+    (element: HTMLLIElement | null) => {
+      itemRef.current = element;
+      setRefElement(element);
+    },
+    [setRefElement],
+  );
   let className = 'item';
   if (isSelected) {
     className += ' selected';
@@ -85,31 +94,30 @@ function ComponentPickerMenuItem({
     Fixes arrow key navigation on initial "/" trigger where default scroll behavior doesn't work.
     Corrective measure taken to compensate lexical menu scroll doesn't work properly on initial render.
   */
-  if (isSelected) {
-    if (option.ref?.current) {
-      const element = option.ref.current;
-      const parent = element.closest('.typeahead-popover ul');
+  useLayoutEffect(() => {
+    if (!isSelected) return;
+    const element = itemRef.current;
+    const parent = element?.closest('.typeahead-popover ul');
 
-      if (parent) {
-        const parentRect = parent.getBoundingClientRect();
-        const elementRect = element.getBoundingClientRect();
+    if (element && parent) {
+      const parentRect = parent.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
 
-        if (
-          elementRect.top < parentRect.top ||
-          elementRect.bottom > parentRect.bottom
-        ) {
-          element.scrollIntoView({ block: 'nearest' });
-        }
+      if (
+        elementRect.top < parentRect.top ||
+        elementRect.bottom > parentRect.bottom
+      ) {
+        element.scrollIntoView({ block: 'nearest' });
       }
     }
-  }
+  });
 
   return (
     <li
       key={option.key}
       tabIndex={-1}
       className={className}
-      ref={option.setRefElement}
+      ref={setItem}
       role="option"
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
