@@ -29,6 +29,7 @@ export function AutosavePlugin({ savedDocument }: AutosavePluginProps): ReactEle
       <OnChangePlugin
         onChange={(editorState, _editor, tags) => saver.onChange(editorState, tags)}
         ignoreSelectionChange={true}
+        ignoreHistoryMergeTagChange={false}
       />
       {(status.problem || status.conflict) && (
         <div className="editor-notice" role="status">

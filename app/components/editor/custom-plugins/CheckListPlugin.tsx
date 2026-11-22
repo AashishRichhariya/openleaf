@@ -36,6 +36,8 @@ import {
 } from 'lexical';
 import { useEffect } from 'react';
 
+const IS_FIREFOX = typeof navigator !== 'undefined' && /Firefox/.test(navigator.userAgent);
+
 function registerCheckList(editor: LexicalEditor) {
   return mergeRegister(
     editor.registerCommand(
@@ -201,7 +203,13 @@ function handleClick(event: Event) {
           const node = $getNearestNodeFromDOMNode(domNode);
 
           if ($isListItemNode(node)) {
-            domNode.focus();
+            if (IS_FIREFOX) {
+              // As Lexical 0.31 ended up in Firefox: the caret at the start of the item
+              editor.getRootElement()?.focus({ preventScroll: true });
+              node.selectStart();
+            } else {
+              domNode.focus();
+            }
             node.toggleChecked();
           }
         });

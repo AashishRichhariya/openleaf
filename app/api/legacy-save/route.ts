@@ -1,6 +1,6 @@
 import { isDocumentContent } from '@/app/utils/storedDocument';
 import { decodeActionArgs } from '@/server/decode-action-args';
-import { isCrossSite, isValidSlug, MAX_BODY_BYTES } from '@/server/request-utils';
+import { isCrossSite, isValidSlug, readBody } from '@/server/request-utils';
 import { saveFromOldTab } from '@/server/save-document';
 
 /**
@@ -16,8 +16,8 @@ export async function POST(request: Request): Promise<Response> {
     return new Response(null, { status: 403 });
   }
 
-  const body = await request.text();
-  if (Buffer.byteLength(body) > MAX_BODY_BYTES) return new Response(null, { status: 413 });
+  const body = await readBody(request);
+  if (body === null) return new Response(null, { status: 413 });
 
   const [slug, content, , isNewDocument] = decodeActionArgs(body) ?? [];
   if (!isValidSlug(slug) || !isDocumentContent(content)) {

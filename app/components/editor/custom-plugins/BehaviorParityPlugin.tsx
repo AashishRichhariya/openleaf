@@ -1,4 +1,5 @@
-import { $isCodeNode } from '@lexical/code';
+import { $isCodeNode, CodeHighlightNode, CodeNode } from '@lexical/code';
+import { AutoLinkNode, LinkNode } from '@lexical/link';
 import {
   $createListItemNode,
   $createListNode,
@@ -8,6 +9,8 @@ import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
+  ListItemNode,
+  ListNode,
   ListType,
 } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -16,13 +19,16 @@ import {
   $isHorizontalRuleNode,
   INSERT_HORIZONTAL_RULE_COMMAND,
 } from '@lexical/react/LexicalHorizontalRuleNode';
-import { $isHeadingNode, $isQuoteNode } from '@lexical/rich-text';
+import { $isHeadingNode, $isQuoteNode, HeadingNode, QuoteNode } from '@lexical/rich-text';
 import {
   $createTableNodeWithDimensions,
   $findTableNode,
   $isTableNode,
   $isTableSelection,
   INSERT_TABLE_COMMAND,
+  TableCellNode,
+  TableNode,
+  TableRowNode,
 } from '@lexical/table';
 import {
   $findMatchingParent,
@@ -54,7 +60,6 @@ import {
   COMMAND_PRIORITY_BEFORE_CRITICAL,
   COMMAND_PRIORITY_BEFORE_EDITOR,
   COMMAND_PRIORITY_CRITICAL,
-  COMMAND_PRIORITY_HIGH,
   COMMAND_PRIORITY_LOW,
   COMMAND_PRIORITY_NORMAL,
   DELETE_CHARACTER_COMMAND,
@@ -70,11 +75,15 @@ import {
   KEY_ENTER_COMMAND,
   LexicalEditor,
   LexicalNode,
+  LineBreakNode,
+  NodeKey,
+  ParagraphNode,
+  TabNode,
+  TextNode,
   OUTDENT_CONTENT_COMMAND,
   RootNode,
   PASTE_COMMAND,
   PASTE_TAG,
-  SELECT_ALL_COMMAND,
   SELECTION_CHANGE_COMMAND,
   SELECTION_INSERT_CLIPBOARD_NODES_COMMAND,
 } from 'lexical';
@@ -105,28 +114,77 @@ function $getTextDirection(element: ElementNode): 'ltr' | 'rtl' | null {
   return null;
 }
 
-/**
- * Direction as Lexical 0.31 reconciled it: from an element's own text, else from the last element
- * before it in document order that has one. So an empty line follows the line above, a list its
- * last item and the root its last block.
- */
-function $syncDirection(): void {
-  let active: 'ltr' | 'rtl' | null = null;
+/** Sets the direction of an element and everything in it. Returns whether anything changed. */
+function $syncBlockDirection(
+  block: ElementNode,
+  incoming: 'ltr' | 'rtl' | null,
+): { changed: boolean; outgoing: 'ltr' | 'rtl' | null } {
+  let active = incoming;
+  let changed = false;
   const visit = (element: ElementNode) => {
     for (let child = element.getFirstChild(); child; child = child.getNextSibling()) {
       if ($isElementNode(child)) visit(child);
     }
     const direction = $getTextDirection(element) ?? active;
     active = direction;
-    if (direction && element.getDirection() !== direction) element.setDirection(direction);
+    if (direction && element.getDirection() !== direction) {
+      element.setDirection(direction);
+      changed = true;
+    }
   };
-  visit($getRoot());
+  visit(block);
+  return { changed, outgoing: active };
 }
 
-// The root's transform runs last in every update that changes anything, inside that update, so
-// it neither adds an undo step nor joins one to another
+/**
+ * Direction as Lexical 0.31 reconciled it: from an element's own text, else from the last element
+ * before it in document order that has one. So an empty line follows the line above, a list its
+ * last item and the root its last block.
+ *
+ * Only changed blocks are visited, and the blocks after them as long as they change too.
+ */
+function $syncDirection(root: RootNode, changedBlocks: Set<NodeKey>): void {
+  let incoming: 'ltr' | 'rtl' | null = null;
+  let follow = false;
+  for (let block = root.getFirstChild(); block; block = block.getNextSibling()) {
+    if (!$isElementNode(block)) continue;
+    const isChanged = changedBlocks.has(block.getKey());
+    if (isChanged || follow) {
+      const { changed, outgoing } = $syncBlockDirection(block, incoming);
+      // The next block may start from this one's direction
+      follow = changed || isChanged;
+      incoming = outgoing;
+    } else {
+      incoming = block.getDirection() ?? incoming;
+    }
+  }
+  if (incoming && root.getDirection() !== incoming) root.setDirection(incoming);
+}
+
+// Every kind of node that can change a block's direction, so that changed blocks are known
+const DIRECTION_SOURCES = [
+  TextNode, CodeHighlightNode, TabNode, LineBreakNode, ParagraphNode, HeadingNode, QuoteNode,
+  ListNode, ListItemNode, CodeNode, TableNode, TableRowNode, TableCellNode, LinkNode, AutoLinkNode,
+];
+
+/**
+ * The root's transform runs last in every update that changes anything, inside that update, so it
+ * neither adds an undo step nor joins one to another. The other transforms note what changed.
+ */
 function registerTextDirection(editor: LexicalEditor): () => void {
-  return editor.registerNodeTransform(RootNode, $syncDirection);
+  const changedBlocks = new Set<NodeKey>();
+  const note = (node: LexicalNode) => {
+    const block = node.getTopLevelElement();
+    if (block) changedBlocks.add(block.getKey());
+  };
+  return mergeRegister(
+    ...DIRECTION_SOURCES.map((klass) =>
+      editor.registerNodeTransform(klass as unknown as typeof TextNode, note)),
+    editor.registerNodeTransform(RootNode, (root) => {
+      $syncDirection(root, changedBlocks);
+      changedBlocks.clear();
+    }),
+  );
 }
 
 /** Backspace at the start of a list item joins it to what is above, instead of splitting the list */
@@ -634,20 +692,6 @@ export function BehaviorParityPlugin({ maxIndent }: { maxIndent: number }): null
         COMMAND_PRIORITY_NORMAL,
       ),
 
-      // Firefox left select all inside the equation and table inputs to the input
-      editor.registerCommand(
-        SELECT_ALL_COMMAND,
-        () => {
-          const active = document.activeElement;
-          if (!navigator.userAgent.includes('Firefox') || !(active instanceof HTMLInputElement)) {
-            return false;
-          }
-          if (!editor.getRootElement()?.contains(active)) return false;
-          active.select();
-          return true;
-        },
-        COMMAND_PRIORITY_HIGH,
-      ),
     );
   }, [editor, maxIndent]);
 

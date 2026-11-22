@@ -11,7 +11,7 @@ import {
 import { DocumentPatch, SaveLogEntry, SaveRequest, SaveResult } from '@/types';
 
 import { applyMerge } from './applyMerge';
-import { clearUnsavedEdit, readUnsavedEdits, storeUnsavedEdit, UnsavedEdit } from './unsavedEdits';
+import { claimUnsavedEdits, clearUnsavedEdit, storeUnsavedEdit, UnsavedEdit } from './unsavedEdits';
 
 import type { EditorState, LexicalEditor } from 'lexical';
 
@@ -59,6 +59,15 @@ function isSameContent(a: DocumentContent | null, b: DocumentContent | null): bo
 /** Stricter: an emptied heading is an edit, though it is stored like an empty document */
 function isUnedited(content: DocumentContent, base: DocumentContent | null): boolean {
   return toComparable(getBlocks(content)) === toComparable(getBlocks(base));
+}
+
+/** The hash the server keeps of a tab id, or null where the browser can't compute it */
+async function hashTabId(tab: string): Promise<string | null> {
+  if (!globalThis.crypto?.subtle) return null;
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(tab));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, 32);
 }
 
 // crypto.randomUUID needs a secure context, which a dev server on the LAN is not
@@ -124,10 +133,13 @@ export class DocumentSaver {
   start(): () => void {
     this.disposed = false;
     this.base.local = this.read();
-    this.recover();
+    void this.recover();
 
     const onHidden = () => {
-      if (document.visibilityState === 'hidden' && !this.leaving) this.saveNow();
+      if (document.visibilityState !== 'hidden' || this.leaving) return;
+      // A hidden tab may be closed without warning, mostly on phones
+      this.storeDraft(false);
+      this.saveNow();
     };
     const onPageHide = () => this.leave();
     const onPageShow = (event: PageTransitionEvent) => {
@@ -230,7 +242,13 @@ export class DocumentSaver {
     this.saving = false;
     // Leaving has sent its own request, and left a copy in storage
     if (this.disposed || this.leaving) return;
-    this.handleResult(result, content);
+    try {
+      this.handleResult(result, content);
+    } catch (error) {
+      // Such as content from another tab that this editor can't take in
+      console.error('Could not handle the save:', error);
+      this.report({ problem: 'failed' });
+    }
   }
 
   private handleResult(result: SaveResult | null, content: DocumentContent): void {
@@ -252,6 +270,10 @@ export class DocumentSaver {
     case 'too-large':
       // Retrying can't help, but the next edit may
       this.report({ problem: 'too-large' });
+      break;
+    case 'invalid':
+      // Retrying the same request can't help either
+      this.report({ problem: 'failed' });
       break;
     default:
       this.report({ problem: 'failed' });
@@ -296,32 +318,33 @@ export class DocumentSaver {
   }
 
   /** Put back what an earlier tab couldn't save before it closed */
-  private recover(): void {
+  private async recover(): Promise<void> {
     const { slug, log, revision } = this.document;
+    const edits = claimUnsavedEdits(slug);
+    if (!edits.length) return;
+    const hashes = await Promise.all(edits.map((edit) => hashTabId(edit.tab)));
+    if (this.disposed) return;
 
-    for (const edit of readUnsavedEdits(slug)) {
-      const alreadySaved = log.some((entry) => entry.tab === edit.tab && entry.seq >= edit.seq);
+    edits.forEach((edit, index) => {
+      const hash = hashes[index];
+      const alreadySaved = !!hash
+        && log.some((entry) => entry.tab === hash && entry.seq >= edit.seq);
       const local = this.read();
-      if (alreadySaved || isSameContent(edit.content, local)) {
-        clearUnsavedEdit(slug, edit.tab);
-        continue;
-      }
-      this.applyUnsavedEdit(edit, local, revision, log.at(-1));
-    }
+      if (alreadySaved || isSameContent(edit.content, local)) return;
+      const last = log.at(-1);
+      const onlyOurs = edit.revision === revision
+        || (!!hash && last?.tab === hash && last.at === revision);
+      this.applyUnsavedEdit(edit, local, onlyOurs);
+    });
     if (this.recovered.length) this.saveNow();
   }
 
-  private applyUnsavedEdit(
-    edit: UnsavedEdit,
-    local: DocumentContent,
-    revision: string | null,
-    last: SaveLogEntry | undefined,
-  ): void {
+  private applyUnsavedEdit(edit: UnsavedEdit, local: DocumentContent, onlyOurs: boolean): void {
     const isFirst = !this.recovered.length;
-    const onlyOurs = edit.revision === revision || (last?.tab === edit.tab && last.at === revision);
 
     let blocks;
-    if (isFirst && onlyOurs) {
+    // Only the edit of a closed tab, which no other tab can have taken
+    if (isFirst && onlyOurs && edit.left && !this.edited) {
       // Nobody else edited since. Continue as that tab, so its late request can't conflict
       const loaded = getBlocks(local);
       ({ blocks } = mergeBlocks(loaded, loaded, loaded, getBlocks(edit.content)));
@@ -357,6 +380,20 @@ export class DocumentSaver {
     return new Blob([body]).size <= MAX_KEEPALIVE_BYTES;
   }
 
+  private storeDraft(left: boolean, content = this.read()): void {
+    if (!left && !this.saving && isUnedited(content, this.base.local)) return;
+    storeUnsavedEdit(this.document.slug, {
+      tab: this.tab,
+      seq: this.seq,
+      left,
+      storedAt: Date.now(),
+      revision: this.base.revision,
+      localBase: this.base.local,
+      remoteBase: this.base.remote,
+      content,
+    });
+  }
+
   private leave(): void {
     this.leaving = true;
     this.scheduleSave.cancel();
@@ -371,14 +408,7 @@ export class DocumentSaver {
       if (patch) body = JSON.stringify({ ...JSON.parse(body), content: undefined, patch });
     }
 
-    storeUnsavedEdit(this.document.slug, {
-      tab: this.tab,
-      seq: this.seq,
-      revision: this.base.revision,
-      localBase: this.base.local,
-      remoteBase: this.base.remote,
-      content,
-    });
+    this.storeDraft(true, content);
     // The page is going away, so nothing can wait for the response
     fetch('/api/documents', {
       method: 'POST',

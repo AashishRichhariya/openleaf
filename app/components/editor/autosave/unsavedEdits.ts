@@ -9,6 +9,10 @@ import { DocumentContent } from '@/app/utils/storedDocument';
 export interface UnsavedEdit {
   tab: string;
   seq: number;
+  /** Whether the tab was closed, rather than only hidden */
+  left: boolean;
+  /** When this was stored */
+  storedAt: number;
   /** The revision the edit is based on */
   revision: string | null;
   /** That revision as the editor held it */
@@ -17,6 +21,9 @@ export interface UnsavedEdit {
   remoteBase: DocumentContent | null;
   content: DocumentContent;
 }
+
+// Older ones are more likely to undo what others did since than to save anything
+const MAX_AGE = 30 * 24 * 60 * 60 * 1000;
 
 const getPrefix = (slug: string) => `openleaf:unsaved:${slug.toLowerCase()}:`;
 
@@ -36,12 +43,24 @@ export function clearUnsavedEdit(slug: string, tab: string): void {
   }
 }
 
-export function readUnsavedEdits(slug: string): UnsavedEdit[] {
+/** The unsaved edits left for this document. Those of closed tabs are taken, so no other tab
+ * takes them too */
+export function claimUnsavedEdits(slug: string): UnsavedEdit[] {
   try {
     const prefix = getPrefix(slug);
-    return Object.keys(localStorage)
-      .filter((key) => key.startsWith(prefix))
-      .map((key) => JSON.parse(localStorage.getItem(key)!) as UnsavedEdit);
+    const claimed: UnsavedEdit[] = [];
+    for (const key of Object.keys(localStorage)) {
+      if (!key.startsWith(prefix)) continue;
+      const edit = JSON.parse(localStorage.getItem(key) ?? 'null') as UnsavedEdit | null;
+      // A hidden tab may still be open and save it itself, so its copy stays where it is
+      if (!edit || (!edit.left && Date.now() - edit.storedAt < MAX_AGE)) {
+        if (edit) claimed.push(edit);
+        continue;
+      }
+      localStorage.removeItem(key);
+      if (Date.now() - edit.storedAt < MAX_AGE) claimed.push(edit);
+    }
+    return claimed;
   } catch {
     return [];
   }

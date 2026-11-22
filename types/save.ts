@@ -4,7 +4,7 @@ import { DocumentContent, SerializedBlock } from '@/app/utils/storedDocument';
  * One entry of a document's save log, so that a tab can recognize its own saves
  */
 export interface SaveLogEntry {
-  /** A random id of the tab that saved */
+  /** A hash of the random id of the tab that saved */
   tab: string;
   /** Increases with each save of that tab */
   seq: number;

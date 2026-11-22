@@ -1,5 +1,5 @@
 import { isDocumentContent } from '@/app/utils/storedDocument';
-import { isCrossSite, isValidSlug, MAX_BODY_BYTES } from '@/server/request-utils';
+import { isCrossSite, isValidSlug, readBody } from '@/server/request-utils';
 import { saveDocument } from '@/server/save-document';
 import { DocumentPatch, SaveRequest, SaveResult } from '@/types';
 
@@ -16,6 +16,7 @@ function parseSaveRequest(body: string): SaveRequest | null {
   try {
     data = JSON.parse(body);
   } catch {
+    // Also nesting too deep to parse
     return null;
   }
   const valid = isValidSlug(data?.slug)
@@ -40,9 +41,9 @@ export async function POST(request: Request): Promise<Response> {
     return new Response(null, { status: 415 });
   }
 
-  const body = await request.text();
+  const body = await readBody(request);
   let result: SaveResult;
-  if (Buffer.byteLength(body) > MAX_BODY_BYTES) {
+  if (body === null) {
     result = { status: 'too-large' };
   } else {
     const save = parseSaveRequest(body);

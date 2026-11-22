@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { createHash } from 'node:crypto';
+
 import { mergeBlocks } from '@/app/utils/mergeDocuments';
 import {
   DocumentContent,
@@ -17,8 +19,16 @@ import {
   updateDocumentContent,
 } from './document-service';
 
-// Enough to recognize the saves of tabs that just closed
-const SAVE_LOG_LENGTH = 20;
+// Enough to recognize the saves of tabs that closed a while ago
+const SAVE_LOG_LENGTH = 100;
+
+/**
+ * What the log keeps of a tab id. The log is sent to everyone who opens the document, and a tab id
+ * is what a save is accepted under, so only a hash of it is kept.
+ */
+export function hashTabId(tab: string): string {
+  return createHash('sha256').update(tab).digest('hex').slice(0, 32);
+}
 const MAX_ATTEMPTS = 6;
 
 type Decision = { content: DocumentContent } | SaveResult;
@@ -69,8 +79,9 @@ async function save(
     } catch (error) {
       if (error instanceof StaleDocumentError) continue;
       const { name, message } = error as Error;
-      // DynamoDB's limits of 400 KB and 32 levels of nesting
-      if (name === 'ValidationException' && /size|nest/i.test(message)) {
+      // DynamoDB's limits of 400 KB and 32 levels of nesting, and nesting too deep to marshal
+      const overLimit = name === 'ValidationException' && /size|nest/i.test(message);
+      if (overLimit || error instanceof RangeError) {
         return { status: 'too-large' };
       }
       throw error;
@@ -107,12 +118,13 @@ function applyPatch(stored: Document | null, patch: DocumentPatch): DocumentCont
 export function saveDocument(request: SaveRequest): Promise<SaveResult> {
   const { tab, seq, revision } = request;
 
-  return save(request.slug.toLowerCase(), tab, seq, (stored) => {
+  const tabHash = hashTabId(tab);
+  return save(request.slug.toLowerCase(), tabHash, seq, (stored) => {
     const current = stored?.updated_at ?? null;
     const log = stored?.save_log ?? [];
     const last = log.at(-1);
     // An older save of the same tab that arrived late
-    if (log.some((entry) => entry.tab === tab && entry.seq >= seq)) {
+    if (log.some((entry) => entry.tab === tabHash && entry.seq >= seq)) {
       return { status: 'saved', revision: current };
     }
 
@@ -122,7 +134,7 @@ export function saveDocument(request: SaveRequest): Promise<SaveResult> {
       if (patched) return { content: patched };
     } else if (request.content) {
       // Or on this tab's previous save, whose response it hasn't seen yet
-      const basedOnOwnSave = !!stored && last?.tab === tab && last.at === stored.updated_at;
+      const basedOnOwnSave = !!stored && last?.tab === tabHash && last.at === stored.updated_at;
       if (basedOnCurrent || basedOnOwnSave) return { content: request.content };
     }
     return {

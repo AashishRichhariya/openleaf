@@ -6,6 +6,28 @@ export const MAX_BODY_BYTES = 2 * 1024 * 1024;
 const MAX_SLUG_BYTES = 2048;
 
 /**
+ * The body as text, or null if it is larger than a save can be. Stops reading at the limit.
+ */
+export async function readBody(request: Request): Promise<string | null> {
+  if (Number(request.headers.get('content-length')) > MAX_BODY_BYTES) return null;
+  if (!request.body) return '';
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > MAX_BODY_BYTES) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
+
+/**
  * Whether a request comes from another site, as server actions check
  */
 export function isCrossSite(request: Request): boolean {

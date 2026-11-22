@@ -4,8 +4,9 @@ export const AUTO_DETECTION_URL_REGEX =
 
 // The two lookbehinds only let a match start where a run of dot-separated words starts. That is
 // where the first match always starts anyway, and without them a long word takes quadratic time.
+// A quoted name ends at the next quote, which also keeps time linear.
 export const AUTO_DETECTION_EMAIL_REGEX =
-  /(((?<![^<>()[\]\\.,;:\s@"])(?<![^<>()[\]\\.,;:\s@"]\.)[^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
+  /(((?<![^<>()[\]\\.,;:\s@"])(?<![^<>()[\]\\.,;:\s@"]\.)[^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|("[^"\n]+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
 
 // Validation pattern (more permissive, used when checking manually entered URLs). It only says
 // whether text contains a URL: a scheme, www. or user@host. So it looks at no more characters
