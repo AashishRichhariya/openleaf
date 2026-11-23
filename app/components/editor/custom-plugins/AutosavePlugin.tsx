@@ -4,8 +4,9 @@ import { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import { DocumentSaver, SavedDocument, SaveProblem, SaveStatus } from '../autosave/DocumentSaver';
 
-const PROBLEMS: Record<SaveProblem, string> = {
-  'failed': 'Changes not saved. Retrying…',
+// A failed save is not shown: it is retried, and the next save sends the whole document anyway.
+// Users never asked for the save, so a notice would only suggest that something is broken.
+const PROBLEMS: Partial<Record<SaveProblem, string>> = {
   'too-large': 'Changes not saved: this document is too large or too deeply nested.',
   'read-only': 'Changes not saved: this document is now read-only.',
 };
@@ -24,6 +25,8 @@ export function AutosavePlugin({ savedDocument }: AutosavePluginProps): ReactEle
 
   useEffect(() => saver.start(), [saver]);
 
+  const problem = status.problem ? PROBLEMS[status.problem] : undefined;
+
   return (
     <>
       <OnChangePlugin
@@ -31,14 +34,12 @@ export function AutosavePlugin({ savedDocument }: AutosavePluginProps): ReactEle
         ignoreSelectionChange={true}
         ignoreHistoryMergeTagChange={false}
       />
-      {(status.problem || status.conflict) && (
+      {(problem || status.conflict) && (
         <div className="editor-notice" role="status">
           <span>
-            {status.problem
-              ? PROBLEMS[status.problem]
-              : 'This document was also edited elsewhere. Both versions were kept.'}
+            {problem ?? 'This document was also edited elsewhere. Both versions were kept.'}
           </span>
-          {!status.problem && (
+          {!problem && (
             <button
               type="button"
               className="editor-notice-dismiss"

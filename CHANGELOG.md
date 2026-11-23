@@ -2,6 +2,12 @@
 
 All notable changes to openleaf will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- A save that fails no longer shows "Changes not saved. Retrying…". It is retried quietly, and the next save sends the whole document. Documents that are too large or read-only are still shown
+
 ## [0.4.0] - 2026-11-23
 
 ### Security

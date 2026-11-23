@@ -147,21 +147,49 @@ test('B5: continuous typing keeps saving', async ({ ed, page }) => {
 });
 
 for (const failure of ['network error', 'server error'] as const) {
-  test(`B5: a ${failure} while saving is shown, and saving recovers`, async ({ ed, page }) => {
+  test(`B5: a ${failure} while saving is retried quietly, and saving recovers`, async ({ ed, page }) => {
     await ed.open();
+    // Saving is implicit, so a save that fails must never show a notice, not even for a moment.
+    await page.evaluate(() => {
+      const seen = window as unknown as { noticeSeen?: string };
+      new MutationObserver(() => {
+        const shown = document.querySelector('.editor-notice');
+        if (shown) seen.noticeSeen = shown.textContent ?? '';
+      }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    });
+    let failed = 0;
     await page.route('**/*', (route) => {
       if (route.request().method() === 'GET') return route.fallback();
+      failed += 1;
       return failure === 'network error'
         ? route.abort('connectionrefused')
         : route.fulfill({ status: 500, body: 'failed' });
     });
     await ed.type('must not be lost');
-    await expect(notice(page)).toContainText(/not saved|save/i, { timeout: 8000 });
-    await expect(notice(page)).toBeVisible();
+    // The save and at least one retry fail
+    await expect.poll(() => failed, { timeout: 12_000 }).toBeGreaterThanOrEqual(2);
     await page.unrouteAll({ behavior: 'ignoreErrors' });
     await ed.type('!');
     await expect.poll(() => storedText(ed.slug), { timeout: 15_000 }).toBe('must not be lost!');
-    await expect(notice(page)).toHaveCount(0, { timeout: 10_000 });
+    await expect(notice(page)).toHaveCount(0);
+    await expect(page.getByText(/not saved|retrying/i)).toHaveCount(0);
+    expect(await page.evaluate(() => (window as unknown as { noticeSeen?: string }).noticeSeen))
+      .toBeUndefined();
+  });
+}
+
+const SHOWN: Record<string, [object, RegExp]> = {
+  'too large': [{ status: 413, body: '' }, /too large/],
+  'read-only': [{ contentType: 'application/json', body: '{"status":"read-only"}' }, /read-only/],
+};
+
+for (const [name, [response, message]] of Object.entries(SHOWN)) {
+  test(`B5 guard: a save refused as ${name} is still shown`, async ({ ed, page }) => {
+    await ed.open();
+    await page.route('**/api/documents', (route) =>
+      route.request().method() === 'POST' ? route.fulfill(response) : route.fallback());
+    await ed.type('refused');
+    await expect(notice(page)).toContainText(message, { timeout: 8000 });
   });
 }
 
