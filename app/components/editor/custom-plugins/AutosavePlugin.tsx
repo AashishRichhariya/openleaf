@@ -6,9 +6,9 @@ import { DocumentSaver, SavedDocument, SaveProblem, SaveStatus } from '../autosa
 
 // A failed save is not shown: it is retried, and the next save sends the whole document anyway.
 // Users never asked for the save, so a notice would only suggest that something is broken.
+// A document locked while open is not shown either: it stays editable and is never saved.
 const PROBLEMS: Partial<Record<SaveProblem, string>> = {
   'too-large': 'Changes not saved: this document is too large or too deeply nested.',
-  'read-only': 'Changes not saved: this document is now read-only.',
 };
 
 interface AutosavePluginProps {

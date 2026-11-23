@@ -180,7 +180,6 @@ for (const failure of ['network error', 'server error'] as const) {
 
 const SHOWN: Record<string, [object, RegExp]> = {
   'too large': [{ status: 413, body: '' }, /too large/],
-  'read-only': [{ contentType: 'application/json', body: '{"status":"read-only"}' }, /read-only/],
 };
 
 for (const [name, [response, message]] of Object.entries(SHOWN)) {
@@ -389,6 +388,34 @@ test('guard B7: a read-only document stays unchanged in the database', async ({ 
   await page.waitForTimeout(3000);
   expect(await ed.row()).toEqual(before);
 });
+
+test('B7: a document locked while it is open stays editable, shows nothing, and is never saved',
+  async ({ ed, page }) => {
+    await ed.open({ content: doc(p('saved text')) });
+    await ed.caretAfter('saved text');
+    await ed.type(' one');
+    await ed.saved();
+    await putRow({ ...(await ed.row())!, read_only: true });
+    const lockedRow = await ed.row();
+    const answers: unknown[] = [];
+    page.on('response', async (response) => {
+      if (response.request().method() === 'POST') answers.push(await response.json().catch(() => null));
+    });
+
+    await ed.type(' two');
+    await expect.poll(() => answers.length, { timeout: 8000 }).toBeGreaterThan(0);
+    expect(answers[0]).toEqual({ status: 'read-only' });
+    await ed.type(' three');
+    await page.waitForTimeout(3000);
+
+    await expect(ed.root).toHaveAttribute('contenteditable', 'true');
+    await expect(ed.root).toHaveText('saved text one two three');
+    // Nothing more is sent once the server said it is locked
+    expect(answers).toHaveLength(1);
+    await expect(notice(page)).toHaveCount(0);
+    await expect(page.getByText(/read-only|not saved/i)).toHaveCount(0);
+    expect(await ed.row()).toEqual(lockedRow);
+  });
 
 test('guard B7: read-only links still open and text can be copied', async ({ ed, context }) => {
   await ed.open({ content: doc(p(link('https://example.com/ro', 'open me'))), row: locked });
