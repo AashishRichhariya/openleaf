@@ -63,3 +63,31 @@ E2E_RECORD_ACCEPTED=1 pnpm test:e2e --project=chromium -g "<scenario name>"
 An element's `textFormat` and `textStyle` are not compared where it holds text, as the owner
 accepted (Lexical 0.53 works them out from the text). See `withoutDerivedTextFormat` in
 `support/tree.ts`.
+
+### Bug numbers
+
+Tests and commits name the bugs fixed after 0.3.0 by number:
+
+| # | Bug in 0.3.0 |
+| --- | --- |
+| B1 | A request could lock any document for good |
+| B2 | A request could overwrite any document, even a locked one, through exposed server functions |
+| B3 | A document holding only an empty table or code block vanished on reload |
+| B4 | Edits made less than 2 s before leaving were lost |
+| B5 | Typing without a pause was never saved, and failed saves were not shown |
+| B6 | Two tabs editing one document overwrote each other |
+| B7 | Read-only documents can be edited and are never saved. Kept on purpose: its tests are guards |
+| B8 | Three backticks put the code block inside its paragraph, breaking shortcuts after it |
+| B9 | Copying an equation with non-Latin characters threw |
+| B10 | `costs $5 and $` became math |
+| B11 | Pasting a sentence with a URL over a selection made a broken link |
+| B12 | Pasting a very long word froze the page |
+| B13 | Escape in the table size widget lost the caret, and the widget was saved |
+| B14 | `/center` offered Block Equation before Align center |
+| B15 | Strikethrough, H4 and H5 had no styling |
+| B16 | `/100x3` did nothing, and the add-column button never showed from the bottom-right cell |
+| B17 | Empty strings were saved as null |
+| B18 | Links opened in a new tab could control the editor tab |
+
+U1-U4 are bugs of 0.3.0 that Lexical 0.53 fixed, listed in `support/accepted.ts`.
+

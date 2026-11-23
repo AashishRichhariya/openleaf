@@ -12,24 +12,25 @@ All notable changes to openleaf will be documented in this file.
 
 ### Fixed
 
-- Locked documents can only be changed by the server's own record, never by a request (B1, B2)
-- Documents holding only an empty table or code block no longer vanish on reload (B3)
-- Edits made just before closing the tab are saved (B4)
-- Typing without a pause still saves, at least every 5 seconds, and failed saves are shown (B5)
-- Two tabs editing the same document no longer overwrite each other: both edits are kept (B6)
-- Locked documents, such as the info page, can still be edited to try things out, and are never saved, as before. The server now refuses to change them, whatever a request says (B1, B2, B7)
-- Three backticks create a code block in the right place, so markdown shortcuts, slash commands and lists keep working after it (B8)
-- Copying equations with non-Latin characters works (B9)
-- Prices such as `$5 and $` are no longer turned into math (B10)
-- Pasting text that contains a URL over a selection no longer creates a broken link (B11)
-- Pasting very long words no longer freezes the page (B12)
-- Escape in the table size widget keeps the caret, and the widget is never saved into documents (B13)
-- `/center` offers Align center first (B14)
-- Strikethrough, H4 and H5 have visible styling (B15)
-- `/NxM` works beyond single digits, as the README says: either number up to 99, or up to 500 while the table has at most 1000 cells. The bottom-right cell offers add-column too (B16)
-- Empty text styles and equations are saved as empty strings, not null (B17)
-- Links opened in a new tab cannot control the editor tab (B18)
-- From Lexical 0.53: clicking away from an equation keeps the edit and puts the caret where you clicked; after pasting several blocks, or pressing Down on the last line of a code block, typing goes where the caret is; in Firefox, Enter in an equation no longer adds a line break after it
+- Nobody can lock, unlock or overwrite a locked document from outside the app any more. Locked documents, such as the info page, can still be edited to try things out, and are never saved, as before
+- Documents holding only an empty table or code block no longer vanish on reload
+- Edits made just before closing the tab are saved
+- Typing without a pause still saves, at least every 5 seconds, and failed saves are shown
+- Two tabs editing the same document no longer overwrite each other: both edits are kept
+- Three backticks create a code block in the right place, so markdown shortcuts, slash commands and lists keep working after it
+- Copying equations with non-Latin characters works
+- Prices such as `$5 and $` are no longer turned into math
+- Pasting a sentence that contains a web address over selected text pastes the sentence, instead of turning the selection into a broken link. Pasting just an address with `https://` or `www.` still makes the selection a link
+- Pasting very long words no longer freezes the page
+- Escape in the table size widget keeps the caret, and the widget is never saved into documents
+- `/center` offers Align center first
+- Strikethrough, H4 and H5 have visible styling
+- `/NxM` works beyond single digits, as the README says: either number up to 99, or up to 500 while the table has at most 1000 cells. The bottom-right cell offers add-column too
+- Empty text styles and equations are saved as empty strings, not null
+- Links opened in a new tab cannot control the editor tab
+- Clicking away from an equation keeps the edit and puts the caret where you clicked
+- After pasting several blocks, or pressing Down on the last line of a code block, typing goes where the caret is
+- In Firefox, Enter in an equation no longer adds a line break after it
 
 ### Changed
 
