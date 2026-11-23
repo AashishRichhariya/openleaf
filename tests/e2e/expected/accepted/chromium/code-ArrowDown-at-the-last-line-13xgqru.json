@@ -1,0 +1,64 @@
+[
+ "code: ArrowDown at the last line",
+ {
+  "caret": "1.0:5:text",
+  "focus": "editor",
+  "text": "first\nsecond\nbelow",
+  "boxes": [
+   {
+    "el": "code.editor-code",
+    "rect": [
+     0,
+     16,
+     832,
+     60
+    ],
+    "style": "rgb(230, 235, 232) | rgb(37, 47, 42) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | 1px solid rgb(74, 120, 86) | 1px solid rgb(74, 120, 86) | 10px 14px | 8px 8px 8px 56px | ::before \"1\\a 2\" 40px 58px rgb(44, 53, 46) 0px rgb(74, 120, 86) 1"
+   },
+   {
+    "el": "span \"first\"",
+    "rect": [
+     57,
+     26,
+     42,
+     18
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"second\"",
+    "rect": [
+     57,
+     47,
+     50,
+     18
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     0,
+     92,
+     832,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"below\"",
+    "rect": [
+     0,
+     93,
+     44,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   }
+  ],
+  "floating": [],
+  "scroll": 0,
+  "tree": "code language=\"javascript\"\n  code-highlight \"first\"\n  linebreak\n  code-highlight \"second\"\nparagraph\n  text \"below\"",
+  "problems": []
+ }
+]

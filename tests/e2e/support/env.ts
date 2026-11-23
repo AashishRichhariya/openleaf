@@ -32,6 +32,8 @@ export const ENV = {
   appDir: process.env.E2E_APP_DIR ?? path.resolve(__dirname, '../../..'),
   // Recording is only ever done against the untouched baseline.
   record: process.env.E2E_RECORD === '1',
+  // Except for the accepted differences in accepted.ts, recorded on 0.4.0.
+  recordAccepted: process.env.E2E_RECORD_ACCEPTED === '1',
   // Optional folder that receives one screenshot per scenario.
   screens: process.env.E2E_SCREENS,
 };

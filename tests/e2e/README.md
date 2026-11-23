@@ -32,7 +32,8 @@ tests/e2e/webkit-mac14.sh            # WebKit on macOS 14
 | Path | What it proves |
 | --- | --- |
 | `parity/` | Each scenario must give the document, caret, look, floating UI, saved row and reload recorded on 0.3.0 |
-| `bugs/` | One or more tests per bug fixed after 0.3.0. `guard` tests protect what the fix must not break |
+| `bugs/` | One or more tests per bug fixed after 0.3.0. `guard` tests protect what the fix must not break. `upgrade-fixes.spec.ts` covers the bugs Lexical 0.53 fixed (U1-U4) |
+| `hardening.spec.ts` | Crafted requests neither crash nor stall the server |
 | `app.spec.ts` | URLs, keys, autosave, metadata, widths |
 | `compat.spec.ts` | Documents and clipboard contents saved by 0.3.0 open, edit and save without loss |
 | `visual.spec.ts` | Screenshots recorded on 0.3.0 |
@@ -47,3 +48,18 @@ record them again on a newer build to get a pass. To add a scenario, record it o
 E2E_RECORD=1 E2E_BASE_URL=<0.3.0 build> pnpm test:e2e --project=chromium -g "<scenario name>"
 node tests/e2e/merge-recording.mjs
 ```
+
+### Accepted differences
+
+`support/accepted.ts` lists the few scenarios where 0.4.0 differs from 0.3.0 on purpose: bugs
+that Lexical 0.53 fixed and the owner chose to keep, each named with its browsers and reason.
+Those scenarios are compared with a reviewed recording of 0.4.0 in `expected/accepted/`, so any
+further change still fails. Only add to the list with the owner's agreement, then record:
+
+```bash
+E2E_RECORD_ACCEPTED=1 pnpm test:e2e --project=chromium -g "<scenario name>"
+```
+
+An element's `textFormat` and `textStyle` are not compared where it holds text, as the owner
+accepted (Lexical 0.53 works them out from the text). See `withoutDerivedTextFormat` in
+`support/tree.ts`.

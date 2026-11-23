@@ -26,6 +26,11 @@ if [ -d "$RUNNER/e2e/.recording/webkit" ]; then
   mkdir -p "$HERE/.recording"
   rsync -a "$RUNNER/e2e/.recording/webkit" "$HERE/.recording/"
 fi
+# Accepted differences recorded with E2E_RECORD_ACCEPTED (see support/accepted.ts)
+if [ -d "$RUNNER/e2e/expected/accepted/webkit" ]; then
+  mkdir -p "$HERE/expected/accepted"
+  rsync -a "$RUNNER/e2e/expected/accepted/webkit" "$HERE/expected/accepted/"
+fi
 if [ -d "$RUNNER/e2e/screenshots/webkit" ]; then
   mkdir -p "$HERE/screenshots"
   rsync -a "$RUNNER/e2e/screenshots/webkit" "$HERE/screenshots/"

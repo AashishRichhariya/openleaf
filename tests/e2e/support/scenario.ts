@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { isAccepted } from './accepted';
 import { capture, Box, View } from './capture';
 import { Editor } from './editor';
 import { ENV } from './env';
@@ -60,6 +61,22 @@ function expected(project: string, name: string): Recorded {
   if (!found) throw new Error(`"${name}" has no recording from the baseline`);
   const expand = (box: any) => ({ ...box, style: styles[box.style] });
   return { ...found, boxes: found.boxes.map(expand), floating: found.floating.map(expand) };
+}
+
+/** The reviewed recording of 0.4.0 for a scenario in accepted.ts */
+function acceptedFile(project: string, name: string): string {
+  return path.join(ROOT, 'expected', 'accepted', project, `${fileName(name)}.json`);
+}
+
+function acceptedRecording(project: string, name: string): Recorded {
+  const file = acceptedFile(project, name);
+  if (!fs.existsSync(file)) throw new Error(`"${name}" is accepted but has no recording of 0.4.0`);
+  return JSON.parse(fs.readFileSync(file, 'utf8'))[1];
+}
+
+function recordAccepted(project: string, name: string, value: Recorded): void {
+  fs.mkdirSync(path.dirname(acceptedFile(project, name)), { recursive: true });
+  fs.writeFileSync(acceptedFile(project, name), `${JSON.stringify([name, value], null, 1)}\n`);
 }
 
 function record(project: string, name: string, value: Recorded): void {
@@ -179,7 +196,14 @@ export function scenario(
       });
     }
 
-    const wanted = ENV.record ? null : expected(info.project.name, name);
+    const accepted = isAccepted(name, info.project.name);
+    const recording = ENV.record || (ENV.recordAccepted && accepted);
+    let wanted: Recorded | null = null;
+    if (!recording) {
+      wanted = accepted
+        ? acceptedRecording(info.project.name, name)
+        : expected(info.project.name, name);
+    }
     let leftBehind: string[] = [];
 
     if (persist) {
@@ -206,6 +230,8 @@ export function scenario(
     actual.problems = [...new Set([...leftBehind, ...problems])].sort();
 
     if (wanted) compare(actual, wanted, changedBy);
-    else record(info.project.name, name, actual);
+    else if (ENV.recordAccepted) {
+      if (accepted) recordAccepted(info.project.name, name, actual);
+    } else record(info.project.name, name, actual);
   });
 }

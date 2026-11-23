@@ -1,0 +1,66 @@
+[
+ "equation block: created with Enter",
+ {
+  "caret": "0.1:6:text",
+  "focus": "editor",
+  "text": "a+b\n after",
+  "boxes": [
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     0,
+     8,
+     832,
+     111
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "div.editor-equation.editor-equation-block",
+    "rect": [
+     379,
+     8,
+     74,
+     79
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | center | ltr | default | no-border | no-left | 0px | 0px 8px 0px 8px"
+   },
+   {
+    "el": "span.editor-equation-block.equation-renderer",
+    "rect": [
+     387,
+     16,
+     58,
+     57
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | center | ltr | pointer | no-border | no-left | 0px | 0px 8px 0px 8px"
+   },
+   {
+    "el": "span.katex",
+    "rect": [
+     395,
+     32,
+     42,
+     25
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | KaTeX_Main | 19.3667px | 400 | normal | 23.2333px | none | center | ltr | pointer | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \" after\"",
+    "rect": [
+     0,
+     96,
+     39,
+     22
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   }
+  ],
+  "floating": [],
+  "scroll": 0,
+  "tree": "paragraph\n  equation equation=\"a+b\"\n  text \" after\"",
+  "problems": [],
+  "saved": "paragraph\n  equation equation=\"a+b\"\n  text \" after\"",
+  "reloaded": "paragraph\n  equation equation=\"a+b\"\n  text \" after\""
+ }
+]

@@ -1,0 +1,36 @@
+[
+ "markdown: heading inside a quote",
+ {
+  "caret": "0.0:1:text",
+  "focus": "editor",
+  "text": "xquoted",
+  "boxes": [
+   {
+    "el": "h1.editor-heading-h1",
+    "rect": [
+     0,
+     24,
+     832,
+     40
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 36px | 700 | normal | 40px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"xquoted\"",
+    "rect": [
+     0,
+     20,
+     149,
+     47
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 36px | 700 | normal | 40px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   }
+  ],
+  "floating": [],
+  "scroll": 0,
+  "tree": "heading tag=\"h1\"\n  text \"xquoted\"",
+  "problems": [],
+  "saved": "heading tag=\"h1\"\n  text \"xquoted\"",
+  "reloaded": "heading tag=\"h1\"\n  text \"xquoted\""
+ }
+]

@@ -1,0 +1,56 @@
+[
+ "equation block: left empty",
+ {
+  "caret": "0:1:element",
+  "focus": "editor",
+  "text": "",
+  "boxes": [
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     0,
+     8,
+     832,
+     70
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "div.editor-equation.editor-equation-block",
+    "rect": [
+     400,
+     8,
+     32,
+     38
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | center | ltr | default | no-border | no-left | 0px | 0px 8px 0px 8px"
+   },
+   {
+    "el": "span.editor-equation-block.equation-renderer",
+    "rect": [
+     408,
+     16,
+     16,
+     16
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | center | ltr | pointer | no-border | no-left | 0px | 0px 8px 0px 8px"
+   },
+   {
+    "el": "span.katex",
+    "rect": [
+     416,
+     32,
+     0,
+     0
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | KaTeX_Main | 19.3667px | 400 | normal | 23.2333px | none | center | ltr | pointer | no-border | no-left | 0px | 0px 0px 0px 0px"
+   }
+  ],
+  "floating": [],
+  "scroll": 0,
+  "tree": "paragraph\n  equation",
+  "problems": [],
+  "saved": "paragraph\n  equation",
+  "reloaded": "paragraph\n  equation"
+ }
+]
