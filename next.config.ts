@@ -10,7 +10,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   async rewrites() {
     return {
-      // Tabs opened on 0.3.0 save through a server action whose id this build can't know
+      // Tabs opened on 0.3.0 save through a server action whose id this build can't know.
+      // TEMPORARY: remove with app/api/legacy-save once no 0.3.0 tab is left (see its route.ts).
       beforeFiles: [
         {
           source: '/:slug',

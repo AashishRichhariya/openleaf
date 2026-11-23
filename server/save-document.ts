@@ -149,6 +149,7 @@ export function saveDocument(request: SaveRequest): Promise<SaveResult> {
 /**
  * Save from a tab that was loaded on 0.3.0. It knows no revision, so its later saves replace
  * the content as they used to. Its first save, though, can't wipe out an existing document.
+ * TEMPORARY: only app/api/legacy-save uses it, and goes with it (see its route.ts).
  */
 export function saveFromOldTab(
   slug: string,

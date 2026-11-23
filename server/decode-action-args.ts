@@ -2,6 +2,7 @@ import 'server-only';
 
 /**
  * Decode the arguments that a 0.3.0 tab sends to its saveDocument server action.
+ * TEMPORARY: only app/api/legacy-save uses it, and goes with it (see its route.ts).
  *
  * React encodes them as JSON in which a string starting with $ is special: $$ escapes a real
  * dollar, $undefined is undefined and $0:path points at an object that was sent earlier.
