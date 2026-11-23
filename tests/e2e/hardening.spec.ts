@@ -60,16 +60,24 @@ test('app: an old-tab request that expands when decoded is refused quickly', asy
 test('app: content nested too deep to work on is refused, not crashed on', async ({ page }) => {
   const slug = newSlug();
   const content = `{"root":{"type":"root","children":[${nested(60_000)}]}}`;
-  const save = await timed(page, '/api/documents', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: `{"slug":"${slug}","tab":"t","seq":1,"revision":null,"content":${content}}`,
-  });
-  expect(save.status).toBeLessThan(500);
-  const old = legacySave(new URL(page.url()).origin, 'x'.repeat(42), [slug]);
-  const oldSave = await timed(page, old.url, { ...old, body: `["${slug}",${content},false,true]` });
-  expect(oldSave.status).toBeLessThan(500);
+  // Only 0.4.0 has these routes. 0.3.0 answers before reading such a body, which Firefox and
+  // Safari report as a network error, so there only the server's health is checked.
+  const routes = (await timed(page, '/api/documents', {})).status === 405;
+  if (routes) {
+    const save = await timed(page, '/api/documents', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: `{"slug":"${slug}","tab":"t","seq":1,"revision":null,"content":${content}}`,
+    });
+    expect(save.status).toBeGreaterThan(0);
+    expect(save.status).toBeLessThan(500);
+    const old = legacySave(new URL(page.url()).origin, 'x'.repeat(42), [slug]);
+    const oldSave = await timed(page, old.url, { ...old, body: `["${slug}",${content},false,true]` });
+    expect(oldSave.status).toBeGreaterThan(0);
+    expect(oldSave.status).toBeLessThan(500);
+  }
   expect(await getRow(slug)).toBeNull();
+  expect((await timed(page, '/robots.txt', {})).status).toBe(200);
 });
 
 test('app: an old tab\'s first save of very many blocks does not crash', async ({ page }) => {
