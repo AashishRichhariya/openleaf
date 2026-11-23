@@ -1,0 +1,76 @@
+[
+ "equation block: clicking away saves",
+ {
+  "caret": "1.0:3:text",
+  "focus": "editor",
+  "text": "x\n2\n+7\nafter",
+  "boxes": [
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     0,
+     8,
+     832,
+     111
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "div.editor-equation.editor-equation-block",
+    "rect": [
+     374,
+     8,
+     84,
+     79
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | center | ltr | default | no-border | no-left | 0px | 0px 8px 0px 8px"
+   },
+   {
+    "el": "span.editor-equation-block.equation-renderer",
+    "rect": [
+     382,
+     16,
+     68,
+     56
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | center | ltr | pointer | no-border | no-left | 0px | 0px 8px 0px 8px"
+   },
+   {
+    "el": "span.katex",
+    "rect": [
+     390,
+     32,
+     52,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | KaTeX_Main | 19.36px | 400 | normal | 23.232px | none | center | ltr | pointer | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     0,
+     119,
+     832,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"after\"",
+    "rect": [
+     0,
+     120,
+     35,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   }
+  ],
+  "floating": [],
+  "scroll": 64,
+  "tree": "paragraph\n  equation equation=\"x^2+7\"\nparagraph\n  text \"after\"",
+  "problems": [],
+  "saved": "paragraph\n  equation equation=\"x^2+7\"\nparagraph\n  text \"after\"",
+  "reloaded": "paragraph\n  equation equation=\"x^2+7\"\nparagraph\n  text \"after\""
+ }
+]

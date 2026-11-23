@@ -1,4 +1,5 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+
 import type { NextConfig } from 'next';
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -7,10 +8,34 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-   webpack(config) {
+  async rewrites() {
+    return {
+      // Tabs opened on 0.3.0 save through a server action whose id this build can't know.
+      // TEMPORARY: remove with app/api/legacy-save once no 0.3.0 tab is left (see its route.ts).
+      beforeFiles: [
+        {
+          source: '/:slug',
+          has: [{ type: 'header', key: 'next-action' }],
+          destination: '/api/legacy-save',
+        },
+      ],
+    };
+  },
+  turbopack: {
+    rules: {
+      // *.svg imports are React components, *.svg?url imports are URLs
+      '*.svg': {
+        condition: { not: { query: /[?&]url(?=&|$)/ } },
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
+  // For builds with --webpack, which the bundle analyzer needs
+  webpack(config) {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule: { test: { test: (arg0: string) => any; }; }) =>
-      rule.test?.test?.('.svg'),
+    const fileLoaderRule = config.module.rules.find(
+      (rule: { test?: { test?: (path: string) => boolean } }) => rule.test?.test?.('.svg'),
     );
 
     config.module.rules.push(

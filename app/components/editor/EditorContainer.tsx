@@ -1,56 +1,43 @@
 'use client';
 
-import { EditorState } from 'lexical';
-import { useRef } from 'react';
+import { useMemo } from 'react';
 
-import { useDebounce } from '@/app/hooks';
-import { saveDocument } from '@/server/document-actions';
+import { SaveLogEntry } from '@/types';
 
+import { SavedDocument } from './autosave/DocumentSaver';
 import Editor from './Editor';
 
 interface EditorContainerProps {
   slug: string;
   initialContent?: string | null;
   isReadOnly?: boolean;
+  /** When the document was last saved, which identifies what an edit is based on */
+  revision?: string | null;
+  saveLog?: SaveLogEntry[];
 }
 
 export default function EditorContainer({
   slug,
   initialContent = null,
   isReadOnly = false,
+  revision = null,
+  saveLog,
 }: EditorContainerProps) {
-  let isNewDocument = !initialContent;
-  const lastSavedContentRef = useRef<string | null>(
-    initialContent ? JSON.stringify(JSON.parse(initialContent)) : null,
+  const savedDocument = useMemo<SavedDocument>(
+    () => ({
+      slug,
+      content: initialContent ? JSON.parse(initialContent) : null,
+      revision,
+      log: saveLog ?? [],
+    }),
+    [slug, initialContent, revision, saveLog],
   );
-
-  const debouncedSave = useDebounce(async (editorState: EditorState) => {
-    try {
-      const editorStateJson = editorState.toJSON();
-      const currentContent = JSON.stringify(editorStateJson);
-      if (currentContent !== lastSavedContentRef.current) {
-        await saveDocument(slug, editorStateJson, isReadOnly, isNewDocument);
-        process.env.NODE_ENV === 'development' && console.log('Document saved successfully');
-        isNewDocument = false;
-        lastSavedContentRef.current = currentContent;
-      }
-    } catch (err) {
-      console.error('Error saving document:', err);
-    }
-  }, 2000);
-
-  // Handle editor changes
-  const handleEditorStateChange = (editorState: EditorState) => {
-    if (isReadOnly) {
-      return;
-    }
-    debouncedSave(editorState);
-  };
 
   return (
     <Editor
       initialContent={initialContent}
-      onEditorStateChange={handleEditorStateChange}
+      isReadOnly={isReadOnly}
+      savedDocument={savedDocument}
     />
   );
 }

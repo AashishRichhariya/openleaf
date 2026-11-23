@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
@@ -11,9 +13,9 @@ const client = new DynamoDBClient({
 });
 
 // Create the DynamoDB Document client
-export const docClient = DynamoDBDocumentClient.from(client,{
+// Empty strings are stored as they are: converting them to null lost empty styles and equations
+export const docClient = DynamoDBDocumentClient.from(client, {
   marshallOptions: {
-    convertEmptyValues: true,
     removeUndefinedValues: true,
   },
 });

@@ -14,23 +14,53 @@ import {
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
+import { mergeRegister } from '@lexical/utils';
 import {
   $createParagraphNode,
   $getSelection,
   $isRangeSelection,
+  $isTextNode,
+  $setSelection,
+  COMMAND_PRIORITY_NORMAL,
   FORMAT_ELEMENT_COMMAND,
+  IS_FIREFOX,
+  KEY_ARROW_DOWN_COMMAND,
+  KEY_ARROW_UP_COMMAND,
+  KEY_ENTER_COMMAND,
   LexicalEditor,
   TextNode,
 } from 'lexical';
-import { ReactElement, useCallback, useMemo, useState } from 'react';
+import {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { Icon } from '@/app/components/icons';
 
 import { $createInlineTableInputNode } from '../custom-nodes';
+import { $liftCaretLine } from '../custom-utils/codeBlockPlacement';
 
 import { INSERT_EQUATION_COMMAND } from './EquationPlugin';
 
+
+// /NxM: any size of up to two digits each, and longer tables up to 500 rows. A table much
+// over 1000 cells is too large to be saved, as DynamoDB items stop at 400 KB.
+const MAX_TABLE_ROWS = 500;
+const MAX_TABLE_COLUMNS = 500;
+const MAX_LARGE_TABLE_CELLS = 1000;
+
+function isAllowedTableSize(rows: number, columns: number): boolean {
+  if (rows < 100 && columns < 100) return true;
+  return rows <= MAX_TABLE_ROWS
+    && columns <= MAX_TABLE_COLUMNS
+    && rows * columns <= MAX_LARGE_TABLE_CELLS;
+}
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
@@ -39,8 +69,10 @@ class ComponentPickerOption extends MenuOption {
   icon?: ReactElement;
   // For extra searching.
   keywords: Array<string>;
-  // Keyboard shortcut
-  shortcut?: string;
+  // Keyboard shortcut, or how to work it out when it is first shown
+  private shortcutSource?: string | (() => string);
+  // Whether it makes a block, which can't go inside another block
+  createsBlock: boolean;
   // What happens when you select this option?
   onSelect: (queryString: string) => void;
 
@@ -49,7 +81,8 @@ class ComponentPickerOption extends MenuOption {
     options: {
       icon?: ReactElement;
       keywords?: Array<string>;
-      shortcut?: string; 
+      shortcut?: string | (() => string);
+      createsBlock?: boolean;
       onSelect: (queryString: string) => void;
     },
   ) {
@@ -57,8 +90,14 @@ class ComponentPickerOption extends MenuOption {
     this.title = title;
     this.keywords = options.keywords || [];
     this.icon = options.icon;
-    this.shortcut = options.shortcut;
+    this.shortcutSource = options.shortcut;
+    this.createsBlock = options.createsBlock ?? true;
     this.onSelect = options.onSelect.bind(this);
+  }
+
+  get shortcut(): string | undefined {
+    if (typeof this.shortcutSource === 'function') this.shortcutSource = this.shortcutSource();
+    return this.shortcutSource;
   }
 }
 
@@ -75,6 +114,15 @@ function ComponentPickerMenuItem({
   onMouseEnter: () => void;
   option: ComponentPickerOption;
 }) {
+  const itemRef = useRef<HTMLLIElement | null>(null);
+  const { setRefElement } = option;
+  const setItem = useCallback(
+    (element: HTMLLIElement | null) => {
+      itemRef.current = element;
+      setRefElement(element);
+    },
+    [setRefElement],
+  );
   let className = 'item';
   if (isSelected) {
     className += ' selected';
@@ -85,31 +133,30 @@ function ComponentPickerMenuItem({
     Fixes arrow key navigation on initial "/" trigger where default scroll behavior doesn't work.
     Corrective measure taken to compensate lexical menu scroll doesn't work properly on initial render.
   */
-  if (isSelected) {
-    if (option.ref?.current) {
-      const element = option.ref.current;
-      const parent = element.closest('.typeahead-popover ul');
+  useLayoutEffect(() => {
+    if (!isSelected) return;
+    const element = itemRef.current;
+    const parent = element?.closest('.typeahead-popover ul');
 
-      if (parent) {
-        const parentRect = parent.getBoundingClientRect();
-        const elementRect = element.getBoundingClientRect();
+    if (element && parent) {
+      const parentRect = parent.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
 
-        if (
-          elementRect.top < parentRect.top ||
-          elementRect.bottom > parentRect.bottom
-        ) {
-          element.scrollIntoView({ block: 'nearest' });
-        }
+      if (
+        elementRect.top < parentRect.top ||
+        elementRect.bottom > parentRect.bottom
+      ) {
+        element.scrollIntoView({ block: 'nearest' });
       }
     }
-  }
+  });
 
   return (
     <li
       key={option.key}
       tabIndex={-1}
       className={className}
-      ref={option.setRefElement}
+      ref={setItem}
       role="option"
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
@@ -130,13 +177,14 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
     return options;
   }
 
-  const tableMatch = queryString.match(/^([1-9]\d?)(?:x([1-9]\d?)?)?$/);
+  const tableMatch = queryString.match(/^([1-9]\d{0,2})(?:x([1-9]\d{0,2})?)?$/);
 
   if (tableMatch !== null) {
     const rows = tableMatch[1];
-    const colOptions = tableMatch[2]
+    const colOptions = (tableMatch[2]
       ? [tableMatch[2]]
-      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(String);
+      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(String)
+    ).filter((columns) => isAllowedTableSize(Number(rows), Number(columns)));
       
     options.push(
       ...colOptions.map(
@@ -155,32 +203,43 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
   return options;
 }
 
+// Measuring text needs a canvas, which costs several milliseconds the first time. So it waits until
+// the menu first shows the shortcut, and is done once.
+let enterShortcut: string | null = null;
+
+function getEnterShortcut(): string {
+  enterShortcut ??= measureEnterShortcut();
+  return enterShortcut;
+}
+
+function measureEnterShortcut(): string {
+  function isSupported(char: string): string | null {
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx === null) {
+        return null; 
+      }
+      ctx.font = '16px sans-serif';
+      const fallbackWidth = ctx.measureText('□').width;
+      const testWidth = ctx.measureText(char).width;
+      return testWidth !== fallbackWidth ? char : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  return isSupported('\u2B90') ?? // ⮐ 
+        isSupported('\u21B5') ?? // ↵
+        isSupported('\u23CE') ?? // ⏎ 
+        'enter';        
+}
+
 function getBaseOptions(editor: LexicalEditor) {
   return [
     new ComponentPickerOption('Paragraph', {
       icon: <Icon name="paragraph"/>,
       keywords: ['normal', 'paragraph', 'p', 'text'],
-      shortcut: (() => {
-        function isSupported(char: string): string | null {
-          try {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            if (ctx === null) {
-              return null; 
-            }
-            ctx.font = '16px sans-serif';
-            const fallbackWidth = ctx.measureText('□').width;
-            const testWidth = ctx.measureText(char).width;
-            return testWidth !== fallbackWidth ? char : null;
-          } catch (e) {
-            return null;
-          }
-        }
-        return isSupported('\u2B90') ?? // ⮐ 
-              isSupported('\u21B5') ?? // ↵
-              isSupported('\u23CE') ?? // ⏎ 
-              'enter';        
-      })(),
+      shortcut: getEnterShortcut,
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();
@@ -214,6 +273,12 @@ function getBaseOptions(editor: LexicalEditor) {
           if ($isRangeSelection(selection)) {
             const node = $createInlineTableInputNode();
             selection.insertNodes([node]);
+            // Lexical 0.31 in Firefox kept no caret once the widget split a line in two, as the
+            // field takes the focus. Inserting the table still finds where it was.
+            if (IS_FIREFOX && $isTextNode(node.getPreviousSibling())
+              && $isTextNode(node.getNextSibling())) {
+              $setSelection(null);
+            }
           }
         });
       },
@@ -255,6 +320,7 @@ function getBaseOptions(editor: LexicalEditor) {
       icon: <Icon name="equation"/>,
       keywords: ['equation', 'inline', 'inline equation', 'math', 'formula', 'inline math', '$'],
       shortcut: '$.$',
+      createsBlock: false,
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
           equation: '',
@@ -266,6 +332,7 @@ function getBaseOptions(editor: LexicalEditor) {
       icon: <Icon name="equation"/>,
       keywords: ['equation', 'block', 'block equation', 'display', 'display equation', 'math', 'formula', '$$', 'centered'],
       shortcut: '$$.$$',
+      createsBlock: false,
       onSelect: () =>
         editor.dispatchCommand(INSERT_EQUATION_COMMAND, {
           equation: '',
@@ -306,6 +373,7 @@ function getBaseOptions(editor: LexicalEditor) {
         new ComponentPickerOption(`Align ${alignment}`, {
           icon: <Icon name={`align-${alignment}`}/>,
           keywords: ['align', 'justify', alignment],
+          createsBlock: false,
           onSelect: () =>
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
         }),
@@ -313,9 +381,22 @@ function getBaseOptions(editor: LexicalEditor) {
   ];
 }
 
+// Block Equation is listed first and matches these through its keyword 'centered'
+function putAlignCenterFirst(
+  options: Array<ComponentPickerOption>,
+  queryString: string,
+): Array<ComponentPickerOption> {
+  const query = queryString.toLowerCase();
+  if (query.length < 2 || !'center'.startsWith(query)) return options;
+  const alignCenter = options.find((option) => option.title === 'Align center');
+  if (!alignCenter) return options;
+  return [alignCenter, ...options.filter((option) => option !== alignCenter)];
+}
+
 export function ComponentPickerPlugin(): ReactElement {
   const [editor] = useLexicalComposerContext();
   const [queryString, setQueryString] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
     minLength: 0,
@@ -330,15 +411,36 @@ export function ComponentPickerPlugin(): ReactElement {
 
     const regex = new RegExp(queryString, 'i');
 
-    return [
+    return putAlignCenterFirst([
       ...getDynamicOptions(editor, queryString),
       ...baseOptions.filter(
         (option) =>
           regex.test(option.title) ||
           option.keywords.some((keyword) => regex.test(keyword)),
       ),
-    ];
+    ], queryString);
   }, [editor, queryString]);
+
+  // Keys as Lexical 0.31 handled them while the menu is open
+  useEffect(() => {
+    if (!isOpen) return;
+    // With nothing to choose from, the arrows move the caret
+    const moveCaret = () => options.length === 0;
+    return mergeRegister(
+      editor.registerCommand(KEY_ARROW_DOWN_COMMAND, moveCaret, COMMAND_PRIORITY_NORMAL),
+      editor.registerCommand(KEY_ARROW_UP_COMMAND, moveCaret, COMMAND_PRIORITY_NORMAL),
+      // Shift+Enter picks the option, as Enter does
+      editor.registerCommand(
+        KEY_ENTER_COMMAND,
+        (event) => {
+          if (!event?.shiftKey || options.length === 0) return false;
+          event.preventDefault();
+          return editor.dispatchCommand(KEY_ENTER_COMMAND, null);
+        },
+        COMMAND_PRIORITY_NORMAL,
+      ),
+    );
+  }, [editor, isOpen, options]);
 
   const onSelectOption = useCallback(
     (
@@ -349,6 +451,7 @@ export function ComponentPickerPlugin(): ReactElement {
     ) => {
       editor.update(() => {
         nodeToRemove?.remove();
+        if (selectedOption.createsBlock) $liftCaretLine();
         selectedOption.onSelect(matchingString);
         closeMenu();
       });
@@ -359,6 +462,8 @@ export function ComponentPickerPlugin(): ReactElement {
   return (
     <LexicalTypeaheadMenuPlugin<ComponentPickerOption>
       onQueryChange={setQueryString}
+      onOpen={() => setIsOpen(true)}
+      onClose={() => setIsOpen(false)}
       onSelectOption={onSelectOption}
       triggerFn={checkForTriggerMatch}
       options={options}

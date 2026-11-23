@@ -32,6 +32,30 @@ export function sanitizeUrl(url: string): string {
   return url;
 }
 
+const WRAPPED = /^[([{<"'“‘«]/;
+const CONTACT_WITH_SPACES = /^(?:mailto:\S+\?|(?:sms|tel):[\d\s()+.-]+$)/i;
+const WEB_URL_WITH_PATH = /^(?:https?:\/\/|www\.)[^\s/]+\//i;
+const ANOTHER_URL = /:\/\/|\bwww\./i;
+
+/**
+ * Whether text is prose around a URL rather than a URL: words before it, a line break, words
+ * after a bare host, or a second URL. Spaces are fine where real URLs have them: in mail
+ * subjects, phone numbers and paths.
+ *
+ * @param text - Text to check
+ * @returns Boolean indicating if the text is prose
+ */
+function isProse(text: string): boolean {
+  const trimmed = text.trim();
+  if (WRAPPED.test(trimmed)) return true;
+  if (!/\s/.test(trimmed)) return false;
+  if (/[\r\n]/.test(trimmed)) return true;
+  if (CONTACT_WITH_SPACES.test(trimmed)) return false;
+  if (!WEB_URL_WITH_PATH.test(trimmed)) return true;
+
+  return trimmed.split(/\s+/).slice(1).some((word) => ANOTHER_URL.test(word));
+}
+
 /**
  * Validates a URL string
  * 
@@ -39,6 +63,7 @@ export function sanitizeUrl(url: string): string {
  * @returns Boolean indicating if URL is valid
  */
 export function validateUrl(url: string): boolean {
+  if (isProse(url)) return false;
   const sanitizedURL = sanitizeUrl(url);
   
   // Check if URL starts with a supported protocol prefix for user starting to type a URL

@@ -16,7 +16,6 @@ import {
   getTableObserverFromTableElement,
   TableCellHeaderStates,
   TableCellNode,
-  TableRowNode,
 } from '@lexical/table';
 import { mergeRegister } from '@lexical/utils';
 import {
@@ -262,7 +261,7 @@ function TableActionMenu({
       const tableColumnIndex =
         $getTableColumnIndexFromTableCellNode(tableCellNode);
 
-      const tableRows = tableNode.getChildren<TableRowNode>();
+      const tableRows = tableNode.getChildren().filter($isTableRowNode);
       const maxRowsLength = Math.max(
         ...tableRows.map((row) => row.getChildren().length),
       );

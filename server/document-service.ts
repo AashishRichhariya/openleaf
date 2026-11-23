@@ -1,5 +1,4 @@
-'use server';
-
+import 'server-only';
 
 import {
   GetCommand,
@@ -7,98 +6,89 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
+import { isContentEmpty } from '@/app/utils/storedDocument';
 import { Document } from '@/types';
 
 import { docClient, DOCUMENTS_TABLE_NAME } from './aws-config';
-import { fetchDocument } from './document-actions';
-import { generateRandomSlug, isDocumentContentEmpty } from './document-utils';
+import { generateRandomSlug } from './document-utils';
 
+/** The document was changed, created or locked since it was read */
+export class StaleDocumentError extends Error {}
+
+function rethrow(error: unknown, action: string): never {
+  if ((error as Error).name === 'ConditionalCheckFailedException') throw new StaleDocumentError();
+  console.error(`Error ${action}:`, error);
+  throw error;
+}
 
 /**
- * Create or update a document in DynamoDB
+ * Create a document. Never overwrites one
  */
-export async function createDocument(document: Document): Promise<Document> {
-  const params = {
-    TableName: DOCUMENTS_TABLE_NAME,
-    Item: document,
-  };
-
+export async function createDocument(document: Document): Promise<void> {
   try {
-    await docClient.send(new PutCommand(params));
-    return document;
+    await docClient.send(new PutCommand({
+      TableName: DOCUMENTS_TABLE_NAME,
+      Item: document,
+      ConditionExpression: 'attribute_not_exists(slug)',
+    }));
   } catch (error) {
-    console.error('Error creating document:', error);
-    throw error;
+    rethrow(error, 'creating document');
   }
 }
 
 /**
- * Update specific fields of a document in DynamoDB
+ * Update a document's content, if it is unlocked and still as it was read
  */
-export async function updateDocument(
-  slug: string,
-  updates: Partial<Document>,
-  version: number = 1,
-): Promise<Document> {
-  const existingDocument = await getDocumentBySlug(slug);
-  
-  // If document doesn't exist, throw an error
-  if (!existingDocument) {
-    throw new Error(`Document with slug ${slug} not found`);
-  }
-   
-  // return silently if the document is read-only
-  if (existingDocument.read_only === true) {
-    return existingDocument;
-  }
-  
-  // Build the update expression and attribute values
-  let updateExpression = 'SET ';
-  const expressionAttributeValues: { [key: string]: any } = {};
-  const expressionAttributeNames: { [key: string]: string } = {};
-
-  Object.keys(updates).forEach((key, index) => {
-    const valueKey = `:val${index}`;
-    const nameKey = `#attr${index}`;
-
-    updateExpression += index === 0 ? '' : ', ';
-    updateExpression += `${nameKey} = ${valueKey}`;
-
-    expressionAttributeValues[valueKey] = (updates as Record<string, any>)[key];
-    expressionAttributeNames[nameKey] = key;
-  });
-
-  const params = {
-    TableName: DOCUMENTS_TABLE_NAME,
-    Key: {
-      slug,
-      version,
-    },
-    UpdateExpression: updateExpression,
-    ExpressionAttributeValues: expressionAttributeValues,
-    ExpressionAttributeNames: expressionAttributeNames,
-    ReturnValues: 'ALL_NEW' as const,
-  };
+export async function updateDocumentContent(
+  previous: Document,
+  updates: Required<Pick<Document, 'content' | 'updated_at' | 'save_log'>>,
+): Promise<void> {
+  const unchanged = previous.updated_at
+    ? '#updatedAt = :previous'
+    : '(attribute_not_exists(#updatedAt) OR attribute_type(#updatedAt, :nullType))';
 
   try {
-    const response = await docClient.send(new UpdateCommand(params));
-    return response.Attributes as Document;
+    await docClient.send(new UpdateCommand({
+      TableName: DOCUMENTS_TABLE_NAME,
+      Key: { slug: previous.slug, version: previous.version },
+      UpdateExpression: 'SET #content = :content, #updatedAt = :updatedAt, #log = :log',
+      ConditionExpression:
+        `attribute_exists(slug) AND ${unchanged} AND `
+        + '(attribute_not_exists(#readOnly) OR #readOnly <> :locked)',
+      ExpressionAttributeNames: {
+        '#content': 'content',
+        '#updatedAt': 'updated_at',
+        '#log': 'save_log',
+        '#readOnly': 'read_only',
+      },
+      ExpressionAttributeValues: {
+        ':content': updates.content,
+        ':updatedAt': updates.updated_at,
+        ':log': updates.save_log,
+        ':locked': true,
+        ...(previous.updated_at ? { ':previous': previous.updated_at } : { ':nullType': 'NULL' }),
+      },
+    }));
   } catch (error) {
-    console.error('Error updating document fields:', error);
-    throw error;
+    rethrow(error, 'updating document');
   }
 }
 
 /**
  * Get a document by slug
  */
-export async function getDocumentBySlug(slug: string): Promise<Document | null> {
+export async function getDocumentBySlug(
+  slug: string,
+  { consistent = true }: { consistent?: boolean } = {},
+): Promise<Document | null> {
   const params = {
     TableName: DOCUMENTS_TABLE_NAME,
     Key: {
       slug,
       version: 1, // Default version
     },
+    // A reload right after a save must see that save
+    ConsistentRead: consistent,
   };
 
   try {
@@ -111,30 +101,18 @@ export async function getDocumentBySlug(slug: string): Promise<Document | null> 
 }
 
 /**
- * Check if a slug exists
- */
-export async function slugExists(slug: string): Promise<boolean> {
-  try {
-    const document = await getDocumentBySlug(slug);
-    return !!document;
-  } catch (error) {
-    console.error('Error checking slug existence:', error);
-    throw error;
-  }
-}
-
-/**
  * Check if a slug document is empty or doesn't exist
- * 
+ *
  * @param slug The slug to check
  * @returns true if document doesn't exist or is empty, false otherwise
  */
-export async function isSlugDocumentEmpty(slug: string): Promise<boolean> {
+async function isSlugDocumentEmpty(slug: string): Promise<boolean> {
   try {
-    const document = await fetchDocument(slug);
-    
+    // Picking a random name for a new document needs no consistent read, which costs double
+    const document = await getDocumentBySlug(slug, { consistent: false });
+
     // Return true if document is null or content is empty
-    return !document || await isDocumentContentEmpty(document.content);
+    return !document || isContentEmpty(document.content);
   } catch (error) {
     console.error(`Error checking if slug document is empty: ${error}`);
     return true; // Consider non-existent or error as empty
@@ -149,18 +127,18 @@ export async function findAvailableSlug(
 ): Promise<string> {
   let attempts = 0;
   let lastSlug = '';
-  
+
   while (attempts < maxAttempts) {
-    const slug = await generateRandomSlug();
+    const slug = generateRandomSlug();
     lastSlug = slug;
-    
+
     const isEmpty = await isSlugDocumentEmpty(slug);
     if (isEmpty) {
       return slug;
     }
     attempts++;
   }
-  
+
   console.warn(`Warning: Could not find empty slug after ${maxAttempts} attempts. Using last generated slug.`);
   return lastSlug;
 }

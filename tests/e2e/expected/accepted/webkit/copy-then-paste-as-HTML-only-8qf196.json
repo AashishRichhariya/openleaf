@@ -1,0 +1,386 @@
+[
+ "copy, then paste as HTML only",
+ {
+  "caret": "6.0:4:text",
+  "focus": "editor",
+  "text": "Head\nsome bold x+1 end\ntask\nsaid\nlet a = 1\nA\nB\n1\n2\nlast",
+  "boxes": [
+   {
+    "el": "h2.editor-heading-h2",
+    "rect": [
+     0,
+     20,
+     832,
+     36
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 30px | 700 | normal | 36px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"Head\"",
+    "rect": [
+     0,
+     18,
+     76,
+     39
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 30px | 700 | normal | 36px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     0,
+     68,
+     832,
+     40
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"some \"",
+    "rect": [
+     0,
+     76,
+     44,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "strong.editor-text-bold \"bold\"",
+    "rect": [
+     44,
+     76,
+     35,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 700 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \" \"",
+    "rect": [
+     79,
+     76,
+     4,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span.editor-equation.editor-equation-inline",
+    "rect": [
+     83,
+     68,
+     60,
+     40
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | default | no-border | no-left | 0px | 4px 4px 4px 4px"
+   },
+   {
+    "el": "span.editor-equation-inline.equation-renderer",
+    "rect": [
+     87,
+     72,
+     52,
+     32
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | pointer | no-border | no-left | 0px | 4px 4px 4px 4px"
+   },
+   {
+    "el": "span.katex",
+    "rect": [
+     91,
+     76,
+     44,
+     22
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | KaTeX_Main | 19.360001px | 400 | normal | 23.232002px | none | left | ltr | pointer | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \" end\"",
+    "rect": [
+     143,
+     76,
+     31,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "ul.editor-checklist.editor-list-ul.editor-list-ul1",
+    "rect": [
+     0,
+     108,
+     832,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px | none"
+   },
+   {
+    "el": "li.editor-listitem.editor-listitem-unchecked",
+    "rect": [
+     8,
+     108,
+     816,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 24px 0px 24px | none | ::before \"\" 16px 16px rgba(0, 0, 0, 0) 1px rgb(74, 120, 86) 1"
+   },
+   {
+    "el": "span \"task\"",
+    "rect": [
+     32,
+     109,
+     32,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "blockquote.editor-quote",
+    "rect": [
+     0,
+     148,
+     832,
+     24
+    ],
+    "style": "rgba(230, 235, 232, 0.7) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | italic | 24px | none | left | ltr | text | no-border | 4px solid rgb(47, 133, 90) | 0px | 0px 0px 0px 16px"
+   },
+   {
+    "el": "span \"said\"",
+    "rect": [
+     20,
+     149,
+     30,
+     21
+    ],
+    "style": "rgba(230, 235, 232, 0.7) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | italic | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "code.editor-code",
+    "rect": [
+     0,
+     188,
+     832,
+     39
+    ],
+    "style": "rgb(230, 235, 232) | rgb(37, 47, 42) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | 1px solid rgb(74, 120, 86) | 1px solid rgb(74, 120, 86) | 10px 14px | 8px 8px 8px 56px | ::before \"1\" 40px 37px rgb(44, 53, 46) 0px rgb(74, 120, 86) 1"
+   },
+   {
+    "el": "span.editor-token-attr \"let\"",
+    "rect": [
+     57,
+     198,
+     25,
+     18
+    ],
+    "style": "rgb(147, 197, 253) | rgba(0, 0, 0, 0) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \" a \"",
+    "rect": [
+     82,
+     198,
+     25,
+     18
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span.editor-token-operator \"=\"",
+    "rect": [
+     107,
+     198,
+     8,
+     18
+    ],
+    "style": "rgb(253, 186, 116) | rgba(0, 0, 0, 0) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \" \"",
+    "rect": [
+     116,
+     198,
+     8,
+     18
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span.editor-token-property \"1\"",
+    "rect": [
+     124,
+     198,
+     8,
+     18
+    ],
+    "style": "rgb(216, 180, 254) | rgba(0, 0, 0, 0) | \"Geist Mono\" | 14px | 400 | normal | 21px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "div.editor-table-scrollable-wrapper",
+    "rect": [
+     0,
+     243,
+     832,
+     139
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "table.editor-table",
+    "rect": [
+     0,
+     267,
+     832,
+     83
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 10px 14px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "th.editor-table-cell.editor-table-cell-header",
+    "rect": [
+     0,
+     267,
+     416,
+     41
+    ],
+    "style": "rgb(230, 235, 232) | rgb(242, 243, 245) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | 1px solid rgb(74, 120, 86) | 1px solid rgb(74, 120, 86) | 0px | 8px 8px 8px 8px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     9,
+     276,
+     399,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"A\"",
+    "rect": [
+     202,
+     277,
+     12,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "th.editor-table-cell.editor-table-cell-header",
+    "rect": [
+     416,
+     267,
+     416,
+     41
+    ],
+    "style": "rgb(230, 235, 232) | rgb(242, 243, 245) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | 1px solid rgb(74, 120, 86) | 1px solid rgb(74, 120, 86) | 0px | 8px 8px 8px 8px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     425,
+     276,
+     399,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"B\"",
+    "rect": [
+     618,
+     277,
+     11,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "th.editor-table-cell.editor-table-cell-header",
+    "rect": [
+     0,
+     308,
+     416,
+     41
+    ],
+    "style": "rgb(230, 235, 232) | rgb(242, 243, 245) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | 1px solid rgb(74, 120, 86) | 1px solid rgb(74, 120, 86) | 0px | 8px 8px 8px 8px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     9,
+     317,
+     399,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"1\"",
+    "rect": [
+     205,
+     318,
+     7,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 700 | normal | 24px | none | center | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "td.editor-table-cell",
+    "rect": [
+     416,
+     308,
+     416,
+     41
+    ],
+    "style": "rgb(230, 235, 232) | rgb(47, 60, 51) | Geist | 16px | 400 | normal | 24px | none | center | ltr | text | 1px solid rgb(74, 120, 86) | 1px solid rgb(74, 120, 86) | 0px | 8px 8px 8px 8px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     425,
+     317,
+     399,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"2\"",
+    "rect": [
+     425,
+     318,
+     10,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "p.editor-paragraph",
+    "rect": [
+     0,
+     382,
+     832,
+     24
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   },
+   {
+    "el": "span \"last\"",
+    "rect": [
+     0,
+     383,
+     27,
+     21
+    ],
+    "style": "rgb(230, 235, 232) | rgba(0, 0, 0, 0) | Geist | 16px | 400 | normal | 24px | none | left | ltr | text | no-border | no-left | 0px | 0px 0px 0px 0px"
+   }
+  ],
+  "floating": [],
+  "scroll": 0,
+  "tree": "heading tag=\"h2\"\n  text \"Head\"\nparagraph\n  text \"some \"\n  text +b \"bold\"\n  text \" \"\n  equation equation=\"x+1\" inline=true\n  text \" end\"\nlist listType=\"check\" start=1 tag=\"ul\"\n  listitem value=1\n    text \"task\"\nquote\n  text \"said\"\ncode language=\"javascript\"\n  code-highlight highlightType=\"keyword\" \"let\"\n  code-highlight \" a \"\n  code-highlight highlightType=\"operator\" \"=\"\n  code-highlight \" \"\n  code-highlight highlightType=\"number\" \"1\"\ntable\n  tablerow\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"A\"\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"B\"\n  tablerow\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"1\"\n    tablecell width=75\n      paragraph format=\"start\"\n        text \"2\"\nparagraph\n  text \"last\"",
+  "problems": [],
+  "saved": "heading tag=\"h2\"\n  text \"Head\"\nparagraph\n  text \"some \"\n  text +b \"bold\"\n  text \" \"\n  equation equation=\"x+1\" inline=true\n  text \" end\"\nlist listType=\"check\" start=1 tag=\"ul\"\n  listitem value=1\n    text \"task\"\nquote\n  text \"said\"\ncode language=\"javascript\"\n  code-highlight highlightType=\"keyword\" \"let\"\n  code-highlight \" a \"\n  code-highlight highlightType=\"operator\" \"=\"\n  code-highlight \" \"\n  code-highlight highlightType=\"number\" \"1\"\ntable\n  tablerow\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"A\"\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"B\"\n  tablerow\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"1\"\n    tablecell width=75\n      paragraph format=\"start\"\n        text \"2\"\nparagraph\n  text \"last\"",
+  "reloaded": "heading tag=\"h2\"\n  text \"Head\"\nparagraph\n  text \"some \"\n  text +b \"bold\"\n  text \" \"\n  equation equation=\"x+1\" inline=true\n  text \" end\"\nlist listType=\"check\" start=1 tag=\"ul\"\n  listitem value=1\n    text \"task\"\nquote\n  text \"said\"\ncode language=\"javascript\"\n  code-highlight highlightType=\"keyword\" \"let\"\n  code-highlight \" a \"\n  code-highlight highlightType=\"operator\" \"=\"\n  code-highlight \" \"\n  code-highlight highlightType=\"number\" \"1\"\ntable\n  tablerow\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"A\"\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"B\"\n  tablerow\n    tablecell backgroundColor=\"rgb(242, 243, 245)\" headerState=1 width=75\n      paragraph\n        text \"1\"\n    tablecell width=75\n      paragraph format=\"start\"\n        text \"2\"\nparagraph\n  text \"last\""
+ }
+]

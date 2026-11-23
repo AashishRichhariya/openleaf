@@ -1,6 +1,7 @@
-import katex from 'katex';
 import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';
+
+import { getKatex, KATEX_OPTIONS, loadKatex } from './katex';
 
 interface EquationRendererProps {
   equation: string;
@@ -14,18 +15,20 @@ export default function EquationRenderer({
   const katexElementRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const katexElement = katexElementRef.current;
+    let current = true;
+    const render = () => {
+      const katexElement = katexElementRef.current;
+      const katex = getKatex();
+      if (current && katexElement !== null && katex) {
+        katex.render(equation ?? '', katexElement, { ...KATEX_OPTIONS, displayMode: !inline });
+      }
+    };
 
-    if (katexElement !== null) {
-      katex.render(equation ?? '', katexElement, {
-        displayMode: !inline, 
-        errorColor: '#cc0000',
-        output: 'html',
-        strict: 'warn',
-        throwOnError: false,
-        trust: false,
-      });
-    }
+    if (getKatex()) render();
+    else void loadKatex().then(render);
+    return () => {
+      current = false;
+    };
   }, [equation, inline]);
 
 

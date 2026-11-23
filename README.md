@@ -35,7 +35,7 @@ Check it out: [openleaf.xyz/info](https://openleaf.xyz/info)
 - Type `[]` or `[x]` for checklist items
 - Type `[text](url)` to create links
 - Type `` ` `` around text (like `` `code` ``) for inline code formatting
-- Type ` ``` ` and press Space for code block
+- Type ` ``` ` for a code block
 - Type `---` for a horizontal divider
 - Type `$` around text (like `$ equation=inline $`) for inline equations
 - Type `$$` around text (like `$$ equation=block $$`) for block equations
@@ -58,7 +58,7 @@ Press `/` to access the command menu with all available formatting options:
 Create tables easily by either:
 
 - Type `/table` and select from the menu
-- Or type `/NxM` where N and M are any numbers (like `/3x4`, `/2x6`, etc.) to instantly create a table with that many rows and columns
+- Or type `/NxM` (like `/3x4`, `/2x6`, `/100x3`, etc.) to instantly create a table with N rows and M columns. Either number can go up to 99, or up to 500 as long as the table has at most 1000 cells
 
 ### Links
 
@@ -72,7 +72,7 @@ Create links easily in multiple ways:
 
 Format code with syntax highlighting:
 
-- Type ` ``` ` and press Space to create a code block
+- Type ` ``` ` to create a code block. It appears on the third backtick
 - Access code blocks via the command menu
 - View line numbers for easier reference
 

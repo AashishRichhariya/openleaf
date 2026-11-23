@@ -1,21 +1,23 @@
 import { debounce } from 'lodash-es';
-import { useMemo, useRef } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 
 export function useDebounce<T extends (...args: never[]) => void>(
   fn: T,
   ms: number,
   maxWait?: number,
 ) {
-  const funcRef = useRef<T | null>(null);
-  funcRef.current = fn;
+  const funcRef = useRef<T>(fn);
+  useLayoutEffect(() => {
+    funcRef.current = fn;
+  });
 
   return useMemo(
     () =>
       debounce(
+        // debounce only calls this later, never during render
+        // eslint-disable-next-line react-hooks/refs
         (...args: Parameters<T>) => {
-          if (funcRef.current) {
-            funcRef.current(...args);
-          }
+          funcRef.current(...args);
         },
         ms,
         maxWait !== undefined ? { maxWait } : undefined,

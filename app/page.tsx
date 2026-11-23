@@ -3,9 +3,9 @@ export const revalidate = 0;
 
 import { redirect } from 'next/navigation';
 
-import { getRandomAvailableSlug } from '@/server/document-actions';
+import { findAvailableSlug } from '@/server/document-service';
 
 export default async function Home() {
-  const randomSlug = await getRandomAvailableSlug();
+  const randomSlug = await findAvailableSlug();
   redirect(`/${randomSlug}`);
 }

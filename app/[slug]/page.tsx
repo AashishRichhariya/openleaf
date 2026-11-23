@@ -1,6 +1,9 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-import { fetchDocument } from '@/server/document-actions';
+import { readStoredContent } from '@/app/utils/storedDocument';
+import { getDocumentBySlug } from '@/server/document-service';
+import { isValidSlug } from '@/server/request-utils';
 
 import EditorContainer from '../components/editor/EditorContainer';
 
@@ -24,16 +27,19 @@ export async function generateMetadata(
 
 export default async function EditorPage(props: EditorPageProps) {
   const { slug } = await props.params;
-  const document = await fetchDocument(slug.toLowerCase());
-  const pageContent = document?.content
-    ? JSON.stringify(document.content)
-    : null;
+  // A slug too long to be stored was never a document
+  if (!isValidSlug(slug)) notFound();
+  const document = await getDocumentBySlug(slug.toLowerCase());
+  const content = readStoredContent(document?.content);
+  const pageContent = content?.root.children?.length ? JSON.stringify(content) : null;
 
   return (
     <EditorContainer
       slug={slug}
       initialContent={pageContent}
-      isReadOnly={document?.read_only ?? false}
+      isReadOnly={!!document?.read_only}
+      revision={document?.updated_at ?? null}
+      saveLog={document?.save_log}
     />
   );
 }
