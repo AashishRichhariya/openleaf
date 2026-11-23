@@ -5,7 +5,7 @@ import { capture, Box, View } from './capture';
 import { Editor } from './editor';
 import { ENV } from './env';
 import { expect, test } from './test';
-import { tree } from './tree';
+import { tree, withoutDerivedTextFormat as derivedOut } from './tree';
 
 /*
  * A scenario performs what a user does, then records everything observable. On the untouched
@@ -121,7 +121,7 @@ function compare(actual: Recorded, wanted: Recorded, changedBy?: ChangedBy): voi
     return;
   }
 
-  expect.soft(actual.tree, 'document').toBe(wanted.tree);
+  expect.soft(derivedOut(actual.tree), 'document').toBe(derivedOut(wanted.tree));
   expect.soft(actual.caret, 'caret').toBe(wanted.caret);
   if (changedBy !== 'B15') compareBoxes(actual.boxes, wanted.boxes, 'editor');
 
@@ -134,9 +134,10 @@ function compare(actual: Recorded, wanted: Recorded, changedBy?: ChangedBy): voi
       (changedBy === 'B13' ? value?.replace(/\n *inline-table-input-node/g, '') : value);
     // Without the widget there can be nothing to save.
     const saved = changedBy === 'B13' && actual.saved === '(no row)' ? 'paragraph' : actual.saved;
-    expect.soft(saved, 'saved document').toBe(orKept(withoutWidget(wanted.saved), actual.saved));
-    expect.soft(actual.reloaded, 'reloaded document')
-      .toBe(orKept(withoutWidget(wanted.reloaded), actual.reloaded));
+    expect.soft(derivedOut(saved), 'saved document')
+      .toBe(derivedOut(orKept(withoutWidget(wanted.saved), actual.saved)));
+    expect.soft(derivedOut(actual.reloaded), 'reloaded document')
+      .toBe(derivedOut(orKept(withoutWidget(wanted.reloaded), actual.reloaded)));
   }
 }
 

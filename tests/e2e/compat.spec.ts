@@ -9,7 +9,7 @@ import {
 import { Editor } from './support/editor';
 import { scenario } from './support/scenario';
 import { expect, test } from './support/test';
-import { plainText, tree } from './support/tree';
+import { plainText, tree, withoutDerivedTextFormat as derivedOut } from './support/tree';
 
 /*
  * Documents and clipboard contents saved by 0.3.0.
@@ -136,7 +136,7 @@ for (let start = 0; start < corpus.length; start += 20) {
         const flat = (value: any) => plainText(value).replace(/\|/g, '');
         expect.soft(flat(now), `document ${start + offset}`).toBe(flat(content));
       } else {
-        expect.soft(tree(now), `document ${start + offset}`).toBe(opened);
+        expect.soft(derivedOut(tree(now)), `document ${start + offset}`).toBe(derivedOut(opened));
       }
     }
     expect(problems.filter((problem) => problem.startsWith('pageerror'))).toEqual([]);
@@ -179,9 +179,11 @@ test('compat: clipboard contents copied from 0.3.0 paste the same', async ({ ed 
   );
   await ed.open();
   await ed.paste(data);
-  expect.soft(await ed.tree(), 'Lexical payload').toBe(pasted[test.info().project.name]);
+  expect.soft(derivedOut(await ed.tree()), 'Lexical payload')
+    .toBe(derivedOut(pasted[test.info().project.name]));
   await ed.selectAll();
   await ed.press('Backspace');
   await ed.paste({ 'text/html': data['text/html'] });
-  expect.soft(await ed.tree(), 'HTML').toBe(pastedFromHtml[test.info().project.name]);
+  expect.soft(derivedOut(await ed.tree()), 'HTML')
+    .toBe(derivedOut(pastedFromHtml[test.info().project.name]));
 });

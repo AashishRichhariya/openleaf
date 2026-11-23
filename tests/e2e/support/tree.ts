@@ -41,6 +41,34 @@ export function tree(content: any): string {
   return blocks.map((block) => serialize(block, 0)).join('\n');
 }
 
+const TEXT_LINE = /^ *(text|code-highlight|tab)( |$)/;
+
+/**
+ * A tree without the textFormat and textStyle of elements that hold text.
+ *
+ * Those two record the format that typing into the element would get once it is empty, and
+ * Lexical 0.53 works them out from the text instead of keeping what 0.31 had set while rendering
+ * (lexical#7968). The owner accepted that difference on 2026-11-23, and only that: the format of
+ * the text itself, and of empty elements, is still compared.
+ */
+export function withoutDerivedTextFormat(value: string | undefined): string | undefined {
+  if (value === undefined) return value;
+  const lines = value.split('\n');
+  const indent = (line: string) => line.length - line.trimStart().length;
+  return lines.map((line, index) => {
+    let holdsText = false;
+    const depth = indent(line);
+    for (let next = index + 1; next < lines.length && indent(lines[next]) > depth; next += 1) {
+      if (TEXT_LINE.test(lines[next])) {
+        holdsText = true;
+        break;
+      }
+    }
+    if (!holdsText) return line;
+    return line.replace(/ textFormat=\d+/, '').replace(/ textStyle="(?:[^"\\]|\\.)*"/, '');
+  }).join('\n');
+}
+
 /** All text in document order, to prove that no content was lost. */
 export function plainText(content: any): string {
   const walk = (node: any): string =>
