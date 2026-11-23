@@ -25,6 +25,7 @@ import {
   $findTableNode,
   $isTableNode,
   $isTableSelection,
+  $isTableCellNode,
   INSERT_TABLE_COMMAND,
   TableCellNode,
   TableNode,
@@ -310,6 +311,39 @@ function $moveInCode(event: KeyboardEvent, up: boolean): boolean {
 }
 
 /** Whether the selection runs from the start of the document to its end */
+/**
+ * A selection that takes in a whole table from outside ends, in Lexical 0.53, on the table's first
+ * or last cell itself. Firefox can extend it from there to the next line, but by the time Lexical
+ * hands the key to its commands it no longer can, and Lexical's table code keeps the end on the
+ * cell. So a further Shift+ArrowDown stayed on the table, where Lexical 0.31 let it go on, as
+ * Chromium and Safari still do. In Firefox the line is added before Lexical sees the key.
+ */
+function registerExtendPastTable(editor: LexicalEditor): () => void {
+  const onKeyDown = (event: KeyboardEvent) => {
+    const up = event.key === 'ArrowUp';
+    if (!IS_FIREFOX || !(up || event.key === 'ArrowDown')) return;
+    if (!event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
+    const endsOnTable = editor.getEditorState().read(() => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection) || selection.focus.type !== 'element') return false;
+      const cell = selection.focus.getNode();
+      const table = $isTableCellNode(cell) ? $findTableNode(cell) : null;
+      // From inside the same table it is a selection of cells, which Lexical handles
+      return !!table && $findTableNode(selection.anchor.getNode()) !== table;
+    });
+    const domSelection = window.getSelection();
+    if (!endsOnTable || !domSelection || typeof domSelection.modify !== 'function') return;
+    domSelection.modify('extend', up ? 'backward' : 'forward', 'line');
+    // Lexical reads the new selection from the page
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  return editor.registerRootListener((root, previous) => {
+    previous?.removeEventListener('keydown', onKeyDown, true);
+    root?.addEventListener('keydown', onKeyDown, true);
+  });
+}
+
 function $isWholeDocumentSelected(): boolean {
   const selection = $getSelection();
   if (!$isRangeSelection(selection) || selection.isCollapsed()) return false;
@@ -577,6 +611,7 @@ export function BehaviorParityPlugin({ maxIndent }: { maxIndent: number }): null
         COMMAND_PRIORITY_LOW,
       ),
 
+      registerExtendPastTable(editor),
       // Before the code block's own handlers (LOW), but not while the slash menu is open
       editor.registerCommand(
         KEY_ARROW_UP_COMMAND,
