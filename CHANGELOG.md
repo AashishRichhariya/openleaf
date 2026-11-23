@@ -17,7 +17,7 @@ All notable changes to openleaf will be documented in this file.
 - Edits made just before closing the tab are saved (B4)
 - Typing without a pause still saves, at least every 5 seconds, and failed saves are shown (B5)
 - Two tabs editing the same document no longer overwrite each other: both edits are kept (B6)
-- Locked documents look read-only instead of silently discarding changes (B7)
+- Locked documents, such as the info page, can still be edited to try things out, and are never saved, as before. The server now refuses to change them, whatever a request says (B1, B2, B7)
 - Three backticks create a code block in the right place, so markdown shortcuts, slash commands and lists keep working after it (B8)
 - Copying equations with non-Latin characters works (B9)
 - Prices such as `$5 and $` are no longer turned into math (B10)

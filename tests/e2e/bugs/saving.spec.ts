@@ -4,7 +4,7 @@ import { Editor } from '../support/editor';
 import { expect, test } from '../support/test';
 import { plainText, tree } from '../support/tree';
 
-import type { Page } from '@playwright/test';
+import type { Page, Request } from '@playwright/test';
 
 const notice = (page: Page) => page.locator('.editor-notice');
 
@@ -298,36 +298,60 @@ test('guard B6: rows without timestamps still save', async ({ ed }) => {
 });
 
 // B7 ---------------------------------------------------------------------------------------------
+// The owner chose (2026-11-23) to keep 0.3.0's behavior: a read-only document, such as the info
+// page, can be edited to try things out, and is never saved. The server refuses to change it
+// anyway (B1, B2). These guards hold on 0.3.0 and on 0.4.0.
 
 const locked = { read_only: true };
 
-test('B7: a read-only document is not editable and says so', async ({ ed, page }) => {
+/** Every request that could save, made while `steps` run and for 3 seconds after. */
+async function savesDuring(page: Page, steps: () => Promise<void>): Promise<string[]> {
+  const sent: string[] = [];
+  const listen = (request: Request) => {
+    if (request.method() !== 'GET') sent.push(`${request.method()} ${request.url()}`);
+  };
+  page.on('request', listen);
+  await steps();
+  await page.waitForTimeout(3000);
+  page.off('request', listen);
+  return sent;
+}
+
+test('guard B7: a read-only document can be edited, with no read-only badge', async ({ ed, page }) => {
   await ed.open({ content: doc(p('locked text')), row: locked });
-  await expect(ed.root).toHaveAttribute('contenteditable', 'false');
-  await expect(page.getByText(/read-only/i)).toBeVisible();
+  await expect(ed.root).toHaveAttribute('contenteditable', 'true');
+  await expect(page.getByText(/read-only/i)).toHaveCount(0);
+  await ed.caretAfter('locked text');
+  await ed.type(' XYZ');
+  await expect(ed.root).toHaveText('locked text XYZ');
 });
 
-test('B7: typing does not appear in a read-only document', async ({ ed, page }) => {
-  await ed.open({ content: doc(p('locked text')), row: locked });
-  await ed.root.getByText('locked text').click();
-  await page.keyboard.type('XYZ');
-  await ed.settle();
-  await expect(ed.root).toHaveText('locked text');
-});
+test('guard B7: edits to a read-only document are never sent, and a reload undoes them',
+  async ({ ed, page }) => {
+    await ed.open({ content: doc(p('locked text'), list('check', li(1, 'todo'))), row: locked });
+    const before = await ed.row();
+    const sent = await savesDuring(page, async () => {
+      await ed.caretAfter('locked text');
+      await ed.type(' XYZ');
+      await ed.root.locator('li').click({ position: { x: 7, y: 10 } });
+      await expect(ed.root.locator('li')).toHaveAttribute('aria-checked', 'true');
+    });
+    expect(sent).toEqual([]);
+    expect(await ed.row()).toEqual(before);
+    await ed.reload();
+    await expect(ed.root.locator('p').first()).toHaveText('locked text');
+    await expect(ed.root.locator('li')).not.toHaveAttribute('aria-checked', 'true');
+  });
 
-test('B7: checkboxes in a read-only document do not toggle', async ({ ed }) => {
-  await ed.open({ content: doc(list('check', li(1, 'todo'))), row: locked });
-  await ed.root.locator('li').click({ position: { x: 7, y: 10 } });
-  await ed.settle();
-  await expect(ed.root.locator('li')).not.toHaveAttribute('aria-checked', 'true');
-});
-
-test('B7: an empty read-only document takes no typing', async ({ ed, page }) => {
-  await ed.open({ content: null, row: locked });
-  await page.keyboard.type('XYZ');
-  await ed.settle();
-  await expect(ed.root).not.toContainText('XYZ');
-});
+test('guard B7: an empty read-only document takes typing, and keeps none of it',
+  async ({ ed, page }) => {
+    await ed.open({ content: null, row: locked });
+    const sent = await savesDuring(page, () => page.keyboard.type('XYZ'));
+    await expect(ed.root).toContainText('XYZ');
+    expect(sent).toEqual([]);
+    await ed.reload();
+    await expect(ed.root).not.toContainText('XYZ');
+  });
 
 test('guard B7: a read-only document stays unchanged in the database', async ({ ed, page }) => {
   await ed.open({ content: doc(p('locked text')), row: locked });

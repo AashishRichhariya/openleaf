@@ -87,7 +87,6 @@ export default function Editor({
       EquationNode,
     ],
     editorState: initialContent,
-    editable: !isReadOnly,
     html: { import: HTML_IMPORT },
   };
 
@@ -95,7 +94,6 @@ export default function Editor({
     <div className="editor-root">
       <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-area">
-          {isReadOnly && <div className="editor-read-only">Read-only</div>}
           <RichTextPlugin
             contentEditable={
               <div ref={onRef} className="editor-wrapper">
@@ -108,7 +106,7 @@ export default function Editor({
             ErrorBoundary={LexicalErrorBoundary}
           />
           <HistoryPlugin />
-          {!initialContent && !isReadOnly && <AutoFocusPlugin />}
+          {!initialContent && <AutoFocusPlugin />}
           <ListPlugin />
           <ComponentPickerPlugin />
           <CheckListPlugin />
@@ -122,6 +120,8 @@ export default function Editor({
           <EquationPlugin />
           <BehaviorParityPlugin maxIndent={MAX_INDENT} />
           {/* Last, so that it sees the document as the other plugins set it up */}
+          {/* A read-only document can be played with, as on 0.3.0, but is never saved. The server
+              refuses to change it anyway. */}
           {!isReadOnly && <AutosavePlugin savedDocument={savedDocument} />}
         </div>
       </LexicalComposer>
