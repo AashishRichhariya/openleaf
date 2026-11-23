@@ -147,21 +147,48 @@ test('B5: continuous typing keeps saving', async ({ ed, page }) => {
 });
 
 for (const failure of ['network error', 'server error'] as const) {
-  test(`B5: a ${failure} while saving is shown, and saving recovers`, async ({ ed, page }) => {
+  test(`B5: a ${failure} while saving is retried quietly, and saving recovers`, async ({ ed, page }) => {
     await ed.open();
+    // Saving is implicit, so a save that fails must never show a notice, not even for a moment.
+    await page.evaluate(() => {
+      const seen = window as unknown as { noticeSeen?: string };
+      new MutationObserver(() => {
+        const shown = document.querySelector('.editor-notice');
+        if (shown) seen.noticeSeen = shown.textContent ?? '';
+      }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    });
+    let failed = 0;
     await page.route('**/*', (route) => {
       if (route.request().method() === 'GET') return route.fallback();
+      failed += 1;
       return failure === 'network error'
         ? route.abort('connectionrefused')
         : route.fulfill({ status: 500, body: 'failed' });
     });
     await ed.type('must not be lost');
-    await expect(notice(page)).toContainText(/not saved|save/i, { timeout: 8000 });
-    await expect(notice(page)).toBeVisible();
+    // The save and at least one retry fail
+    await expect.poll(() => failed, { timeout: 12_000 }).toBeGreaterThanOrEqual(2);
     await page.unrouteAll({ behavior: 'ignoreErrors' });
     await ed.type('!');
     await expect.poll(() => storedText(ed.slug), { timeout: 15_000 }).toBe('must not be lost!');
-    await expect(notice(page)).toHaveCount(0, { timeout: 10_000 });
+    await expect(notice(page)).toHaveCount(0);
+    await expect(page.getByText(/not saved|retrying/i)).toHaveCount(0);
+    expect(await page.evaluate(() => (window as unknown as { noticeSeen?: string }).noticeSeen))
+      .toBeUndefined();
+  });
+}
+
+const SHOWN: Record<string, [object, RegExp]> = {
+  'too large': [{ status: 413, body: '' }, /too large/],
+};
+
+for (const [name, [response, message]] of Object.entries(SHOWN)) {
+  test(`B5 guard: a save refused as ${name} is still shown`, async ({ ed, page }) => {
+    await ed.open();
+    await page.route('**/api/documents', (route) =>
+      route.request().method() === 'POST' ? route.fulfill(response) : route.fallback());
+    await ed.type('refused');
+    await expect(notice(page)).toContainText(message, { timeout: 8000 });
   });
 }
 
@@ -361,6 +388,34 @@ test('guard B7: a read-only document stays unchanged in the database', async ({ 
   await page.waitForTimeout(3000);
   expect(await ed.row()).toEqual(before);
 });
+
+test('B7: a document locked while it is open stays editable, shows nothing, and is never saved',
+  async ({ ed, page }) => {
+    await ed.open({ content: doc(p('saved text')) });
+    await ed.caretAfter('saved text');
+    await ed.type(' one');
+    await ed.saved();
+    await putRow({ ...(await ed.row())!, read_only: true });
+    const lockedRow = await ed.row();
+    const answers: unknown[] = [];
+    page.on('response', async (response) => {
+      if (response.request().method() === 'POST') answers.push(await response.json().catch(() => null));
+    });
+
+    await ed.type(' two');
+    await expect.poll(() => answers.length, { timeout: 8000 }).toBeGreaterThan(0);
+    expect(answers[0]).toEqual({ status: 'read-only' });
+    await ed.type(' three');
+    await page.waitForTimeout(3000);
+
+    await expect(ed.root).toHaveAttribute('contenteditable', 'true');
+    await expect(ed.root).toHaveText('saved text one two three');
+    // Nothing more is sent once the server said it is locked
+    expect(answers).toHaveLength(1);
+    await expect(notice(page)).toHaveCount(0);
+    await expect(page.getByText(/read-only|not saved/i)).toHaveCount(0);
+    expect(await ed.row()).toEqual(lockedRow);
+  });
 
 test('guard B7: read-only links still open and text can be copied', async ({ ed, context }) => {
   await ed.open({ content: doc(p(link('https://example.com/ro', 'open me'))), row: locked });

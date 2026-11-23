@@ -2,6 +2,14 @@
 
 All notable changes to openleaf will be documented in this file.
 
+## [0.4.1] - 2026-11-24
+
+### Changed
+
+- A save that fails no longer shows "Changes not saved. Retrying…". It is retried quietly, and the next save sends the whole document
+- A document locked while it is open no longer freezes or shows "this document is now read-only". Like a document that opens locked, it can still be edited and is never saved
+- Documents too large to save still show their notice
+
 ## [0.4.0] - 2026-11-23
 
 ### Security

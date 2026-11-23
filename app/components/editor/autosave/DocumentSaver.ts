@@ -24,7 +24,7 @@ const MAX_RETRY_DELAY = 30_000;
 // Browsers refuse keepalive requests over 64 KB
 const MAX_KEEPALIVE_BYTES = 60_000;
 
-export type SaveProblem = 'failed' | 'too-large' | 'read-only';
+export type SaveProblem = 'failed' | 'too-large';
 
 export interface SaveStatus {
   problem: SaveProblem | null;
@@ -286,10 +286,10 @@ export class DocumentSaver {
       this.resolveConflict(result.revision, result.content);
       break;
     case 'read-only':
+      // Locked while open: like a document that loads read-only, it can still be edited, quietly
+      // and without saving
       this.locked = true;
       this.scheduleSave.cancel();
-      this.editor.setEditable(false);
-      this.report({ problem: 'read-only' });
       break;
     case 'too-large':
       // Retrying can't help, but the next edit may
