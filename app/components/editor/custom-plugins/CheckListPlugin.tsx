@@ -192,6 +192,9 @@ function handleCheckItemEvent(event: PointerEvent, callback: () => void) {
   }
 }
 
+// What the click that follows a pointerdown came from
+let lastPointerType = '';
+
 function handleClick(event: Event) {
   handleCheckItemEvent(event as PointerEvent, () => {
     if (isHTMLElement(event.target)) {
@@ -204,21 +207,26 @@ function handleClick(event: Event) {
 
           if ($isListItemNode(node)) {
             if (IS_FIREFOX) {
-              // As Lexical 0.31 ended up in Firefox: the caret at the start of the item
-              editor.getRootElement()?.focus({ preventScroll: true });
+              // As Lexical 0.31 ended up in Firefox: the caret at the start of the item. Focus
+              // ends on the editor after a first click, and on the item after a later click.
+              domNode.focus({ preventScroll: true });
               node.selectStart();
             } else {
               domNode.focus();
             }
             node.toggleChecked();
           }
-        });
+        }, IS_FIREFOX && lastPointerType === 'touch'
+          // After a tap it ends on the item, which placing the caret would take the focus from
+          ? { onUpdate: () => domNode.focus({ preventScroll: true }) }
+          : undefined);
       }
     }
   });
 }
 
 function handlePointerDown(event: PointerEvent) {
+  lastPointerType = event.pointerType;
   handleCheckItemEvent(event, () => {
     // Prevents caret moving when clicking on check mark
     event.preventDefault();

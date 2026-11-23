@@ -55,6 +55,7 @@ import {
   $isTabNode,
   $isTextNode,
   $normalizeCaret,
+  $selectAll,
   $setSelectionFromCaretRange,
   CLICK_COMMAND,
   COMMAND_PRIORITY_BEFORE_CRITICAL,
@@ -68,6 +69,7 @@ import {
   HISTORY_MERGE_TAG,
   INDENT_CONTENT_COMMAND,
   INSERT_PARAGRAPH_COMMAND,
+  IS_FIREFOX,
   KEY_ARROW_DOWN_COMMAND,
   KEY_ARROW_UP_COMMAND,
   KEY_BACKSPACE_COMMAND,
@@ -86,6 +88,7 @@ import {
   PASTE_TAG,
   SELECTION_CHANGE_COMMAND,
   SELECTION_INSERT_CLIPBOARD_NODES_COMMAND,
+  SELECT_ALL_COMMAND,
 } from 'lexical';
 import { useEffect } from 'react';
 
@@ -437,6 +440,24 @@ export function BehaviorParityPlugin({ maxIndent }: { maxIndent: number }): null
 
     return mergeRegister(
       registerTextDirection(editor),
+
+      // Lexical 0.31 left select all to Firefox, which selects the text of a focused field such as
+      // an equation's. 0.53 only selects the document. The editor's own selection then became the
+      // whole document, as it does now, unless the editor had none.
+      editor.registerCommand(
+        SELECT_ALL_COMMAND,
+        (event) => {
+          const target = event?.target;
+          if (!IS_FIREFOX) return false;
+          if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
+            return false;
+          }
+          target.select();
+          if ($getSelection() !== null) $selectAll();
+          return true;
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
 
       editor.registerCommand(
         KEY_BACKSPACE_COMMAND,

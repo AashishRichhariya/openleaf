@@ -19,8 +19,11 @@ import {
   $createParagraphNode,
   $getSelection,
   $isRangeSelection,
+  $isTextNode,
+  $setSelection,
   COMMAND_PRIORITY_NORMAL,
   FORMAT_ELEMENT_COMMAND,
+  IS_FIREFOX,
   KEY_ARROW_DOWN_COMMAND,
   KEY_ARROW_UP_COMMAND,
   KEY_ENTER_COMMAND,
@@ -270,6 +273,12 @@ function getBaseOptions(editor: LexicalEditor) {
           if ($isRangeSelection(selection)) {
             const node = $createInlineTableInputNode();
             selection.insertNodes([node]);
+            // Lexical 0.31 in Firefox kept no caret once the widget split a line in two, as the
+            // field takes the focus. Inserting the table still finds where it was.
+            if (IS_FIREFOX && $isTextNode(node.getPreviousSibling())
+              && $isTextNode(node.getNextSibling())) {
+              $setSelection(null);
+            }
           }
         });
       },
