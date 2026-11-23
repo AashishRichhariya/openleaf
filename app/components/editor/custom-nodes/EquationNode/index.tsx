@@ -1,9 +1,9 @@
 
-import katex from 'katex';
 import { $applyNodeReplacement, DecoratorNode, DOMExportOutput } from 'lexical';
 import { ReactElement } from 'react';
 
 import EquationComponent from './EquationComponent';
+import { getKatex, KATEX_OPTIONS } from './katex';
 
 import type {
   DOMConversionMap,
@@ -118,14 +118,13 @@ export class EquationNode extends DecoratorNode<ReactElement> {
     if (encoding) element.setAttribute('data-lexical-equation-encoding', encoding);
     element.setAttribute('data-lexical-inline', `${this.__inline}`);
     element.setAttribute('data-lexical-start-edit', `${this.__startInEditMode}`);
-    katex.render(this.__equation, element, {
-      displayMode: !this.__inline,
-      errorColor: '#cc0000',
-      output: 'html',
-      strict: 'warn',
-      throwOnError: false,
-      trust: false,
-    });
+    // KaTeX loads as soon as the page is ready, so this is only plain text right after loading
+    const katex = getKatex();
+    if (katex) {
+      katex.render(this.__equation, element, { ...KATEX_OPTIONS, displayMode: !this.__inline });
+    } else {
+      element.textContent = this.__equation;
+    }
     return {element};
   }
 

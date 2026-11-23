@@ -167,20 +167,57 @@ const DIRECTION_SOURCES = [
   ListNode, ListItemNode, CodeNode, TableNode, TableRowNode, TableCellNode, LinkNode, AutoLinkNode,
 ];
 
+type TransformRegistry = {
+  registerNodeTransformToKlass?: (
+    klass: typeof TextNode,
+    listener: (node: LexicalNode) => void,
+  ) => { transforms: Set<(node: LexicalNode) => void> };
+};
+
+/**
+ * Notes changes on one kind of node. The public registerNodeTransform also marks every existing
+ * node of that kind dirty, so that the transform sees them: for fifteen kinds that clones and
+ * reconciles the whole document once more on load, which made large documents open more than 10%
+ * slower. The first pass is done below without it, so only the note is needed here. Falls back to
+ * the public method if Lexical renames its internal one.
+ */
+function registerNote(
+  editor: LexicalEditor,
+  klass: typeof TextNode,
+  note: (node: LexicalNode) => void,
+): () => void {
+  const registry = editor as unknown as TransformRegistry;
+  if (typeof registry.registerNodeTransformToKlass !== 'function') {
+    return editor.registerNodeTransform(klass, note);
+  }
+  const registered = registry.registerNodeTransformToKlass.call(editor, klass, note);
+  return () => {
+    registered.transforms.delete(note);
+  };
+}
+
 /**
  * The root's transform runs last in every update that changes anything, inside that update, so it
  * neither adds an undo step nor joins one to another. The other transforms note what changed.
+ * Registering the root's transform marks the root dirty, so it runs once at the start: that first
+ * run syncs the whole document, writing only the blocks whose direction changes.
  */
 function registerTextDirection(editor: LexicalEditor): () => void {
   const changedBlocks = new Set<NodeKey>();
+  let syncAll = true;
   const note = (node: LexicalNode) => {
+    if (syncAll) return;
     const block = node.getTopLevelElement();
     if (block) changedBlocks.add(block.getKey());
   };
   return mergeRegister(
     ...DIRECTION_SOURCES.map((klass) =>
-      editor.registerNodeTransform(klass as unknown as typeof TextNode, note)),
+      registerNote(editor, klass as unknown as typeof TextNode, note)),
     editor.registerNodeTransform(RootNode, (root) => {
+      if (syncAll) {
+        syncAll = false;
+        for (const block of root.getChildren()) changedBlocks.add(block.getKey());
+      }
       $syncDirection(root, changedBlocks);
       changedBlocks.clear();
     }),

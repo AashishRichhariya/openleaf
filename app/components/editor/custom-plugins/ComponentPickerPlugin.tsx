@@ -66,8 +66,8 @@ class ComponentPickerOption extends MenuOption {
   icon?: ReactElement;
   // For extra searching.
   keywords: Array<string>;
-  // Keyboard shortcut
-  shortcut?: string;
+  // Keyboard shortcut, or how to work it out when it is first shown
+  private shortcutSource?: string | (() => string);
   // Whether it makes a block, which can't go inside another block
   createsBlock: boolean;
   // What happens when you select this option?
@@ -78,7 +78,7 @@ class ComponentPickerOption extends MenuOption {
     options: {
       icon?: ReactElement;
       keywords?: Array<string>;
-      shortcut?: string; 
+      shortcut?: string | (() => string);
       createsBlock?: boolean;
       onSelect: (queryString: string) => void;
     },
@@ -87,9 +87,14 @@ class ComponentPickerOption extends MenuOption {
     this.title = title;
     this.keywords = options.keywords || [];
     this.icon = options.icon;
-    this.shortcut = options.shortcut;
+    this.shortcutSource = options.shortcut;
     this.createsBlock = options.createsBlock ?? true;
     this.onSelect = options.onSelect.bind(this);
+  }
+
+  get shortcut(): string | undefined {
+    if (typeof this.shortcutSource === 'function') this.shortcutSource = this.shortcutSource();
+    return this.shortcutSource;
   }
 }
 
@@ -195,32 +200,43 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
   return options;
 }
 
+// Measuring text needs a canvas, which costs several milliseconds the first time. So it waits until
+// the menu first shows the shortcut, and is done once.
+let enterShortcut: string | null = null;
+
+function getEnterShortcut(): string {
+  enterShortcut ??= measureEnterShortcut();
+  return enterShortcut;
+}
+
+function measureEnterShortcut(): string {
+  function isSupported(char: string): string | null {
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx === null) {
+        return null; 
+      }
+      ctx.font = '16px sans-serif';
+      const fallbackWidth = ctx.measureText('□').width;
+      const testWidth = ctx.measureText(char).width;
+      return testWidth !== fallbackWidth ? char : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  return isSupported('\u2B90') ?? // ⮐ 
+        isSupported('\u21B5') ?? // ↵
+        isSupported('\u23CE') ?? // ⏎ 
+        'enter';        
+}
+
 function getBaseOptions(editor: LexicalEditor) {
   return [
     new ComponentPickerOption('Paragraph', {
       icon: <Icon name="paragraph"/>,
       keywords: ['normal', 'paragraph', 'p', 'text'],
-      shortcut: (() => {
-        function isSupported(char: string): string | null {
-          try {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            if (ctx === null) {
-              return null; 
-            }
-            ctx.font = '16px sans-serif';
-            const fallbackWidth = ctx.measureText('□').width;
-            const testWidth = ctx.measureText(char).width;
-            return testWidth !== fallbackWidth ? char : null;
-          } catch (e) {
-            return null;
-          }
-        }
-        return isSupported('\u2B90') ?? // ⮐ 
-              isSupported('\u21B5') ?? // ↵
-              isSupported('\u23CE') ?? // ⏎ 
-              'enter';        
-      })(),
+      shortcut: getEnterShortcut,
       onSelect: () =>
         editor.update(() => {
           const selection = $getSelection();

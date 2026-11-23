@@ -13,6 +13,9 @@ import {
 import React, { useEffect } from 'react';
 
 import { $createEquationNode, EquationNode } from '@/app/components/editor/custom-nodes';
+import { loadKatex } from '@/app/components/editor/custom-nodes/EquationNode/katex';
+
+import { whenIdle } from '../custom-utils/whenIdle';
 
 type CommandPayload = {
   equation: string;
@@ -25,6 +28,10 @@ export const INSERT_EQUATION_COMMAND: LexicalCommand<CommandPayload> =
 
 export function EquationPlugin(): React.ReactElement | null {
   const [editor] = useLexicalComposerContext();
+
+  // Equations need KaTeX, which is not part of the page's first load. Loaded when the page is idle,
+  // it is ready before the first new equation. Equations in the document load it themselves.
+  useEffect(() => whenIdle(() => void loadKatex()), []);
 
   useEffect(() => {
     if (!editor.hasNodes([EquationNode])) {
