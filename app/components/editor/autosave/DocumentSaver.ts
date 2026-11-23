@@ -5,6 +5,7 @@ import {
   DocumentContent,
   getBlocks,
   isContentEmpty,
+  SerializedBlock,
   toComparable,
   withoutTransientNodes,
 } from '@/app/utils/storedDocument';
@@ -59,6 +60,26 @@ function isSameContent(a: DocumentContent | null, b: DocumentContent | null): bo
 /** Stricter: an emptied heading is an edit, though it is stored like an empty document */
 function isUnedited(content: DocumentContent, base: DocumentContent | null): boolean {
   return toComparable(getBlocks(content)) === toComparable(getBlocks(base));
+}
+
+/** A code block as its text, however highlighting has split it into tokens */
+function withoutHighlighting(node: SerializedBlock): SerializedBlock {
+  if (node.type === 'code') {
+    const text = (node.children ?? [])
+      .map((child) => (child.type === 'linebreak' ? '\n' : String(child.text ?? '')))
+      .join('');
+    return { ...node, children: undefined, text };
+  }
+  return node.children ? { ...node, children: node.children.map(withoutHighlighting) } : node;
+}
+
+/**
+ * Whether content differs from the base at most in how code is highlighted. Highlighting loads
+ * after the page, so it can arrive with an update that is not marked as Lexical's own.
+ */
+function isOnlyHighlighted(content: DocumentContent, base: DocumentContent | null): boolean {
+  return toComparable(getBlocks(content).map(withoutHighlighting))
+    === toComparable(getBlocks(base).map(withoutHighlighting));
 }
 
 /** The hash the server keeps of a tab id, or null where the browser can't compute it */
@@ -170,9 +191,12 @@ export class DocumentSaver {
   }
 
   onChange(editorState: EditorState, tags: Set<string>): void {
-    if (!this.edited && tags.has('history-merge')) {
-      this.base.local = withoutTransientNodes(editorState.toJSON() as unknown as DocumentContent);
-      return;
+    if (!this.edited) {
+      const content = withoutTransientNodes(editorState.toJSON() as unknown as DocumentContent);
+      if (tags.has('history-merge') || isOnlyHighlighted(content, this.base.local)) {
+        this.base.local = content;
+        return;
+      }
     }
     this.edited = true;
     if (!this.locked) this.scheduleSave();

@@ -1,5 +1,5 @@
 import { getRow, newSlug, putRow } from './support/db';
-import { doc, heading, p } from './support/doc';
+import { code, doc, heading, p } from './support/doc';
 import { ENV } from './support/env';
 import { expect, test } from './support/test';
 import { plainText } from './support/tree';
@@ -233,3 +233,36 @@ test('app: no console or page errors in a normal session', async ({ ed, problems
   await ed.reload();
   expect(problems).toEqual([]);
 });
+
+// Highlighting loads after the page. Whenever it comes, it is not an edit: on 0.3.0, opening a
+// document never saved it.
+for (const delay of [0, 1500]) {
+  test(`app: opening code saves nothing, highlighting ${delay} ms late`, async ({ ed, page }) => {
+    const slug = newSlug();
+    await putRow({ slug, content: doc(code('def f(x):\n    return x + 1  # add', 'python')) });
+    const stored = await getRow(slug);
+    let held = 0;
+    // Intercepting changes the timing, so it is only done to hold Prism back
+    if (delay) {
+      await page.route('**/_next/static/chunks/*.js', async (route) => {
+        const response = await route.fetch();
+        const body = await response.text();
+        if (body.includes('languages.extend')) {
+          held += 1;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+        await route.fulfill({ response, body });
+      });
+    }
+    await ed.open({ slug });
+    await expect(page.locator('.editor-input code span[class*="editor-token"]').first())
+      .toBeVisible();
+    // 0.3.0 loaded Prism with the page, so there it is never held back
+    expect(held).toBeLessThanOrEqual(delay ? 1 : 0);
+    // Longer than the autosave's wait, then the page is left
+    await page.waitForTimeout(3000);
+    await page.goto('about:blank');
+    await page.waitForTimeout(1000);
+    expect((await getRow(slug))?.updated_at).toBe(stored?.updated_at);
+  });
+}
