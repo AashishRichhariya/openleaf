@@ -10,7 +10,8 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <Link href="/" target="_blank" rel="noopener noreferrer">
+          {/* It opens a new document in a new tab, so preloading it here is never used */}
+          <Link href="/" target="_blank" rel="noopener noreferrer" prefetch={false}>
             <Image
               src="/logo/animated-logo-minified.svg"
               alt="Openleaf Logo"

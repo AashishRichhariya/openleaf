@@ -36,6 +36,10 @@ export class Editor {
       return root?.__lexicalEditor && root.__lexicalEditor._rootElement === root;
     }, undefined, { timeout: 30_000 });
     await this.page.evaluate(() => document.fonts.ready.then(() => undefined));
+    // Since 0.4.0, code highlighting loads right after the page, as the owner agreed to for speed.
+    // A document with code is ready once it is highlighted, as 0.3.0 had it from the start.
+    await this.page.waitForFunction(() => !document.querySelector('.editor-input code')
+      || !!(globalThis as { Prism?: unknown }).Prism, undefined, { timeout: 30_000 });
     await this.settle();
   }
 
