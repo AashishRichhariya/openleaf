@@ -34,7 +34,9 @@ export function isCrossSite(request: Request): boolean {
   if (request.headers.get('sec-fetch-site') === 'cross-site') return true;
   const origin = request.headers.get('origin');
   if (!origin) return false;
-  const host = request.headers.get('x-forwarded-host') ?? request.headers.get('host');
+  // Behind several proxies this is a list, the first of which is what the browser asked for
+  const host = (request.headers.get('x-forwarded-host') ?? request.headers.get('host'))
+    ?.split(',')[0].trim();
   return !URL.canParse(origin) || new URL(origin).host !== host;
 }
 
@@ -42,7 +44,9 @@ export function isCrossSite(request: Request): boolean {
  * Whether a value can be used as a document's slug
  */
 export function isValidSlug(value: unknown): value is string {
+  // Documents are stored under the lowercase slug, which can take more bytes
   return typeof value === 'string'
     && value.length > 0
-    && Buffer.byteLength(value) <= MAX_SLUG_BYTES;
+    && Buffer.byteLength(value) <= MAX_SLUG_BYTES
+    && Buffer.byteLength(value.toLowerCase()) <= MAX_SLUG_BYTES;
 }

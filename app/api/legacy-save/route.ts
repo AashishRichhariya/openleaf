@@ -1,4 +1,4 @@
-import { isDocumentContent } from '@/app/utils/storedDocument';
+import { isDocumentContent, isWithinLimits } from '@/app/utils/storedDocument';
 import { decodeActionArgs } from '@/server/decode-action-args';
 import { isCrossSite, isValidSlug, readBody } from '@/server/request-utils';
 import { saveFromOldTab } from '@/server/save-document';
@@ -23,6 +23,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!isValidSlug(slug) || !isDocumentContent(content)) {
     return new Response(null, { status: 400 });
   }
+  if (!isWithinLimits(content)) return new Response(null, { status: 413 });
 
   const result = await saveFromOldTab(slug, content, isNewDocument !== false);
   // A locked document ignored saves silently

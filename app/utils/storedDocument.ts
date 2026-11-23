@@ -34,6 +34,28 @@ const BLOCK_TYPES = new Set([
   'code', 'paragraph', 'heading', 'quote', 'list', 'table', 'horizontalrule',
 ]);
 
+// Far beyond what DynamoDB stores: 400 KB per document, 32 levels of nesting
+const MAX_NODES = 100_000;
+const MAX_DEPTH = 100;
+
+/**
+ * Whether content is small and shallow enough to work on. Checked without recursion, as content
+ * nested too deeply for the stack is what it must catch.
+ */
+export function isWithinLimits(content: DocumentContent): boolean {
+  const pending: Array<[unknown, number]> = [[content.root, 0]];
+  let nodes = 0;
+  while (pending.length) {
+    const [node, depth] = pending.pop()!;
+    if (++nodes > MAX_NODES || depth > MAX_DEPTH) return false;
+    const children = (node as SerializedBlock | null)?.children;
+    if (Array.isArray(children)) {
+      for (const child of children) pending.push([child, depth + 1]);
+    }
+  }
+  return true;
+}
+
 export function isDocumentContent(value: unknown): value is DocumentContent {
   const root = (value as DocumentContent | null)?.root;
   return Array.isArray(root?.children)

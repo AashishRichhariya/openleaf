@@ -6,8 +6,8 @@ import 'server-only';
  * React encodes them as JSON in which a string starting with $ is special: $$ escapes a real
  * dollar, $undefined is undefined and $0:path points at an object that was sent earlier.
  */
-// Far more than the largest document DynamoDB can store
-const MAX_DECODED_VALUES = 500_000;
+// Far more than the 400 KB that DynamoDB stores can hold, and quick to reach
+const MAX_DECODED_VALUES = 200_000;
 
 export function decodeActionArgs(body: string): unknown[] | null {
   let args: unknown;
@@ -19,9 +19,9 @@ export function decodeActionArgs(body: string): unknown[] | null {
   if (!Array.isArray(args)) return null;
   const root = args;
 
-  // Each reference is decoded once, and the total is capped: references could otherwise make a
-  // small body expand without end
-  const references = new Map<string, unknown>();
+  // Every use of a reference is decoded again, and counts against the cap. Decoding each one only
+  // once and sharing the result would let a small body stand for an exponentially large tree.
+  const active = new Set<string>();
   let budget = MAX_DECODED_VALUES;
 
   const decode = (value: unknown, depth: number): unknown => {
@@ -31,7 +31,8 @@ export function decodeActionArgs(body: string): unknown[] | null {
       if (value === '$undefined') return undefined;
       if (value === '$-0') return 0;
       if (value.startsWith('$0:')) {
-        if (references.has(value)) return references.get(value);
+        // A reference inside what it points at would never end
+        if (active.has(value)) throw new Error('Circular reference');
         let target: unknown = root;
         for (const key of value.slice(3).split(':')) {
           if (!target || typeof target !== 'object' || !Object.hasOwn(target, key)) {
@@ -41,10 +42,9 @@ export function decodeActionArgs(body: string): unknown[] | null {
         }
         // A reference points at an object, never at another reference
         if (!target || typeof target !== 'object') throw new Error('Invalid reference');
-        // Placeholder first, so that a reference to itself ends
-        references.set(value, null);
-        const decoded = decode(target, depth + 20);
-        references.set(value, decoded);
+        active.add(value);
+        const decoded = decode(target, depth + 1);
+        active.delete(value);
         return decoded;
       }
       throw new Error('Unsupported value');

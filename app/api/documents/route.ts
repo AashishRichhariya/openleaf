@@ -1,4 +1,4 @@
-import { isDocumentContent } from '@/app/utils/storedDocument';
+import { DocumentContent, isDocumentContent, isWithinLimits } from '@/app/utils/storedDocument';
 import { isCrossSite, isValidSlug, readBody } from '@/server/request-utils';
 import { saveDocument } from '@/server/save-document';
 import { DocumentPatch, SaveRequest, SaveResult } from '@/types';
@@ -16,7 +16,6 @@ function parseSaveRequest(body: string): SaveRequest | null {
   try {
     data = JSON.parse(body);
   } catch {
-    // Also nesting too deep to parse
     return null;
   }
   const valid = isValidSlug(data?.slug)
@@ -47,7 +46,10 @@ export async function POST(request: Request): Promise<Response> {
     result = { status: 'too-large' };
   } else {
     const save = parseSaveRequest(body);
-    result = save ? await saveDocument(save) : { status: 'invalid' };
+    const content = save?.patch ? { root: { children: save.patch.blocks } } : save?.content;
+    if (!save) result = { status: 'invalid' };
+    else if (content && !isWithinLimits(content as DocumentContent)) result = { status: 'too-large' };
+    else result = await saveDocument(save);
   }
   // A conflict is an answer the page handles, and browsers log every 4xx as an error
   return Response.json(result, { status: result.status === 'invalid' ? 400 : 200 });

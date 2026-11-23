@@ -45,19 +45,20 @@ async function save(
 ): Promise<SaveResult> {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
     const stored = await getDocumentBySlug(slug);
-    if (stored?.read_only === true) return { status: 'read-only' };
+    // Up to 0.3.0 anyone could store any value here, and the page treats every truthy one as locked
+    if (stored?.read_only) return { status: 'read-only' };
 
     const decision = decide(stored);
     if ('status' in decision) return decision;
 
-    const content = withoutTransientNodes(decision.content);
-    const processedContent = isContentEmpty(content) ? null : content;
     // Strictly increasing, as it identifies the revision
     const previous = Date.parse(stored?.updated_at ?? '') || 0;
     const now = new Date(Math.max(Date.now(), previous + 1)).toISOString();
     const entry: SaveLogEntry = { tab, seq, at: now };
 
     try {
+      const content = withoutTransientNodes(decision.content);
+      const processedContent = isContentEmpty(content) ? null : content;
       if (stored) {
         await updateDocumentContent(stored, {
           content: processedContent,

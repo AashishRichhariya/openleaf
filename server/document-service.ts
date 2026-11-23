@@ -77,7 +77,10 @@ export async function updateDocumentContent(
 /**
  * Get a document by slug
  */
-export async function getDocumentBySlug(slug: string): Promise<Document | null> {
+export async function getDocumentBySlug(
+  slug: string,
+  { consistent = true }: { consistent?: boolean } = {},
+): Promise<Document | null> {
   const params = {
     TableName: DOCUMENTS_TABLE_NAME,
     Key: {
@@ -85,7 +88,7 @@ export async function getDocumentBySlug(slug: string): Promise<Document | null> 
       version: 1, // Default version
     },
     // A reload right after a save must see that save
-    ConsistentRead: true,
+    ConsistentRead: consistent,
   };
 
   try {
@@ -105,7 +108,8 @@ export async function getDocumentBySlug(slug: string): Promise<Document | null> 
  */
 async function isSlugDocumentEmpty(slug: string): Promise<boolean> {
   try {
-    const document = await getDocumentBySlug(slug);
+    // Picking a random name for a new document needs no consistent read, which costs double
+    const document = await getDocumentBySlug(slug, { consistent: false });
 
     // Return true if document is null or content is empty
     return !document || isContentEmpty(document.content);

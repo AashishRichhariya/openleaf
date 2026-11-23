@@ -42,7 +42,8 @@ function getChange(base: string[], next: string[]): Change {
   const addHunk = (from: number, to: number, start: number, end: number) => {
     const added = Array.from({ length: end - start }, (_, offset) => start + offset);
     if (from === to) {
-      change.inserted[from].push(...added);
+      // Not push(...added): too many arguments overflow the stack
+      for (const block of added) change.inserted[from].push(block);
       return;
     }
     // Pair edited blocks by position if none were added or removed, else replace the stretch.

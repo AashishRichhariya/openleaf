@@ -60,12 +60,14 @@ test('B1: the request format of old tabs cannot lock either', async ({ ed, page 
   expect((await ed.row())!.read_only).toBe(false);
 });
 
-for (const locked of [false, true]) {
-  const kind = locked ? 'a locked' : 'an existing';
+// 0.3.0 let anyone store any value as read_only, and its page shows every truthy one as locked
+for (const locked of [false, true, 'true', 1]) {
+  const kind = locked === false ? 'an existing'
+    : locked === true ? 'a locked' : `a locked (read_only ${JSON.stringify(locked)})`;
 
   test(`B2: a forged isNewDocument cannot overwrite ${kind} document`, async ({ ed, page }) => {
     const victim = newSlug();
-    await putRow({ slug: victim, content: doc(p('precious')), read_only: locked });
+    await putRow({ slug: victim, content: doc(p('precious')), read_only: locked as boolean });
     await ed.open();
     // A real "create" request, then pointed at somebody else's document.
     const create = await captureSave(page, 'overwrite-marker', () => ed.type('overwrite-marker'));
