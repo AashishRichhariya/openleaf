@@ -2,7 +2,7 @@
 
 All notable changes to openleaf will be documented in this file.
 
-## [Unreleased]
+## [0.4.1] - 2026-11-24
 
 ### Changed
 
