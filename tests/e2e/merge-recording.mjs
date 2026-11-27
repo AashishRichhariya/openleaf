@@ -1,4 +1,5 @@
 // Merges what E2E_RECORD=1 wrote into expected/<browser>.json, one scenario per line.
+// With --replace (a full recording), each browser's file holds only what was recorded.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +11,7 @@ for (const project of fs.readdirSync(recording)) {
   const folder = path.join(recording, project);
   const target = path.join(here, 'expected', `${project}.json`);
   const merged = new Map();
-  if (fs.existsSync(target)) {
+  if (fs.existsSync(target) && !process.argv.includes('--replace')) {
     const { styles, scenarios } = JSON.parse(fs.readFileSync(target, 'utf8'));
     const expand = (box) => ({ ...box, style: styles[box.style] });
     for (const [name, value] of Object.entries(scenarios)) {

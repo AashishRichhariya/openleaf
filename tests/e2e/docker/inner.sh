@@ -89,7 +89,7 @@ status=0
 ./node_modules/.bin/playwright test -c tests/e2e/playwright.config.ts "$@" || status=$?
 
 if [ "$MODE" = update ] && [ -d "$E2E/.recording" ]; then
-  node tests/e2e/merge-recording.mjs || status=1
+  node tests/e2e/merge-recording.mjs ${E2E_REPLACE:+--replace} || status=1
 fi
 
 # Results always, and in update mode what was recorded.

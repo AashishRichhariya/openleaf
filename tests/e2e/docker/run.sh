@@ -19,6 +19,7 @@ die() { echo "e2e: $*" >&2; exit 2; }
 
 MODE=test
 REF=origin/main
+REPLACE=
 # `pnpm test:e2e -- --project=chromium` passes the "--" along.
 if [ "${1:-}" = "--" ]; then shift; fi
 if [ "${1:-}" = "--update" ]; then
@@ -57,6 +58,8 @@ if [ "$MODE" = update ]; then
     die 'update records over baselines: name the tests with -g "<name>" or a file, or pass --all'
   fi
   set -- ${ARGS[@]+"${ARGS[@]}"}
+  # Everything recorded: baselines of tests that no longer exist go too.
+  if [ $all = 1 ] && [ $filtered = 0 ]; then REPLACE=1; fi
 fi
 
 docker info >/dev/null 2>&1 || die "Docker is not running"
@@ -97,7 +100,7 @@ echo "e2e: building the runner image"
 "${COMPOSE[@]}" build --quiet e2e
 echo "e2e: running ($MODE)"
 status=0
-"${COMPOSE[@]}" run --rm -T "${MOUNTS[@]}" -v "$TMP/out:/out" e2e \
+"${COMPOSE[@]}" run --rm -T "${MOUNTS[@]}" -v "$TMP/out:/out" -e E2E_REPLACE="$REPLACE" e2e \
   bash /opt/e2e/inner.sh "$MODE" "$@" || status=$?
 
 # Bring the results back, replacing those of the previous run.
