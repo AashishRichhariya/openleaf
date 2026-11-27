@@ -37,7 +37,16 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'], viewport } },
+    {
+      name: 'firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        viewport,
+        // System font fallback is asynchronous by default, so a glyph only a fallback font has
+        // (the slash menu's ⮐) was found or not depending on timing. Synchronous, it always is.
+        launchOptions: { firefoxUserPrefs: { 'gfx.font_rendering.fallback.async': false } },
+      },
+    },
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'], viewport, deviceScaleFactor: 1 },
