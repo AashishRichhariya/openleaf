@@ -11,16 +11,18 @@ export default defineConfig({
   testMatch: '**/*.spec.ts',
   outputDir: './test-results',
   snapshotPathTemplate: '{testDir}/screenshots/{projectName}/{arg}{ext}',
-  // A missing screenshot is a failure. Pass --update-snapshots to record on the baseline.
+  // A missing screenshot is a failure. `pnpm test:e2e:update` records it (see README).
   updateSnapshots: 'none',
   fullyParallel: true,
   forbidOnly: true,
   retries: 0,
-  workers: Number(process.env.E2E_WORKERS ?? 3),
+  // Measured on Docker with 8 CPUs and 8 GB (see README). E2E_WORKERS overrides it.
+  workers: Number(process.env.E2E_WORKERS || 6),
   timeout: 90_000,
   reporter: [
     ['line'],
     ['json', { outputFile: process.env.E2E_REPORT ?? './test-results/report.json' }],
+    ['html', { outputFolder: './playwright-report', open: 'never' }],
   ],
   expect: {
     timeout: 8000,
