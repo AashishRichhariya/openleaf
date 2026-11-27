@@ -1,0 +1,77 @@
+# Lint and the e2e suite (tests/e2e/README.md) on every pull request and push to develop and main.
+# The four job checks are required by the "required-checks" ruleset. No secrets are used, and the
+# suite runs in Docker against DynamoDB Local only.
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+    inputs:
+      update_baselines:
+        description: Record every baseline on GitHub's runners and upload them as an artifact
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26.13.1
+      - run: npm install -g pnpm@12.21.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+  e2e:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    env:
+      # GitHub's arm runners have 4 CPUs; the app runs next to the browsers.
+      E2E_WORKERS: 3
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run the suite
+        if: ${{ !inputs.update_baselines }}
+        run: bash tests/e2e/docker/run.sh --project=${{ matrix.browser }}
+      - name: Record every baseline
+        if: ${{ inputs.update_baselines }}
+        run: bash tests/e2e/docker/run.sh --update --all --project=${{ matrix.browser }}
+      - name: Upload the report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-report-${{ matrix.browser }}
+          path: |
+            tests/e2e/playwright-report/
+            tests/e2e/test-results/
+          retention-days: 14
+      - name: Upload the recorded baselines
+        if: ${{ always() && inputs.update_baselines }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-baselines-${{ matrix.browser }}
+          path: |
+            tests/e2e/expected/${{ matrix.browser }}.json
+            tests/e2e/screenshots/${{ matrix.browser }}/
+          retention-days: 14
