@@ -24,6 +24,17 @@ test('autosave waits for a pause of about two seconds', async ({ ed, page }) => 
   await ed.saved();
 });
 
+// The other side of the pause: the save comes about two seconds after typing stops, not later.
+test('autosave saves about two seconds after typing stops', async ({ ed }) => {
+  await ed.open();
+  await ed.type('pause');
+  const stopped = Date.now();
+  await expect
+    .poll(() => storedText(ed.slug), { timeout: 3500, intervals: [100] })
+    .toBe('pause');
+  expect(Date.now() - stopped).toBeGreaterThan(1500);
+});
+
 test('opening a document writes nothing', async ({ ed, page }) => {
   await ed.open({ content: doc(heading(1, 'untouched'), p('body')) });
   const before = await ed.row();
