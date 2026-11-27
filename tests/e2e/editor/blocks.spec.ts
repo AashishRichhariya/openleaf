@@ -1,9 +1,7 @@
 /* Dividers, quotes and headings, and blocks inserted between others. */
 
-import { doc, heading, hr, p, quote, text,
-} from '../support/doc';
+import { doc, heading, hr, p, quote, text } from '../support/doc';
 import { scenario } from '../support/scenario';
-
 
 // A block inserted with content below.
 for (const query of ['divider', '3x3', 'table']) {

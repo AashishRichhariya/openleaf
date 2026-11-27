@@ -1,11 +1,9 @@
 /* Empty documents and empty values are stored as such. */
 
 import { asStoredByV030 } from '../support/db';
-import { code, doc, equation, p, table, tableWidget, text,
-} from '../support/doc';
+import { code, doc, equation, p, table, tableWidget, text } from '../support/doc';
 import { expect, test } from '../support/test';
 import { plainText } from '../support/tree';
-
 
 test('an emptied document is stored empty and takes focus again', async ({ ed }) => {
   await ed.open({ content: doc(p('gone soon')) });

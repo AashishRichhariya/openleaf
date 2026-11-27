@@ -1,12 +1,10 @@
 /* What is saved is what a reload shows. */
 
 import { newSlug, putRow, storedText } from '../support/db';
-import { doc, p, tableWidget,
-} from '../support/doc';
+import { doc, p, tableWidget } from '../support/doc';
 import { Editor } from '../support/editor';
 import { expect, test } from '../support/test';
 import { tree } from '../support/tree';
-
 
 // Documents of only an empty table or code block survive a reload (B3) ----------------------------
 

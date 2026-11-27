@@ -1,10 +1,7 @@
-
-import { doc, li, list, p, quote, table,
-} from '../support/doc';
+import { doc, li, list, p, quote, table } from '../support/doc';
 import { Editor } from '../support/editor';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
-
 
 // [title, query that finds it, keywords]
 const OPTIONS: Array<[string, string, string[]]> = [

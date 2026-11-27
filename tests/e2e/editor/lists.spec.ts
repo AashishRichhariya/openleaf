@@ -1,9 +1,6 @@
-
-import { doc, li, list, p, table,
-} from '../support/doc';
+import { doc, li, list, p, table } from '../support/doc';
 import { scenario } from '../support/scenario';
 import { test } from '../support/test';
-
 
 const TRIGGERS = [
   '- ', '* ', '+ ', '1. ', '3. ', '1) ', '[] ', '[ ] ', '[x] ', '[X] ', '- [ ] ', '- [x] ',

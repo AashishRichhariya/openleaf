@@ -4,8 +4,7 @@
  */
 
 import { getRow, newSlug, putRow } from '../support/db';
-import { doc, p,
-} from '../support/doc';
+import { doc, p } from '../support/doc';
 import { legacySave } from '../support/requests';
 import { expect, test } from '../support/test';
 

@@ -1,10 +1,7 @@
-
-import { doc, p, table, tableWidget,
-} from '../support/doc';
+import { doc, p, table, tableWidget } from '../support/doc';
 import { Editor } from '../support/editor';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
-
 
 const mod = 'ControlOrMeta';
 

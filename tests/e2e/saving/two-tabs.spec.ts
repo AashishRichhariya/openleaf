@@ -1,11 +1,9 @@
 /* Two tabs editing one document keep both edits (B6). */
 
 import { storedText } from '../support/db';
-import { doc, p,
-} from '../support/doc';
+import { doc, p } from '../support/doc';
 import { Editor, notice } from '../support/editor';
 import { expect, test } from '../support/test';
-
 
 async function twoTabs(ed: Editor, content?: object): Promise<[Editor, Editor]> {
   await ed.open(content ? { content } : {});

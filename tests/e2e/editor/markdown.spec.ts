@@ -1,10 +1,7 @@
-
-import { doc, heading, li, link, list, p, quote, table, text,
-} from '../support/doc';
+import { doc, heading, li, link, list, p, quote, table, text } from '../support/doc';
 import { Editor } from '../support/editor';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
-
 
 const has = async (ed: Editor, type: string) =>
   new RegExp(`(^|\\n) *${type}( |\\n|$)`).test(await ed.tree());

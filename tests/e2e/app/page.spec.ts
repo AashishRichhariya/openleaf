@@ -1,11 +1,11 @@
 /* The page around the editor: focus, navbar, metadata, widths, privacy and errors. */
 
-import { code, doc, equation, heading, hr, li, link, list, p, quote, table, text,
+import {
+  code, doc, equation, heading, hr, li, link, list, p, quote, table, text,
 } from '../support/doc';
 import { ENV } from '../support/env';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
-
 
 test('app: an existing document does not take focus', async ({ ed }) => {
   await ed.open({ content: doc(p('reading')) });

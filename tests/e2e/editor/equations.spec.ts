@@ -1,12 +1,9 @@
-
-import { doc, equation, li, list, p, table,
-} from '../support/doc';
+import { doc, equation, li, list, p, table } from '../support/doc';
 import { Editor } from '../support/editor';
 import { KEYS } from '../support/keys';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
 import { plainText } from '../support/tree';
-
 
 const mod = 'ControlOrMeta';
 

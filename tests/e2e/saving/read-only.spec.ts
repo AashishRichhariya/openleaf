@@ -1,15 +1,15 @@
-
 import { putRow } from '../support/db';
-import { doc, li, link, list, p,
-} from '../support/doc';
+import { doc, li, link, list, p } from '../support/doc';
 import { notice } from '../support/editor';
 import { expect, test } from '../support/test';
 
 import type { Page, Request } from '@playwright/test';
 
-// The owner chose (2026-11-23) to keep 0.3.0's behavior: a read-only document, such as the info
-// page, can be edited to try things out, and is never saved. The server refuses to change it
-// anyway (B1, B2). These guards hold on 0.3.0 and on 0.4.0.
+/*
+ * Read-only documents (B7). The owner chose (2026-11-23) to keep 0.3.0's behavior: a read-only
+ * document, such as the info page, can be edited to try things out, and is never saved. The server
+ * refuses to change it anyway (B1, B2). These tests pin that behavior.
+ */
 
 const locked = { read_only: true };
 

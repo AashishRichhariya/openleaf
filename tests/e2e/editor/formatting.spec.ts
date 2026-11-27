@@ -1,10 +1,8 @@
 /* Bold, italic, underline and the other text formats, indentation, and heading styles. */
 
-import { doc, heading, p, text,
-} from '../support/doc';
+import { doc, heading, p, text } from '../support/doc';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
-
 
 const mod = 'ControlOrMeta';
 

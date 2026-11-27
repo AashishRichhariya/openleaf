@@ -1,11 +1,11 @@
 /* Screenshots compared pixel by pixel with screenshots/<browser>/, what main shows today. */
 
 import { expectScreenshot } from '../support/baseline';
-import { code, doc, equation, heading, hr, li, link, list, p, quote, table, text,
+import {
+  code, doc, equation, heading, hr, li, link, list, p, quote, table, text,
 } from '../support/doc';
 import { Editor } from '../support/editor';
 import { test } from '../support/test';
-
 
 const CONTENT: Record<string, object> = {
   text: doc(

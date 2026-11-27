@@ -1,10 +1,7 @@
-
-import { doc, link, p, text,
-} from '../support/doc';
+import { doc, link, p, text } from '../support/doc';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
 import { tree } from '../support/tree';
-
 
 const mod = 'ControlOrMeta';
 

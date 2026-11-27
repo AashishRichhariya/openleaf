@@ -1,11 +1,9 @@
 /* Autosave: when it saves, that it saves the last edit, and that opening saves nothing. */
 
 import { getRow, newSlug, putRow, storedText } from '../support/db';
-import { code, doc, heading, p,
-} from '../support/doc';
+import { code, doc, heading, p } from '../support/doc';
 import { Editor, notice } from '../support/editor';
 import { expect, test } from '../support/test';
-
 
 test('autosave, then reload', async ({ ed }) => {
   await ed.open();

@@ -1,11 +1,8 @@
 /* Typing, deleting, selecting, text direction and text inserted without keys. */
 
-import {
-  br, doc, heading, li, list, p, table, text,
-} from '../support/doc';
+import { br, doc, heading, li, list, p, table, text } from '../support/doc';
 import { KEYS } from '../support/keys';
 import { scenario } from '../support/scenario';
-
 
 const mod = 'ControlOrMeta';
 

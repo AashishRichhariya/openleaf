@@ -1,11 +1,8 @@
-
-import { code, doc, equation, heading, li, list, p, quote, table, text,
-} from '../support/doc';
+import { code, doc, equation, heading, li, list, p, quote, table, text } from '../support/doc';
 import { Editor } from '../support/editor';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
 import { plainText } from '../support/tree';
-
 
 const has = async (ed: Editor, type: string) =>
   new RegExp(`(^|\\n) *${type}( |\\n|$)`).test(await ed.tree());

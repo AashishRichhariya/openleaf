@@ -1,9 +1,7 @@
 /* Undo and redo. */
 
-import { doc, heading, p,
-} from '../support/doc';
+import { doc, heading, p } from '../support/doc';
 import { scenario } from '../support/scenario';
-
 
 scenario('history: undo typing', async (ed) => {
   await ed.type('first');

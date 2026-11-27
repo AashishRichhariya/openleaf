@@ -1,11 +1,9 @@
 /* URLs and slugs: what opens which document, and under which key it is stored. */
 
 import { getRow, newSlug, putRow } from '../support/db';
-import { doc, p,
-} from '../support/doc';
+import { doc, p } from '../support/doc';
 import { expect, test } from '../support/test';
 import { plainText } from '../support/tree';
-
 
 test('app: / redirects to a new random document', async ({ ed, page }) => {
   await page.goto('/');

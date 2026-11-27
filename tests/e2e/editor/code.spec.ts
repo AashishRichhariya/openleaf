@@ -1,13 +1,9 @@
-
-import {
-  br, code, doc, heading, li, link, list, p, quote, table, text,
-} from '../support/doc';
+import { br, code, doc, heading, li, link, list, p, quote, table, text } from '../support/doc';
 import { Editor } from '../support/editor';
 import { KEYS } from '../support/keys';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
 import { plainText, shape, tree } from '../support/tree';
-
 
 const JS = 'const x = 1;\n// note\nfunction f(a) {\n  return "s" + a;\n}';
 
@@ -350,7 +346,6 @@ scenario('code: Shift+Tab over lines', async (ed) => {
 }, { content: doc(code('\ta\n\n\tc', 'javascript')) });
 
 // Three backticks put the code block in the right place (B8) --------------------------------------
-
 
 const shapes = async (ed: Editor) => (await ed.state()).root.children.map(shape).join(' ');
 

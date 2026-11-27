@@ -6,13 +6,13 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 
 import { asStoredByV030, getRow, newSlug, putRow } from '../support/db';
-import { code, doc, equation, heading, hr, li, link, list, p, quote, table, tableWidget, text,
+import {
+  code, doc, equation, heading, hr, li, link, list, p, quote, table, tableWidget, text,
 } from '../support/doc';
 import { Editor } from '../support/editor';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
 import { plainText, tree, withoutDerivedTextFormat as derivedOut } from '../support/tree';
-
 
 const FIXTURES = path.join(__dirname, '..', 'fixtures');
 

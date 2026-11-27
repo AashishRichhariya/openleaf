@@ -4,8 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { getRow, newSlug, putRow } from '../support/db';
-import { doc, p,
-} from '../support/doc';
+import { doc, p } from '../support/doc';
 import { ENV } from '../support/env';
 import { captureSave, legacySave, send } from '../support/requests';
 import { expect, test } from '../support/test';
