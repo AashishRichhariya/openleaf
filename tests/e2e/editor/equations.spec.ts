@@ -2,6 +2,7 @@
 import { doc, equation, li, list, p, table,
 } from '../support/doc';
 import { Editor } from '../support/editor';
+import { KEYS } from '../support/keys';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
 import { plainText } from '../support/tree';
@@ -114,21 +115,21 @@ for (const [kind, content] of [['inline', sample], ['block', block]] as const) {
   scenario(`equation ${kind}: Enter edits, Enter saves`, async (ed) => {
     await selectFirst(ed);
     await ed.enter();
-    await ed.press('End');
+    await ed.press(KEYS.lineEnd);
     await ed.type('+2');
     await ed.enter();
   }, { content });
 
   scenario(`equation ${kind}: Escape after an edit`, async (ed) => {
     await first(ed).dblclick();
-    await ed.press('End');
+    await ed.press(KEYS.lineEnd);
     await ed.type('+9');
     await ed.press('Escape');
   }, { content });
 
   scenario(`equation ${kind}: clicking away saves`, async (ed) => {
     await first(ed).dblclick();
-    await ed.press('End');
+    await ed.press(KEYS.lineEnd);
     await ed.type('+7');
     await ed.root.getByText('after').click();
   }, { content });
@@ -236,16 +237,16 @@ const OPEN: Record<string, (ed: Editor) => Promise<void>> = {
 };
 
 const INPUT_KEYS: Record<string, string[]> = {
-  'Backspace': ['End', 'Backspace'],
-  'Delete': ['Home', 'Delete'],
-  'line start': ['End', `${mod}+ArrowLeft`],
-  'line end': ['Home', `${mod}+ArrowRight`],
+  'Backspace': [KEYS.lineEnd, 'Backspace'],
+  'Delete': [KEYS.lineStart, 'Delete'],
+  'line start': [KEYS.lineEnd, KEYS.lineStart],
+  'line end': [KEYS.lineStart, KEYS.lineEnd],
   'select all': [`${mod}+a`],
-  'ArrowUp': ['End', 'ArrowUp'],
-  'ArrowDown': ['Home', 'ArrowDown'],
-  'ArrowLeft': ['End', 'ArrowLeft'],
-  'ArrowRight at the end': ['End', 'ArrowRight'],
-  'Tab': ['End', 'Tab'],
+  'ArrowUp': [KEYS.lineEnd, 'ArrowUp'],
+  'ArrowDown': [KEYS.lineStart, 'ArrowDown'],
+  'ArrowLeft': [KEYS.lineEnd, 'ArrowLeft'],
+  'ArrowRight at the end': [KEYS.lineEnd, 'ArrowRight'],
+  'Tab': [KEYS.lineEnd, 'Tab'],
 };
 
 for (const [how, open] of Object.entries(OPEN)) {
@@ -269,7 +270,7 @@ for (const key of ['Backspace', 'Delete', `${mod}+a`, 'ArrowUp', 'Tab']) {
 scenario('equation input: clicking back where the caret was', async (ed) => {
   await ed.caretAfter('before');
   await ed.root.locator('.equation-wrapper').dblclick();
-  await ed.press('End');
+  await ed.press(KEYS.lineEnd);
   await ed.type('+1');
   await ed.caretAfter('before');
 }, { content: doc(p('before ', equation('x^2'), ' after')) });
@@ -284,7 +285,7 @@ test('clicking away from an equation keeps the edit, and typing goes where you c
     await ed.open({ content: doc(p('before ', equation('x+1'), ' after')) });
     await ed.root.locator('.equation-wrapper').first().dblclick();
     await ed.settle();
-    await ed.press('End');
+    await ed.press(KEYS.lineEnd);
     await ed.type('+7');
     await ed.root.getByText('after').click();
     await ed.settle();

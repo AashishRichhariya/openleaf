@@ -3,6 +3,7 @@
 import {
   br, doc, heading, li, list, p, table, text,
 } from '../support/doc';
+import { KEYS } from '../support/keys';
 import { scenario } from '../support/scenario';
 
 
@@ -58,14 +59,14 @@ scenario('typing: emoji is deleted whole', async (ed) => {
 
 scenario('typing: delete a word', async (ed) => {
   await ed.type('alpha beta gamma');
-  await ed.press('Alt+Backspace');
+  await ed.press(KEYS.deleteWordBackward);
 });
 
 scenario('typing: delete to line start', async (ed) => {
   await ed.type('keep');
   await ed.enter();
   await ed.type('remove all of this');
-  await ed.press('ControlOrMeta+Backspace');
+  for (const key of KEYS.deleteLineBackward) await ed.press(key);
 });
 
 scenario('typing: Enter splits a paragraph', async (ed) => {
@@ -117,7 +118,7 @@ scenario('selection: extend with Shift+arrows', async (ed) => {
 
 scenario('selection: extend by word', async (ed) => {
   await ed.caretAfter('one two three');
-  await ed.press('Alt+Shift+ArrowLeft');
+  await ed.press(KEYS.selectWordBackward);
 }, { content: doc(p('one two three')) });
 
 scenario('selection: across paragraphs, then Backspace', async (ed) => {

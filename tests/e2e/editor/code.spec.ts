@@ -3,12 +3,11 @@ import {
   br, code, doc, heading, li, link, list, p, quote, table, text,
 } from '../support/doc';
 import { Editor } from '../support/editor';
+import { KEYS } from '../support/keys';
 import { scenario } from '../support/scenario';
 import { expect, test } from '../support/test';
 import { plainText, shape, tree } from '../support/tree';
 
-
-const mod = 'ControlOrMeta';
 
 const JS = 'const x = 1;\n// note\nfunction f(a) {\n  return "s" + a;\n}';
 
@@ -330,8 +329,15 @@ scenario('code: ArrowDown at the last line', async (ed) => {
   await ed.press('ArrowDown');
 }, { content: doc(code('first\nsecond', 'javascript'), p('below')), persist: false });
 
-for (const key of ['Shift+End', 'Shift+Home', `${mod}+ArrowLeft`, `${mod}+ArrowRight`]) {
-  scenario(`code: ${key}`, async (ed) => {
+const LINE_KEYS: Record<string, string> = {
+  'select to line end': KEYS.selectToLineEnd,
+  'select to line start': KEYS.selectToLineStart,
+  'line start': KEYS.lineStart,
+  'line end': KEYS.lineEnd,
+};
+
+for (const [name, key] of Object.entries(LINE_KEYS)) {
+  scenario(`code: ${name}`, async (ed) => {
     await ed.caretAfter('sec');
     await ed.press(key);
   }, { content: doc(code('first\n  second', 'javascript')), persist: false });
