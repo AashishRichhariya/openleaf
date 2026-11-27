@@ -19,19 +19,33 @@ pnpm test:e2e tests/e2e/editor/code.spec.ts    # one file
 pnpm test:e2e --grep @B8                       # one tag
 ```
 
-Any `playwright test` argument passes through. Write `--grep`, not `-g`: Volta's `pnpm` refuses any command with `-g`. The command builds a runner image (the first time downloads about
-2 GB), copies the working tree into a container (tracked and new files, never ignored ones or env files), installs,
+Any `playwright test` argument passes through. Write `--grep`, not `-g`: Volta's `pnpm` refuses any command with
+`-g`. A tag like `@B1` also matches `@B10`-`@B18`; write `--grep "@B1\b"` for exactly one.
+
+The command builds a runner image (the first time downloads about 2 GB), copies the working tree into a container (tracked and new files, never ignored ones or env files), installs,
 builds, starts DynamoDB Local and the app, runs Playwright, and returns its exit code. Uncommitted changes are tested.
 
 Results:
 - `tests/e2e/playwright-report/index.html`: the HTML report. Open it with `npx playwright show-report tests/e2e/playwright-report`.
 - `tests/e2e/test-results/`: the JSON report, failure screenshots and diffs, and `logs/` (install, build, app).
 
+Both are ignored by git.
+
 `E2E_WORKERS` changes the number of workers (default 6, measured on 8 CPUs and 8 GB: memory peaks near 5 GB).
 
-Native runs, for debugging only: start a local build on 127.0.0.1:4200 against DynamoDB Local and run
-`E2E_BASE_URL=http://127.0.0.1:4200 npx playwright test -c tests/e2e/playwright.config.ts`. Fonts and pixels differ
-from Linux, so screenshots and element boxes fail there; only Docker results count.
+Native runs, for debugging only. Start DynamoDB Local on 127.0.0.1:8000, then, in a shell with only local settings
+(they take precedence over `.env.local`, which may point at production):
+
+```bash
+export AWS_ENDPOINT_URL_DYNAMODB=http://127.0.0.1:8000 AWS_REGION=ap-south-1 AWS_ACCESS_KEY_ID=local \
+  AWS_SECRET_ACCESS_KEY=local DOCUMENTS_TABLE=openleaf-local-e2e NEXT_PUBLIC_UMAMI_WEBSITE_ID= NEXT_PUBLIC_UMAMI_SCRIPT_URL=
+node tests/e2e/docker/create-table.mjs openleaf-local-e2e
+pnpm build && pnpm start -H 127.0.0.1 -p 4200     # then, in another terminal:
+npx playwright test -c tests/e2e/playwright.config.ts --project=chromium --grep "<title>"
+```
+
+Fonts, pixels and some keys differ from Linux, so screenshots, element boxes and a few scenarios fail there; only
+Docker results count.
 
 ## What is where
 
@@ -55,7 +69,8 @@ Steps that need platform-specific editing keys use `support/keys.ts` (delete a w
 
 A scenario performs a user's steps, then records everything observable: the text, focus, caret, scroll, every element's
 box and style, floating UI, the document tree, the saved row, what a reload shows, and console errors. Every run must
-reproduce `expected/<browser>.json`. Element boxes allow 1 px; styles and everything else must match exactly. A
+reproduce `expected/<browser>.json`. Element boxes and page scroll allow 1 px, and only console errors the baseline
+does not have fail; styles and everything else must match exactly. A
 paragraph's `textFormat` and `textStyle` are left out where it holds text (Lexical works them out from the text; see
 `withoutDerivedTextFormat` in `support/tree.ts`).
 
@@ -72,9 +87,11 @@ A new scenario or screenshot without a baseline fails with the command that reco
 **An existing feature you change that has no tests:** add tests for today's behavior first, on `main`'s behavior, and
 record them. Then make the change, so that the tests show what it changed.
 
-**A bug fix:** add a test in the area file, titled by the behavior it checks, that fails without the fix. Tag it with
-the GitHub issue if there is one: `test('pasting a URL over a word links the word', { tag: '@issue-42' }, ...)`. Add
-tests for what the fix must not break.
+**A bug fix:** add a test in the area file, titled by the behavior it checks, that fails without the fix: write it
+first, run it before fixing, and see it fail. Tag it with the GitHub issue: `test('pasting a URL over a word links the
+word', { tag: '@issue-42' }, ...)` (open an issue if there is none; the `@B`/`@U` tags below are history and are not
+continued). Add tests for what the fix must not break, and update or add a screenshot if the fix changes how
+something looks.
 
 **Helpers:**
 - `ed` (`support/editor.ts`): `open`, `type`, `press`, `select`, `caretAfter`, `paste`, `copy`, `pick` (slash menu),
@@ -108,7 +125,7 @@ test('a pasted URL over a word links the word', { tag: '@issue-42' }, async ({ e
 2. Re-record exactly those: `pnpm test:e2e:update --grep "<their names>"` (a `--grep` or file filter is required; `--all`
    re-records everything).
 3. Review the diff of `expected/*.json` and look at every changed PNG.
-4. Explain every difference in the PR.
+4. Explain every difference in the PR, and agree it with the owner.
 
 Never update a baseline to silence a failure you cannot explain. Update mode records Linux results from Docker, so
 baselines are the same on every machine and in CI.
@@ -137,7 +154,8 @@ pnpm test:perf v0.4.1        # against any ref
 ```
 
 It builds and serves both in Docker, each with its own table, measures page load and typing latency in interleaved
-rounds, and prints both sets of numbers. It exits 1 if this tree is more than 10% slower. It is not run in CI.
+rounds, and prints both sets of numbers. It exits 1 if this tree is more than 10% (and more than 0.5 ms) slower on any
+measure. It is not run in CI.
 
 ## Safety
 

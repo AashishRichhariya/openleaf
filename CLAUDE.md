@@ -49,7 +49,7 @@ through), and in CI on every PR. Its baselines are what `main` does today.
 - **Any feature you touch that has no tests gets tests in the same PR**, recorded before your change so that the change
   shows. When features or tests change, update `tests/e2e/README.md` too.
 - **Run the related subset while working:** `pnpm test:e2e --grep "<title>"`, a file (`tests/e2e/editor/code.spec.ts`), a
-  tag (`--grep @B8`) or a browser (`--project=chromium`). Run **the full suite locally before opening or updating a
+  tag (`--grep "@B8\b"`) or a browser (`--project=chromium`). Run **the full suite locally before opening or updating a
   PR.** CI must also pass: its checks `lint`, `e2e (chromium)`, `e2e (firefox)` and `e2e (webkit)` are required to
   merge into `develop` or `main`, and must be green on `develop` before `main` is fast-forwarded.
 - **Never skip, delete or weaken a test, add retries or raise a tolerance to get green.** A test for a fixed bug is
@@ -62,7 +62,7 @@ through), and in CI on every PR. Its baselines are what `main` does today.
   Never update a baseline to silence a failure you cannot explain.
 - A new scenario or screenshot without a baseline fails with the exact update command to run.
 - For dependency upgrades and editor-core changes, also run `pnpm test:perf` (this tree against `origin/main`; it
-  fails if more than 10% slower).
+  fails if more than 10% and 0.5 ms slower).
 - Native (non-Docker) runs are for debugging only: their fonts and pixels differ from the Linux baselines.
 
 ## Proof videos
