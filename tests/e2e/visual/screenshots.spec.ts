@@ -7,6 +7,16 @@ import {
 import { Editor } from '../support/editor';
 import { test } from '../support/test';
 
+// The navbar logo blinks forever (an SVG <animate>), which Playwright's animations: 'disabled' does
+// not stop. Served without it, the logo shows its first frame in every screenshot.
+test.beforeEach(async ({ page }) => {
+  await page.route('**/logo/animated-logo-minified.svg', async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(/<animate\b[^>]*\/>/g, '');
+    await route.fulfill({ response, body });
+  });
+});
+
 const CONTENT: Record<string, object> = {
   text: doc(
     heading(1, 'Heading one'),
