@@ -22,6 +22,10 @@ export AWS_ENDPOINT_URL=http://127.0.0.1:8000 AWS_ENDPOINT_URL_DYNAMODB=http://1
 
 step() { echo "e2e: $*"; }
 
+# Results are written as root; hand them to the host's user, or a Linux host cannot remove them.
+give_back() { chown -R "${HOST_UID:-0}:${HOST_GID:-0}" "$OUT" 2>/dev/null || true; }
+trap give_back EXIT
+
 # Unpacks a tree and refuses to go on if it holds any env file.
 unpack() {
   local archive=$1 dir=$2 found

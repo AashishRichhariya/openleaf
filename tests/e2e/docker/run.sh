@@ -69,7 +69,7 @@ PROJECT="openleaf-e2e-$MODE-$$"
 COMPOSE=(docker compose -f "$HERE/compose.yaml" -p "$PROJECT")
 cleanup() {
   "${COMPOSE[@]}" down --remove-orphans --timeout 5 >/dev/null 2>&1 || true
-  rm -rf "$TMP"
+  rm -rf "$TMP" 2>/dev/null || echo "e2e: could not remove $TMP" >&2
 }
 trap cleanup EXIT
 trap 'exit 130' INT TERM
@@ -100,7 +100,8 @@ echo "e2e: building the runner image"
 "${COMPOSE[@]}" build --quiet e2e
 echo "e2e: running ($MODE)"
 status=0
-"${COMPOSE[@]}" run --rm -T "${MOUNTS[@]}" -v "$TMP/out:/out" -e E2E_REPLACE="$REPLACE" e2e \
+"${COMPOSE[@]}" run --rm -T "${MOUNTS[@]}" -v "$TMP/out:/out" -e E2E_REPLACE="$REPLACE" \
+  -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" e2e \
   bash /opt/e2e/inner.sh "$MODE" "$@" || status=$?
 
 # Bring the results back, replacing those of the previous run.
