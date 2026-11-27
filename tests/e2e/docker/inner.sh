@@ -47,7 +47,8 @@ serve() {
   pnpm install --frozen-lockfile >"$LOGS/$label-install.log" 2>&1 \
     || { tail -30 "$LOGS/$label-install.log"; exit 1; }
   node /opt/e2e/create-table.mjs "$table"
-  mkdir -p .next "/next-cache/$label" && ln -sfn "/next-cache/$label" .next/cache
+  local cache="/next-cache/$label-${E2E_CACHE_KEY:-default}"
+  mkdir -p .next "$cache" && ln -sfn "$cache" .next/cache
   step "$label: building"
   DOCUMENTS_TABLE=$table pnpm build >"$LOGS/$label-build.log" 2>&1 \
     || { tail -40 "$LOGS/$label-build.log"; exit 1; }
@@ -93,7 +94,12 @@ status=0
 ./node_modules/.bin/playwright test -c tests/e2e/playwright.config.ts "$@" || status=$?
 
 if [ "$MODE" = update ] && [ -d "$E2E/.recording" ]; then
-  node tests/e2e/merge-recording.mjs ${E2E_REPLACE:+--replace} || status=1
+  replace=
+  if [ -n "${E2E_REPLACE:-}" ]; then
+    if [ $status = 0 ]; then replace=--replace
+    else step "tests failed: merging into the baselines instead of replacing them, so none is lost"; fi
+  fi
+  node tests/e2e/merge-recording.mjs $replace || status=1
 fi
 
 # Results always, and in update mode what was recorded.

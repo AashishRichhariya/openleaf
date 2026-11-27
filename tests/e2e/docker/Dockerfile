@@ -1,7 +1,7 @@
 # The e2e runner: Playwright's browsers, the repo's Node and pnpm. Nothing from the repo is baked in:
 # run.sh hands the working tree to each run, without env files.
 # The tag must match @playwright/test in package.json. Bump both together.
-FROM mcr.microsoft.com/playwright:v1.65.1-noble
+FROM mcr.microsoft.com/playwright:v1.65.1-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579
 
 ARG NODE_VERSION=26.13.1
 ARG PNPM_VERSION=12.21.0

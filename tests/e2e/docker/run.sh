@@ -44,10 +44,12 @@ if [ "$MODE" = update ]; then
       -g|--grep|-g*|--grep=*) filtered=1 ;;
       -*) ;;
       *)
+        # A file filter looks like a path; other bare words are values of options.
         case $previous in
           --project|-j|--workers|--reporter|--repeat-each|--retries|--timeout|-c|--config|\
-          --max-failures|-x|--output|--shard|--grep-invert|--tsconfig|--update-snapshots) ;;
-          *) filtered=1 ;;
+          --max-failures|-x|--output|--shard|--grep-invert|--tsconfig|--update-snapshots|\
+          --trace|--global-timeout|--test-list|--test-list-invert) ;;
+          *) case $arg in */*|*.spec*|*.ts) filtered=1 ;; esac ;;
         esac
         ;;
     esac
@@ -72,7 +74,8 @@ cleanup() {
   rm -rf "$TMP" 2>/dev/null || echo "e2e: could not remove $TMP" >&2
 }
 trap cleanup EXIT
-trap 'exit 130' INT TERM
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 # The working tree: tracked and untracked files git does not ignore, minus deleted ones and env files.
 (
@@ -81,7 +84,7 @@ trap 'exit 130' INT TERM
     [ -f "$file" ] || continue
     case "${file##*/}" in
       .env.example) ;;
-      .env*) continue ;;
+      .env*|.npmrc|*credentials*|*.pem|*.key) continue ;;
     esac
     printf '%s\0' "$file"
   done | COPYFILE_DISABLE=1 tar -czf "$TMP/tree.tgz" --no-xattrs --null -T -
@@ -96,15 +99,21 @@ if [ "$MODE" = perf ]; then
 fi
 
 mkdir -p "$TMP/out"
+docker volume create openleaf-e2e-pnpm-store >/dev/null
+docker volume create openleaf-e2e-next-cache >/dev/null
 echo "e2e: building the runner image"
 "${COMPOSE[@]}" build --quiet e2e
 echo "e2e: running ($MODE)"
 status=0
+# Next's build cache is kept per checkout, so that two worktrees never share one.
+CACHE_KEY=$(printf '%s' "$ROOT" | cksum | cut -d' ' -f1)
 "${COMPOSE[@]}" run --rm -T "${MOUNTS[@]}" -v "$TMP/out:/out" -e E2E_REPLACE="$REPLACE" \
-  -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" e2e \
+  -e E2E_CACHE_KEY="$CACHE_KEY" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" e2e \
   bash /opt/e2e/inner.sh "$MODE" "$@" || status=$?
 
-# Bring the results back, replacing those of the previous run.
+# Bring the results back, replacing those of the previous run. A failure here must not change the
+# exit code, which is Playwright's.
+set +e
 for name in test-results playwright-report; do
   if [ -d "$TMP/out/$name" ]; then
     rm -rf "${E2E:?}/$name"
@@ -118,7 +127,13 @@ if [ -d "$TMP/out/logs" ]; then
 fi
 if [ "$MODE" = update ]; then
   [ -d "$TMP/out/expected" ] && cp "$TMP/out/expected/"*.json "$E2E/expected/"
-  [ -d "$TMP/out/screenshots" ] && cp -R "$TMP/out/screenshots/." "$E2E/screenshots/"
+  if [ -d "$TMP/out/screenshots" ]; then
+    # A full recording that passed also drops the screenshots of tests that no longer exist.
+    if [ -n "$REPLACE" ] && [ $status = 0 ]; then
+      for dir in "$TMP/out/screenshots/"*/; do rm -rf "$E2E/screenshots/$(basename "$dir")"; done
+    fi
+    cp -R "$TMP/out/screenshots/." "$E2E/screenshots/"
+  fi
   if [ -d "$TMP/out/.recording" ]; then
     rm -rf "$E2E/.recording"
     cp -R "$TMP/out/.recording" "$E2E/.recording"

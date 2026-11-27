@@ -2,7 +2,7 @@
 # inside and the suite's loopback guards hold. Nothing is published to the host.
 services:
   db:
-    image: amazon/dynamodb-local:3.3.0
+    image: amazon/dynamodb-local:3.3.0@sha256:d89f8fcc6b1a39cb35976c248ed42a28c66ae00dc043099210f5571e42648ab4
     command: ["-jar", "DynamoDBLocal.jar", "-inMemory"]
   e2e:
     build:
@@ -20,8 +20,10 @@ services:
       - pnpm-store:/pnpm-store
       - next-cache:/next-cache
 volumes:
-  # Fixed names, so that every run (and perf's) reuses the caches.
+  # Shared by every run (and perf's), whatever its project name; run.sh creates them.
   pnpm-store:
     name: openleaf-e2e-pnpm-store
+    external: true
   next-cache:
     name: openleaf-e2e-next-cache
+    external: true
