@@ -27,13 +27,12 @@ function localTable(value: string): string {
 export const ENV = {
   baseURL: loopbackUrl(process.env.E2E_BASE_URL ?? 'http://127.0.0.1:4200'),
   dbURL: loopbackUrl(process.env.E2E_DB_URL ?? 'http://127.0.0.1:8000'),
-  table: localTable(process.env.E2E_TABLE ?? 'openleaf-local-upgrade'),
+  table: localTable(process.env.E2E_TABLE ?? 'openleaf-local-e2e'),
   // The build under test, used to find every server action it exposes.
   appDir: process.env.E2E_APP_DIR ?? path.resolve(__dirname, '../../..'),
-  // Recording is only ever done against the untouched baseline.
+  // Scenarios record what they see instead of comparing it. Set by `pnpm test:e2e:update`, which
+  // then merges the recordings into expected/ (merge-recording.mjs).
   record: process.env.E2E_RECORD === '1',
-  // Except for the accepted differences in accepted.ts, recorded on 0.4.0.
-  recordAccepted: process.env.E2E_RECORD_ACCEPTED === '1',
   // Optional folder that receives one screenshot per scenario.
   screens: process.env.E2E_SCREENS,
 };

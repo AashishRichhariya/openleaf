@@ -3,6 +3,9 @@ import { expect, Locator, Page } from '@playwright/test';
 import { getRow, newSlug, putRow, Row } from './db';
 import { tree } from './tree';
 
+/** The notice under the editor, shown when a save is refused or edits conflict. */
+export const notice = (page: Page) => page.locator('.editor-notice');
+
 interface OpenOptions {
   /** Seeds the row before the page is opened. */
   content?: object | null;

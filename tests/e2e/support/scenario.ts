@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { isAccepted } from './accepted';
+import { noBaseline } from './baseline';
 import { capture, Box, View } from './capture';
 import { Editor } from './editor';
 import { ENV } from './env';
@@ -9,27 +9,20 @@ import { expect, test } from './test';
 import { tree, withoutDerivedTextFormat as derivedOut } from './tree';
 
 /*
- * A scenario performs what a user does, then records everything observable. On the untouched
- * baseline that record is saved to expected/<browser>.json (see README). Every later run must
- * reproduce it.
+ * A scenario performs what a user does, then records everything observable: text, focus, caret,
+ * scroll, element boxes and styles, floating UI, the document, what was saved and what a reload
+ * shows. Every run must reproduce the baseline in expected/<browser>.json, which is what main does
+ * today. `pnpm test:e2e:update` records it (see README).
  */
-
-/** A listed bug whose fix changes part of what a scenario records. The rest is still compared. */
-export type ChangedBy =
-  // The tree is fixed, the look is not allowed to move.
-  | 'B8'
-  // The table size widget is no longer saved.
-  | 'B13'
-  // Strikethrough, H4 and H5 gain styling.
-  | 'B15';
 
 interface Options {
   content?: object | null;
-  changedBy?: ChangedBy;
   /** Also compare what was saved and what a reload shows. On unless switched off. */
   persist?: boolean;
   viewport?: { width: number; height: number };
   timeout?: number;
+  /** Playwright tags, such as '@B14' for a fixed bug or '@issue-42'. */
+  tag?: string | string[];
 }
 
 interface Recorded extends View {
@@ -53,30 +46,15 @@ function fileName(name: string): string {
 }
 
 function expected(project: string, name: string): Recorded {
-  loaded[project] ??= JSON.parse(
-    fs.readFileSync(path.join(ROOT, 'expected', `${project}.json`), 'utf8'),
-  );
+  const file = path.join(ROOT, 'expected', `${project}.json`);
+  loaded[project] ??= fs.existsSync(file)
+    ? JSON.parse(fs.readFileSync(file, 'utf8'))
+    : { styles: [], scenarios: {} };
   const { styles, scenarios } = loaded[project];
   const found = scenarios[name];
-  if (!found) throw new Error(`"${name}" has no recording from the baseline`);
+  if (!found) throw new Error(noBaseline(name, project, name));
   const expand = (box: any) => ({ ...box, style: styles[box.style] });
   return { ...found, boxes: found.boxes.map(expand), floating: found.floating.map(expand) };
-}
-
-/** The reviewed recording of 0.4.0 for a scenario in accepted.ts */
-function acceptedFile(project: string, name: string): string {
-  return path.join(ROOT, 'expected', 'accepted', project, `${fileName(name)}.json`);
-}
-
-function acceptedRecording(project: string, name: string): Recorded {
-  const file = acceptedFile(project, name);
-  if (!fs.existsSync(file)) throw new Error(`"${name}" is accepted but has no recording of 0.4.0`);
-  return JSON.parse(fs.readFileSync(file, 'utf8'))[1];
-}
-
-function recordAccepted(project: string, name: string, value: Recorded): void {
-  fs.mkdirSync(path.dirname(acceptedFile(project, name)), { recursive: true });
-  fs.writeFileSync(acceptedFile(project, name), `${JSON.stringify([name, value], null, 1)}\n`);
 }
 
 function record(project: string, name: string, value: Recorded): void {
@@ -84,9 +62,6 @@ function record(project: string, name: string, value: Recorded): void {
   fs.mkdirSync(folder, { recursive: true });
   fs.writeFileSync(path.join(folder, `${fileName(name)}.json`), JSON.stringify([name, value]));
 }
-
-// Blocks whose wrapper B8 removes are compared through what is drawn inside them.
-const B8_DRAWN = /^(code|span.*"|.*katex)/;
 
 function compareBoxes(actual: Box[], wanted: Box[], label: string): void {
   const names = (boxes: Box[]) => boxes.map((box) => box.el);
@@ -106,66 +81,36 @@ function compareBoxes(actual: Box[], wanted: Box[], label: string): void {
   expect.soft(differences.slice(0, 12), `${label}: look`).toEqual([]);
 }
 
-function compare(actual: Recorded, wanted: Recorded, changedBy?: ChangedBy): void {
+function compare(actual: Recorded, wanted: Recorded): void {
   expect.soft(actual.text, 'visible text').toBe(wanted.text);
   expect.soft(actual.focus, 'focus').toBe(wanted.focus);
   expect.soft(actual.note, 'reported by the steps').toBe(wanted.note);
   expect.soft(Math.abs(actual.scroll - wanted.scroll), 'page scroll moved').toBeLessThanOrEqual(1);
-  // B16: where the last row's add-row button shows, the bottom-right cell now also offers
-  // add-column. Only that button, and only then, may be new.
-  const addColumn = 'button.editor-table-add-columns';
-  const rowButtonShown = wanted.floating.some((box) => box.el === 'button.editor-table-add-rows');
-  const columnButtonWas = wanted.floating.some((box) => box.el === addColumn);
-  const floating = rowButtonShown && !columnButtonWas
-    ? actual.floating.filter((box) => box.el !== addColumn)
-    : actual.floating;
-  compareBoxes(floating, wanted.floating, 'floating UI');
+  compareBoxes(actual.floating, wanted.floating, 'floating UI');
   // The first line: stack traces name the build's own chunk files.
   const firstLine = (problem: string) => problem.split('\n')[0];
   const known = wanted.problems.map(firstLine);
   const newProblems = actual.problems.filter((problem) => !known.includes(firstLine(problem)));
   expect.soft(newProblems, 'console and page errors').toEqual([]);
-
-  if (changedBy === 'B8') {
-    const drawn = (boxes: Box[]) => boxes.filter((box) => B8_DRAWN.test(box.el));
-    compareBoxes(drawn(actual.boxes), drawn(wanted.boxes), 'editor');
-    // Compared with itself, as the tree differs by design, wherever 0.3.0 saved what it showed.
-    const wasKept = wanted.saved === wanted.tree && wanted.reloaded === wanted.tree;
-    if (wanted.saved !== undefined && wasKept) {
-      expect.soft(actual.saved ?? actual.tree, 'saved document').toBe(actual.tree);
-      expect.soft(actual.reloaded ?? actual.tree, 'reloaded document').toBe(actual.tree);
-    }
-    return;
-  }
-
   expect.soft(derivedOut(actual.tree), 'document').toBe(derivedOut(wanted.tree));
   expect.soft(actual.caret, 'caret').toBe(wanted.caret);
-  if (changedBy !== 'B15') compareBoxes(actual.boxes, wanted.boxes, 'editor');
-
-  if (wanted.saved !== undefined) {
-    // Where 0.3.0 lost the document (B3), not losing it is the only acceptable difference.
-    const lostByBaseline = wanted.reloaded === 'paragraph' && wanted.tree !== 'paragraph';
-    const orKept = (was?: string, now?: string) =>
-      (lostByBaseline && now === actual.tree ? actual.tree : was);
-    const withoutWidget = (value?: string) =>
-      (changedBy === 'B13' ? value?.replace(/\n *inline-table-input-node/g, '') : value);
-    // Without the widget there can be nothing to save.
-    const saved = changedBy === 'B13' && actual.saved === '(no row)' ? 'paragraph' : actual.saved;
-    expect.soft(derivedOut(saved), 'saved document')
-      .toBe(derivedOut(orKept(withoutWidget(wanted.saved), actual.saved)));
-    expect.soft(derivedOut(actual.reloaded), 'reloaded document')
-      .toBe(derivedOut(orKept(withoutWidget(wanted.reloaded), actual.reloaded)));
+  compareBoxes(actual.boxes, wanted.boxes, 'editor');
+  if (wanted.saved !== undefined || actual.saved !== undefined) {
+    expect.soft(derivedOut(actual.saved), 'saved document').toBe(derivedOut(wanted.saved));
+    expect.soft(derivedOut(actual.reloaded), 'reloaded document').toBe(derivedOut(wanted.reloaded));
   }
 }
 
 export function scenario(
   name: string,
   steps: (ed: Editor) => Promise<string | void>,
-  { content, changedBy, persist = true, viewport, timeout }: Options = {},
+  { content, persist = true, viewport, timeout, tag }: Options = {},
 ): void {
-  test(`parity: ${name}`, async ({ ed, page, problems }, info) => {
+  test(name, { tag }, async ({ ed, page, problems }, info) => {
     if (timeout) test.setTimeout(timeout);
     if (viewport) await page.setViewportSize(viewport);
+    // Fails before any work when there is nothing to compare with.
+    const wanted = ENV.record ? null : expected(info.project.name, name);
     await ed.open(content === undefined ? {} : { content });
     const note = (await steps(ed)) || undefined;
     await ed.settle();
@@ -196,14 +141,6 @@ export function scenario(
       });
     }
 
-    const accepted = isAccepted(name, info.project.name);
-    const recording = ENV.record || (ENV.recordAccepted && accepted);
-    let wanted: Recorded | null = null;
-    if (!recording) {
-      wanted = accepted
-        ? acceptedRecording(info.project.name, name)
-        : expected(info.project.name, name);
-    }
     let leftBehind: string[] = [];
 
     if (persist) {
@@ -215,7 +152,7 @@ export function scenario(
           await page.waitForTimeout(250);
           const row = await ed.row();
           stored = row ? tree(row.content) : '(no row)';
-          // A known baseline outcome need not be waited out.
+          // A known outcome need not be waited out.
           if (wanted && stored === wanted.saved && Date.now() > deadline - 2500) break;
         }
         actual.saved = stored;
@@ -229,9 +166,7 @@ export function scenario(
 
     actual.problems = [...new Set([...leftBehind, ...problems])].sort();
 
-    if (wanted) compare(actual, wanted, changedBy);
-    else if (ENV.recordAccepted) {
-      if (accepted) recordAccepted(info.project.name, name, actual);
-    } else record(info.project.name, name, actual);
+    if (wanted) compare(actual, wanted);
+    else record(info.project.name, name, actual);
   });
 }
