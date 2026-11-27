@@ -2,8 +2,8 @@
 # Runs the e2e suite in Docker: builds the app from the working tree, starts DynamoDB Local and the
 # app, and runs Playwright. Needs only Docker and bash (3.2 works). Exits with Playwright's code.
 #
-#   run.sh [playwright args...]             all browsers, or e.g. --project=chromium -g "table"
-#   run.sh --update [--all] [args...]       record baselines for the chosen tests (a -g or file
+#   run.sh [playwright args...]             all browsers, or e.g. --project=chromium --grep "table"
+#   run.sh --update [--all] [args...]       record baselines for the chosen tests (a --grep or file
 #                                           filter is required, unless --all is given)
 #   run.sh --perf [ref]                     perf.mjs: this tree against ref (default origin/main)
 #
@@ -55,7 +55,7 @@ if [ "$MODE" = update ]; then
     previous=$arg
   done
   if [ $all = 0 ] && [ $filtered = 0 ]; then
-    die 'update records over baselines: name the tests with -g "<name>" or a file, or pass --all'
+    die 'update records over baselines: name the tests with --grep "<name>" or a file, or pass --all'
   fi
   set -- ${ARGS[@]+"${ARGS[@]}"}
   # Everything recorded: baselines of tests that no longer exist go too.
