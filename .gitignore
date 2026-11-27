@@ -41,6 +41,9 @@ yarn-error.log*
 # vscode
 /.vscode/
 
+# claude code: personal settings stay local; skills in .claude/skills are shared
+.claude/settings.local.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
