@@ -25,9 +25,11 @@ test('autosave waits for a pause of about two seconds', async ({ ed, page }) => 
 });
 
 // The other side of the pause: the save comes about two seconds after typing stops, not later.
-test('autosave saves about two seconds after typing stops', async ({ ed }) => {
+test('autosave saves about two seconds after typing stops', async ({ ed, page }) => {
   await ed.open();
-  await ed.type('pause');
+  await ed.root.focus();
+  // Timed from the last key itself: ed.type would also wait for the page to settle.
+  await page.keyboard.type('pause', { delay: 12 });
   const stopped = Date.now();
   await expect
     .poll(() => storedText(ed.slug), { timeout: 3500, intervals: [100] })
