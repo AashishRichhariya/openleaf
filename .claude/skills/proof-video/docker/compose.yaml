@@ -1,0 +1,20 @@
+# /proof-video: the recorder, with DynamoDB Local for the app. The recorder shares the database's network, so
+# both are on 127.0.0.1 inside and nothing is published to the host.
+name: openleaf-proof-video
+services:
+  db:
+    image: amazon/dynamodb-local:3.3.0
+    command: ["-jar", "DynamoDBLocal.jar", "-inMemory"]
+  video:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: openleaf-proof-video:1
+    network_mode: service:db
+    depends_on: [db]
+    volumes:
+      - pnpm-store:/pnpm-store
+      - next-cache:/next-cache
+volumes:
+  pnpm-store:
+  next-cache:

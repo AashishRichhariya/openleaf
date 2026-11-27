@@ -1,0 +1,32 @@
+{
+  "title": "Example: proof video",
+  "name": "proof-video-example",
+  "voice": "af_heart",
+  "steps": [
+    {
+      "say": "This is an example proof video. Every number on a card comes from a real report, never from memory.",
+      "card": {
+        "kicker": "openleaf",
+        "title": "What this video proves",
+        "stats": [{ "value": "3", "label": "steps" }, { "value": "0", "label": "failures" }],
+        "lines": ["A card, then the real app, then a local file"]
+      }
+    },
+    {
+      "say": "Here is the real app, built from the working tree and running against a local database. I type a heading with markdown, then a line of text.",
+      "app": [
+        { "goto": "/proof-example" },
+        { "click": ".editor-input" },
+        { "type": "# Proof video" },
+        { "press": "Enter" },
+        { "type": "Typed by the recorder." }
+      ],
+      "min_seconds": 9
+    },
+    {
+      "say": "A file step shows any page or report kept next to the storyboard, such as a Playwright report.",
+      "file": "notes.html",
+      "do": [{ "wait": 500 }, { "scroll": 200 }]
+    }
+  ]
+}
