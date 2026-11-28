@@ -300,6 +300,9 @@ export class DocumentSaver {
       this.report({ problem: 'failed' });
       break;
     default:
+      // Until a save is confirmed, the edit is also kept in the browser, in case the tab never
+      // gets to save it: it may crash, or be closed while offline
+      this.storeDraft(false, content);
       this.report({ problem: 'failed' });
       this.retryTimer = setTimeout(() => void this.save(), this.retryDelay);
       this.retryDelay = Math.min(this.retryDelay * 2, MAX_RETRY_DELAY);
