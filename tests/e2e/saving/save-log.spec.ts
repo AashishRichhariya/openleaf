@@ -115,7 +115,8 @@ test('a tab\'s edit that never arrived is recovered, after other tabs saved', as
   await page.context().addInitScript(() => {
     for (const type of ['pagehide', 'visibilitychange']) {
       window.addEventListener(type, (event) => {
-        if ((window as unknown as { crashing?: boolean }).crashing) event.stopImmediatePropagation();
+        const crashing = (window as unknown as { crashing?: boolean }).crashing;
+        if (crashing) event.stopImmediatePropagation();
       }, true);
     }
   });
