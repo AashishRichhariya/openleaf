@@ -19,8 +19,14 @@ import {
   updateDocumentContent,
 } from './document-service';
 
-// Enough to recognize the saves of tabs that closed a while ago
-const SAVE_LOG_LENGTH = 100;
+// The tabs whose saves the log can recognize: each tab's latest save, of the most recent tabs.
+// A tab's latest save is all that matters, as a save landing means its earlier ones did too.
+export const SAVE_LOG_TABS = 10;
+
+/** The log after a save: one entry per tab, the latest last */
+export function withSave(log: SaveLogEntry[], entry: SaveLogEntry): SaveLogEntry[] {
+  return [...log.filter((saved) => saved.tab !== entry.tab), entry].slice(-SAVE_LOG_TABS);
+}
 
 /**
  * What the log keeps of a tab id. The log is sent to everyone who opens the document, and a tab id
@@ -63,7 +69,7 @@ async function save(
         await updateDocumentContent(stored, {
           content: processedContent,
           updated_at: now,
-          save_log: [...(stored.save_log ?? []), entry].slice(-SAVE_LOG_LENGTH),
+          save_log: withSave(stored.save_log ?? [], entry),
         });
       } else {
         await createDocument({
