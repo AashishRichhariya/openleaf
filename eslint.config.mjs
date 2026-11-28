@@ -8,6 +8,7 @@ const config = [
       "next-env.d.ts",
       "tests/e2e/test-results/**",
       "tests/e2e/.recording/**",
+      "tests/e2e/playwright-report/**",
     ],
   },
   {

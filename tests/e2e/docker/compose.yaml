@@ -1,0 +1,29 @@
+# DynamoDB Local and the runner. The runner shares the database's network, so both are on 127.0.0.1
+# inside and the suite's loopback guards hold. Nothing is published to the host.
+services:
+  db:
+    image: amazon/dynamodb-local:3.3.0@sha256:d89f8fcc6b1a39cb35976c248ed42a28c66ae00dc043099210f5571e42648ab4
+    command: ["-jar", "DynamoDBLocal.jar", "-inMemory"]
+  e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: openleaf-e2e:1
+    network_mode: service:db
+    depends_on: [db]
+    init: true
+    # Chromium needs more shared memory than Docker's default 64 MB.
+    shm_size: 2gb
+    environment:
+      E2E_WORKERS: ${E2E_WORKERS:-}
+    volumes:
+      - pnpm-store:/pnpm-store
+      - next-cache:/next-cache
+volumes:
+  # Shared by every run (and perf's), whatever its project name; run.sh creates them.
+  pnpm-store:
+    name: openleaf-e2e-pnpm-store
+    external: true
+  next-cache:
+    name: openleaf-e2e-next-cache
+    external: true

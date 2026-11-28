@@ -49,7 +49,9 @@ The goal runs later, in a fresh chat, without this conversation. So **everything
      - the two or three most important prohibitions;
      - that usage limits never end the job.
    - **Everything else lives in the brief:** section 0 holds the hard rules, the DONE items, the BLOCKED rule and "print
-     the checklist before you stop". Each DONE item is one line that points to its brief section ("section 4 holds")
+     the checklist before you stop". Keep the template's BLOCKED rule whole: its reasons are examples, and it names
+     "a fix that needs a hard-rule exception" (an app change, weakening a test). A stop check reads a short list of
+     examples as the only allowed reasons, and then refuses a BLOCKED that truly needs the owner. Each DONE item is one line that points to its brief section ("section 4 holds")
      instead of restating it.
    - **Measure the block:** `awk '/^```text$/{f=1;next} /^```$/{if(f)exit} f' "<path to goal_prompt.md>" | wc -c`.
      If it's over, shorten wording or move detail into the brief. Never drop a hard rule or a DONE item to make it fit.

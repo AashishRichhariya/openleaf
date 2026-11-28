@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { ENV } from './env';
+import { plainText } from './tree';
 
 type Attribute =
   | { S: string }
@@ -73,6 +74,11 @@ export async function getRow(slug: string): Promise<Row | null> {
     Key: { slug: { S: slug }, version: { N: '1' } },
   });
   return Item ? unmarshall({ M: Item }) : null;
+}
+
+/** All the text stored for a document, '' when there is no row. See plainText. */
+export async function storedText(slug: string): Promise<string> {
+  return plainText((await getRow(slug))?.content ?? null);
 }
 
 /** Writes a row exactly as given: empty strings stay empty strings, nulls stay NULL. */

@@ -16,7 +16,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "analyze": "ANALYZE=true next build --webpack",
-    "test:e2e": "playwright test -c tests/e2e/playwright.config.ts"
+    "test:e2e": "bash tests/e2e/docker/run.sh",
+    "test:e2e:update": "bash tests/e2e/docker/run.sh --update",
+    "test:perf": "bash tests/e2e/docker/run.sh --perf"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1175.0",

@@ -52,8 +52,8 @@ For feature requests:
    - For refactoring: `refactor/short-description` (e.g., `refactor/editor-state`)
    - For testing: `test/short-description` (e.g., `test/table-rendering`)
    - For style changes: `style/short-description` (e.g., `style/button-colors`)
-3. Make your changes
-4. Submit a PR to the `develop` branch (not directly to `main`)
+3. Make your changes, with tests (see [Testing](#testing))
+4. Run `pnpm test:e2e`, then submit a PR to the `develop` branch (not directly to `main`). CI must pass.
 
 ## Code Guidelines
 
@@ -69,6 +69,20 @@ For feature requests:
 - Follow the existing patterns in the codebase
 - Use ESLint and Prettier for formatting (configs are in the repo)
 - For CSS, use Tailwind utility classes when possible
+
+## Testing
+
+Every feature and bug fix comes with end-to-end tests. They run in Docker, so all you need is Docker and bash:
+
+```bash
+pnpm test:e2e                          # the whole suite, in Chromium, Firefox and WebKit
+pnpm test:e2e --project=chromium --grep "table"   # a subset, while you work
+```
+
+- Run the full suite before you open or update a pull request.
+- CI runs it on every pull request, and its checks must pass before anything is merged.
+- [tests/e2e/README.md](tests/e2e/README.md) explains how to add tests for a feature or a fix, and how to update a
+  baseline when you change behavior on purpose.
 
 ## Project Structure
 

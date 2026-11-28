@@ -20,7 +20,9 @@ pnpm install          # dependencies
 pnpm dev              # dev server: only with a local database (see Safety)
 pnpm build            # production build, typecheck included
 pnpm lint
-pnpm test:e2e         # end-to-end tests: see tests/e2e/README.md for setup and options
+pnpm test:e2e         # end-to-end tests in Docker, all 3 browsers; Playwright args pass through
+pnpm test:e2e:update --grep "<name>"   # re-record chosen baselines (intended changes only)
+pnpm test:perf        # perf against origin/main, for upgrades and editor-core changes
 ```
 
 ## Safety
@@ -34,14 +36,34 @@ pnpm test:e2e         # end-to-end tests: see tests/e2e/README.md for setup and 
 
 ## Tests
 
-- **Every new feature and every bug fix comes with tests.** A bug fix's test must fail without the fix.
-- **Any feature you change that has no tests gets tests in the same PR.** When features or tests change, update
-  `tests/e2e/README.md` too.
-- **Run the related tests while working, and the full suite locally before opening or updating a PR.**
+The e2e suite in `tests/e2e/` is the regression suite: [tests/e2e/README.md](tests/e2e/README.md) says how to run it,
+where each area lives, and how to add tests. It runs in Docker (`pnpm test:e2e`, any Playwright argument passes
+through), and in CI on every PR. Its baselines are what `main` does today.
+
+- **Every new feature and every bug fix comes with tests**, as the README describes:
+  - **A new feature:** scenarios (`scenario()`) in its area file for what users do, plain `test()`s with explicit
+    `expect`s for its rules, and a screenshot if it adds UI. Scenarios record behavior; `expect`s state rules. A new
+    feature needs both.
+  - **A bug fix:** a test in the area file, titled by the behavior it checks, that fails without the fix. Tag it with
+    the issue (`{ tag: '@issue-42' }`) if there is one, and add tests for what the fix must not break.
+- **Any feature you touch that has no tests gets tests in the same PR**, recorded before your change so that the change
+  shows. When features or tests change, update `tests/e2e/README.md` too.
+- **Run the related subset while working:** `pnpm test:e2e --grep "<title>"`, a file (`tests/e2e/editor/code.spec.ts`), a
+  tag (`--grep "@B8\b"`) or a browser (`--project=chromium`). Run **the full suite locally before opening or updating a
+  PR.** CI must also pass: its checks `lint`, `e2e (chromium)`, `e2e (firefox)` and `e2e (webkit)` are required to
+  merge into `develop` or `main`, and must be green on `develop` before `main` is fast-forwarded.
 - **Never skip, delete or weaken a test, add retries or raise a tolerance to get green.** A test for a fixed bug is
-  ordinary expected behavior: never delete it because "it is fixed".
-- **Baselines** (`tests/e2e/expected/`, `tests/e2e/screenshots/`) change only for an intended change. Explain it in the
-  PR, agree it with the owner, and look at every recorded file before committing it.
+  ordinary expected behavior: it is never deleted because "it is fixed".
+- **Baselines** (`tests/e2e/expected/`, `tests/e2e/screenshots/`) are re-recorded only for an intended change, explained
+  in the PR and agreed with the owner:
+  1. see the related tests fail, and read what changed in the report (`tests/e2e/playwright-report/`);
+  2. `pnpm test:e2e:update --grep "<those tests>"` (a filter is required; `--all` re-records everything);
+  3. look at every recorded entry and PNG in the diff before committing it.
+  Never update a baseline to silence a failure you cannot explain.
+- A new scenario or screenshot without a baseline fails with the exact update command to run.
+- For dependency upgrades and editor-core changes, also run `pnpm test:perf` (this tree against `origin/main`; it
+  fails if more than 10% and 0.5 ms slower).
+- Native (non-Docker) runs are for debugging only: their fonts and pixels differ from the Linux baselines.
 
 ## Proof videos
 

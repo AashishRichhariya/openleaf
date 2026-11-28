@@ -3,6 +3,9 @@ import { expect, Locator, Page } from '@playwright/test';
 import { getRow, newSlug, putRow, Row } from './db';
 import { tree } from './tree';
 
+/** The notice under the editor, shown when a save is refused or edits conflict. */
+export const notice = (page: Page) => page.locator('.editor-notice');
+
 interface OpenOptions {
   /** Seeds the row before the page is opened. */
   content?: object | null;
@@ -96,6 +99,19 @@ export class Editor {
   /** History merges edits made within a second, so this makes the next edit its own undo step. */
   async pause(): Promise<void> {
     await this.page.waitForTimeout(1150);
+  }
+
+  /**
+   * A double click with a person's timing: two presses at one spot, 250 ms apart (well within a
+   * system's double-click interval). Playwright's dblclick presses twice within a millisecond, so
+   * what the second press met depended on how fast the page had reacted to the first.
+   */
+  async doubleClick(target: Locator): Promise<void> {
+    const box = (await target.boundingBox())!;
+    const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+    await this.page.mouse.click(x, y);
+    await this.page.waitForTimeout(250);
+    await this.page.mouse.click(x, y, { clickCount: 2 });
   }
 
   /** Puts the caret at an offset of the n-th text run containing `value`, or selects it. */

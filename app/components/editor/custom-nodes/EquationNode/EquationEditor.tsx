@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, RefObject } from 'react';
+import React, { forwardRef, MutableRefObject, Ref, useLayoutEffect, useRef } from 'react';
 
 type EquationEditorProps = {
   equation: string;
@@ -20,6 +20,21 @@ function EquationEditor(
     }
   };
 
+  // Focused without scrolling: Lexical already scrolls the equation into view, smoothly
+  // (scroll-behavior: smooth), and the browser's own scroll to a focused input landing in the
+  // middle of that animation left the page at a different place from one time to the next.
+  const input = useRef<HTMLInputElement | null>(null);
+  useLayoutEffect(() => {
+    input.current?.focus({ preventScroll: true });
+  }, []);
+  const setInput = (element: HTMLInputElement | null) => {
+    input.current = element;
+    if (typeof forwardedRef === 'function') forwardedRef(element);
+    else if (forwardedRef) {
+      (forwardedRef as MutableRefObject<HTMLInputElement | null>).current = element;
+    }
+  };
+
   const delimiter = inline ? '$' : '$$';
   
   return (
@@ -30,8 +45,7 @@ function EquationEditor(
         value={equation ?? ''}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        autoFocus
-        ref={forwardedRef as RefObject<HTMLInputElement>}
+        ref={setInput}
         size={Math.max((equation ?? '').length + 2, 5)}
         placeholder="y=mx+c"
       />

@@ -42,12 +42,17 @@ N-1. "<[META]/task>/REPORT.md" covers what changed, evidence, known limits, the 
 N. Only after 1 to N-1: progress.md says STATUS: DONE, the keeper no longer watches this session, and keeper status proves it.
 
 Usage limits, errors and long runtime never end this job: keep progress.md current and continue. Only if a decision or
-access truly needs me (for example a precondition fails, access is refused, or the work can only be finished by
-breaking a hard rule): finish all other work, revert local setup, set STATUS: BLOCKED, unwatch, print "BLOCKED" with
-evidence and the exact question for me, and stop. Never present that as done.
+access truly needs me: finish all other work, revert local setup, set STATUS: BLOCKED, unwatch, print "BLOCKED" with
+evidence and the exact question for me, and stop. Never present that as done. These are examples, not the whole list:
+- a precondition fails, or access is refused;
+- **a fix that needs a hard-rule exception**: the work can only be finished by breaking a hard rule, such as changing
+  code outside the scope (for example app code to fix a bug the tests found) or weakening a test. First rule out what
+  you can fix within the rules, then ask me with AskUserQuestion if I'm here, else declare BLOCKED with the question.
 
 **Before you stop** (DONE or BLOCKED), print the full checklist: items 1 to N, each with its status and evidence (or
-the evidence file's path). The goal's stop-check reads the conversation, not this file.
+the evidence file's path). The goal's stop-check reads the conversation, not this file. Printed evidence means the
+commands, exit codes, counts and durations; long output (full logs, per-test tables) stays in its evidence file,
+named in the checklist.
 
 ## 1. Context
 
