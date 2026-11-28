@@ -344,15 +344,17 @@ test('closing a tab with a large document sends only the changes', async ({ page
 
 test('leaving during an unfinished save stores the last edit without reopening', async ({ ed, page }) => {
   await ed.open({ content: doc(p('first'), p('second')) });
-  // Every save takes over a second to arrive
+  // The server stores each save at once, but its answer takes 3 s to come back. (A closing page's
+  // own request is not held: it bypasses routes.)
   await page.route('**/api/documents', async (route) => {
-    await new Promise((done) => setTimeout(done, 1200));
-    return route.continue().catch(() => undefined);
+    const response = await route.fetch();
+    await new Promise((done) => setTimeout(done, 3000));
+    return route.fulfill({ response }).catch(() => undefined);
   });
   await ed.caretAfter('second');
   await ed.type(' saving');
-  await page.waitForTimeout(2300);
-  // The save is on its way: this edit goes with the page being left
+  await expect.poll(() => storedText(ed.slug), { timeout: 8000 }).toBe('first|second saving');
+  // The save is stored but unanswered: this edit goes with the page being left
   await ed.type(' plus more');
   await page.goto('about:blank');
   await expect.poll(() => storedText(ed.slug), { timeout: 8000 }).toBe('first|second saving plus more');
