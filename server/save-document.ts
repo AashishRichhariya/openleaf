@@ -8,6 +8,7 @@ import {
   DocumentContent,
   getBlocks,
   isContentEmpty,
+  isWithinLimits,
   SerializedBlock,
 } from '@/app/utils/storedDocument';
 import {
@@ -29,11 +30,19 @@ import { ContentTooLargeError, isOverMapLimit, readContent, writeContent } from 
 
 // The tabs whose saves the log can recognize: each tab's latest save, of the most recent tabs.
 // A tab's latest save is all that matters, as a save landing means its earlier ones did too.
-export const SAVE_LOG_TABS = 10;
+const SAVE_LOG_TABS = 10;
 
-/** The log after a save: one entry per tab, the latest last */
-export function withSave(log: SaveLogEntry[], entry: SaveLogEntry): SaveLogEntry[] {
-  return [...log.filter((saved) => saved.tab !== entry.tab), entry].slice(-SAVE_LOG_TABS);
+/** The log after a save: each tab's latest entry, of the most recent tabs, the latest last */
+function withSave(log: SaveLogEntry[], entry: SaveLogEntry): SaveLogEntry[] {
+  const seen = new Set<string>([entry.tab]);
+  const kept = [entry];
+  // From the end, as logs before 0.5.0 hold many entries per tab
+  for (let index = log.length - 1; index >= 0 && kept.length < SAVE_LOG_TABS; index -= 1) {
+    if (seen.has(log[index].tab)) continue;
+    seen.add(log[index].tab);
+    kept.push(log[index]);
+  }
+  return kept.reverse();
 }
 
 /**
@@ -171,7 +180,9 @@ export function saveDocument(request: SaveRequest): Promise<SaveResult> {
       if (basedOnCurrent) {
         const changed = applyChanges(storedContent, request.changes);
         // The base matches, but the blocks don't: only the whole document can tell
-        return changed ? { content: changed } : { status: 'resend' };
+        if (!changed) return { status: 'resend' };
+        // Limited as a whole document is, though each request only sends some of it
+        return isWithinLimits(changed) ? { content: changed } : { status: 'too-large' };
       }
       // Its positions are in a revision older than its own save, so the whole document is
       // needed, which is then taken as it is, as always

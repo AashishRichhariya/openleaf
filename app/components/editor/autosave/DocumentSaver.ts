@@ -136,6 +136,8 @@ export class DocumentSaver {
   private saveAgain = false;
   // The server asked for the whole document, or refused the changes
   private sendWhole = false;
+  // A save went without an answer, so it may have changed the revision
+  private unconfirmed = false;
   // Until the first edit, changes are Lexical normalizing what was loaded
   private edited = false;
   private leaving = false;
@@ -257,7 +259,9 @@ export class DocumentSaver {
 
     this.saving = true;
     this.saveAgain = false;
-    const change = this.sendWhole ? { content } : createChange(this.base, content);
+    const change = this.sendWhole || this.mustSendWhole(content)
+      ? { content }
+      : createChange(this.base, content);
     this.sendWhole = false;
     const body = JSON.stringify(this.createRequest(change));
     let result: SaveResult | null = null;
@@ -299,11 +303,13 @@ export class DocumentSaver {
     }
     switch (result?.status) {
     case 'saved':
+      this.unconfirmed = false;
       this.base = { revision: result.revision, local: content, remote: toStored(content) };
       this.confirmed();
       if (this.saveAgain) void this.save();
       break;
     case 'conflict':
+      this.unconfirmed = false;
       this.resolveConflict(result.revision, result.content);
       break;
     case 'read-only':
@@ -324,6 +330,7 @@ export class DocumentSaver {
       // Until a save is confirmed, the edit is also kept in the browser, in case the tab never
       // gets to save it: it may crash, or be closed while offline
       this.storeDraft(false, content);
+      this.unconfirmed = true;
       this.report({ problem: 'failed' });
       this.retryTimer = setTimeout(() => void this.save(), this.retryDelay);
       this.retryDelay = Math.min(this.retryDelay * 2, MAX_RETRY_DELAY);
@@ -424,6 +431,17 @@ export class DocumentSaver {
     };
   }
 
+  /**
+   * A save whose answer was lost may have changed the revision. Changes would then be answered
+   * with "resend", which a hidden page may not live to send. So it sends the whole document,
+   * taken as this tab's own save, if keepalive can carry it. (Saves go one at a time.)
+   */
+  private mustSendWhole(content: DocumentContent): boolean {
+    return document.visibilityState === 'hidden'
+      && this.unconfirmed
+      && this.fitsKeepalive(JSON.stringify(content));
+  }
+
   private fitsKeepalive(body: string): boolean {
     return new Blob([body]).size <= MAX_KEEPALIVE_BYTES;
   }
@@ -450,12 +468,14 @@ export class DocumentSaver {
     const content = this.read();
     if (!this.saving && isUnedited(content, this.base.local)) return;
 
-    // A save still on its way may change the revision before this arrives, and then only the whole
-    // document can be taken (as this tab's own save). Otherwise the smaller of the two
-    const change = this.saving ? { content } : createChange(this.base, content);
+    // A save on its way, or one whose answer was lost, may change the revision before this
+    // arrives. Then only the whole document is taken, as this tab's own save: changes would be
+    // answered with "resend" to a page that is gone. Otherwise the smaller of the two
+    const whole = this.saving || this.unconfirmed;
+    const change = whole ? { content } : createChange(this.base, content);
     const request = this.createRequest(change);
     let body = JSON.stringify(request);
-    if (this.saving && !this.fitsKeepalive(body)) {
+    if (whole && !this.fitsKeepalive(body)) {
       // Browsers refuse keepalive requests over 64 KB
       const changes = createChanges(this.base, content);
       if (changes) body = JSON.stringify({ ...request, content: undefined, changes });

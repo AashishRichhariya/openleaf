@@ -304,13 +304,15 @@ test('closing a tab with a large document sends only the changes', async ({ page
   await putRow({ slug, content: LARGE });
   // A closing page's request is not reported to Playwright, so the page notes what it sends
   await context.addInitScript(() => {
-    const send = window.fetch;
+    const send = window.fetch.bind(window);
     window.fetch = (input, init) => {
+      // Sent first: in WebKit, writing storage before a closing page's fetch stops the request
+      const sending = send(input, init);
       if (String(input).endsWith('/api/documents') && typeof init?.body === 'string') {
         const sent = JSON.parse(localStorage.getItem('e2e:sent') ?? '[]');
         localStorage.setItem('e2e:sent', JSON.stringify([...sent, init.body]));
       }
-      return send(input, init);
+      return sending;
     };
   });
   await page.goto('/robots.txt');
@@ -349,6 +351,35 @@ test('leaving during an unfinished save stores the last edit without reopening',
   await ed.type(' plus more');
   await page.goto('about:blank');
   await expect.poll(() => storedText(ed.slug), { timeout: 8000 }).toBe('first|second saving plus more');
+});
+
+test('closing a tab after a lost answer stores the last edit without reopening', async ({ page, context }) => {
+  const slug = newSlug();
+  await putRow({ slug, content: LARGE });
+  await page.goto('/robots.txt');
+  const opened = context.waitForEvent('page');
+  await page.evaluate((url) => void window.open(url, '_blank'), `/${slug}`);
+  const tab = new Editor(await opened);
+  tab.slug = slug;
+  await tab.ready();
+  let lost = 0;
+  await tab.page.route('**/api/documents', async (route) => {
+    if (lost) return route.continue();
+    lost += 1;
+    // The server gets the save and stores it, but the answer never arrives
+    await route.fetch();
+    return route.abort('connectionreset');
+  });
+  await tab.caretAfter('line 60');
+  await tab.type(' one');
+  await expect.poll(() => storedText(slug), { timeout: 8000 }).toContain('line 60 one');
+  // Before the retry, a further edit, and the tab is closed
+  await tab.type(' two');
+  const closed = tab.page.waitForEvent('close');
+  await tab.page.evaluate(() => void setTimeout(() => window.close(), 0));
+  await closed;
+  await expect.poll(() => storedText(slug), { timeout: 5000 })
+    .toBe(expectedLines((lines) => { lines[60] += ' one two'; }));
 });
 
 // Tabs opened before 0.5.0 keep saving --------------------------------------------------------------

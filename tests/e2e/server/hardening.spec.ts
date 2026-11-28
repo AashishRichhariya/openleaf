@@ -238,3 +238,17 @@ test('app: many valid ranges over a large document are applied quickly', async (
   expect(children[1].children[0].text).toBe('b1');
   expect(children[count - 2].children[0].text).toBe(`new ${count / 2 - 1}`);
 });
+
+test('app: changes that would grow a document past the node limit are refused as too large', async ({ page }) => {
+  const slug = newSlug();
+  const count = 99_990;
+  await putRow({ slug, content: doc(...Array.from({ length: count }, () => ({ type: 'p' }))) }, { compressed: true });
+  const before = await getRow(slug);
+  // Each request is within the limit, but the document it makes is not
+  const { result } = await postSave(page, {
+    slug, tab: 't', seq: 1, revision: before!.updated_at,
+    changes: { count, ranges: [range(count, 0, Array.from({ length: 20 }, () => block))] },
+  });
+  expect(result).toEqual({ status: 'too-large' });
+  expect(await getRow(slug)).toEqual(before);
+});

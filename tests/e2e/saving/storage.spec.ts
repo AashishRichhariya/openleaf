@@ -218,6 +218,10 @@ async function sendEverySave(page: Page, slug: string, revision: string) {
       slug, tab: 't', seq: 3, revision,
       patch: { start: 0, end: 0, count: 1, blocks: [p('overwritten')] },
     }),
+    await postSave(page, {
+      slug, tab: 't', seq: 4, revision,
+      changes: { count: 1, ranges: [{ start: 0, deleteCount: 1, blocks: [p('overwritten')] }] },
+    }),
   ];
   const old = legacySave(new URL(page.url()).origin, 'x'.repeat(42), [slug, doc(p('overwritten')), false, false]);
   const oldStatus = await page.evaluate(async ({ url, method, headers, body }) =>

@@ -66,6 +66,21 @@ test('an old log of 100 entries shrinks on the next save', async ({ page }) => {
     .toEqual([91, 92, 93, 94, 95, 96, 97, 98, 99].map((i) => tabHash(`old-${i % 30}`)));
 });
 
+test('an old log alternating between a few tabs keeps one entry per tab', async ({ page }) => {
+  const slug = newSlug();
+  const old = Array.from({ length: 100 }, (_, i) => ({
+    tab: tabHash(i % 2 ? 'old-b' : 'old-a'),
+    seq: i,
+    at: new Date(Date.UTC(2025, 4, 19, 9, 0, i)).toISOString(),
+  }));
+  await putRow({ slug, content: doc(p('old log')), save_log: old });
+  await saveAs(page, slug, 'new-tab', 1, 'new save');
+  const log = (await getRow(slug))!.save_log as Array<{ tab: string; seq: number }>;
+  expect(log.map((entry) => entry.tab)).toEqual(['old-a', 'old-b', 'new-tab'].map(tabHash));
+  // Each tab's latest save
+  expect(log.map((entry) => entry.seq)).toEqual([98, 99, 1]);
+});
+
 test('a late duplicate is still recognized after other tabs saved', async ({ page }) => {
   const slug = newSlug();
   const first = await saveAs(page, slug, 'tab-a', 1, 'a one');
@@ -173,5 +188,35 @@ test('a closed tab\'s edit that did arrive is recognized and not applied again',
   await reopened.page.waitForTimeout(3000);
   await expect(reopened.root).not.toContainText('end once');
   expect(await getRow(slug)).toEqual(before);
+  await expect(notice(reopened.page)).toHaveCount(0);
+});
+
+test('a closed tab\'s edit left in the browser is recovered after more than 10 other tabs saved', async ({ page }) => {
+  const slug = newSlug();
+  const base = doc(p('base'), p('middle'), p('end'));
+  await putRow({ slug, content: base });
+  const revision = (await getRow(slug))!.updated_at;
+  await page.goto('/robots.txt');
+  // What a tab closing offline leaves (unsavedEdits.ts), as its last request never arrived
+  const content = doc(p('base'), p('middle'), p('end from the closed tab'));
+  await page.evaluate(({ slug, revision, base, content }) => {
+    localStorage.setItem(`openleaf:unsaved:${slug}:closed-tab`, JSON.stringify({
+      tab: 'closed-tab', seq: 3, left: true, storedAt: Date.now(), revision,
+      localBase: base, remoteBase: base, content,
+    }));
+  }, { slug, revision, base, content });
+  for (let i = 0; i < 11; i += 1) {
+    const row = (await getRow(slug))!;
+    const { result } = await postSave(page, {
+      slug, tab: `other-${i}`, seq: 1, revision: row.updated_at,
+      content: doc(p(`base ${i}`), p('middle'), p('end')),
+    });
+    expect(result.status).toBe('saved');
+  }
+  expect((await getRow(slug))!.save_log).toHaveLength(10);
+  const reopened = new Editor(await page.context().newPage());
+  await reopened.open({ slug });
+  await expect.poll(() => storedText(slug), { timeout: 10_000 })
+    .toBe('base 10|middle|end from the closed tab');
   await expect(notice(reopened.page)).toHaveCount(0);
 });
