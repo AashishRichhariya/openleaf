@@ -2,9 +2,22 @@ import 'server-only';
 
 import { createHash } from 'node:crypto';
 
+import { applyRanges } from '@/app/utils/blockChanges';
 import { mergeBlocks } from '@/app/utils/mergeDocuments';
-import { DocumentContent, getBlocks, isContentEmpty } from '@/app/utils/storedDocument';
-import { Document, DocumentPatch, SaveLogEntry, SaveRequest, SaveResult } from '@/types';
+import {
+  DocumentContent,
+  getBlocks,
+  isContentEmpty,
+  SerializedBlock,
+} from '@/app/utils/storedDocument';
+import {
+  Document,
+  DocumentChanges,
+  DocumentPatch,
+  SaveLogEntry,
+  SaveRequest,
+  SaveResult,
+} from '@/types';
 
 import {
   createDocument,
@@ -94,6 +107,36 @@ async function save(
   throw new Error(`Document ${slug} kept changing while it was being saved`);
 }
 
+function withBlocks(
+  content: DocumentContent | null,
+  children: SerializedBlock[],
+  root: DocumentChanges['root'] = {},
+): DocumentContent {
+  return {
+    root: {
+      direction: null,
+      format: '',
+      indent: 0,
+      version: 1,
+      ...content?.root,
+      ...root,
+      type: 'root',
+      children,
+    },
+  };
+}
+
+/** The stored content with the changes, or null if they don't fit it */
+function applyChanges(
+  content: DocumentContent | null,
+  changes: DocumentChanges,
+): DocumentContent | null {
+  const blocks = getBlocks(content);
+  if (blocks.length !== changes.count) return null;
+  const children = applyRanges(blocks, changes.ranges);
+  return children && withBlocks(content, children, changes.root);
+}
+
 function applyPatch(content: DocumentContent | null, patch: DocumentPatch): DocumentContent | null {
   const blocks = getBlocks(content);
   if (blocks.length !== patch.count || patch.start + patch.end > blocks.length) return null;
@@ -102,17 +145,7 @@ function applyPatch(content: DocumentContent | null, patch: DocumentPatch): Docu
     ...patch.blocks,
     ...blocks.slice(blocks.length - patch.end),
   ];
-  return {
-    root: {
-      direction: null,
-      format: '',
-      indent: 0,
-      type: 'root',
-      version: 1,
-      ...content?.root,
-      children,
-    },
-  };
+  return withBlocks(content, children);
 }
 
 /**
@@ -132,12 +165,21 @@ export function saveDocument(request: SaveRequest): Promise<SaveResult> {
     }
 
     const basedOnCurrent = revision === current;
-    if (request.patch) {
+    // Or on this tab's previous save, whose response it hasn't seen yet
+    const basedOnOwnSave = !!stored && last?.tab === tabHash && last.at === stored.updated_at;
+    if (request.changes) {
+      if (basedOnCurrent) {
+        const changed = applyChanges(storedContent, request.changes);
+        // The base matches, but the blocks don't: only the whole document can tell
+        return changed ? { content: changed } : { status: 'resend' };
+      }
+      // Its positions are in a revision older than its own save, so the whole document is
+      // needed, which is then taken as it is, as always
+      if (basedOnOwnSave) return { status: 'resend' };
+    } else if (request.patch) {
       const patched = basedOnCurrent ? applyPatch(storedContent, request.patch) : null;
       if (patched) return { content: patched };
     } else if (request.content) {
-      // Or on this tab's previous save, whose response it hasn't seen yet
-      const basedOnOwnSave = !!stored && last?.tab === tabHash && last.at === stored.updated_at;
       if (basedOnCurrent || basedOnOwnSave) return { content: request.content };
     }
     return {

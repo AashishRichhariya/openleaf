@@ -6,7 +6,7 @@ import path from 'node:path';
 import { getRow, newSlug, putRow } from '../support/db';
 import { doc, p } from '../support/doc';
 import { ENV } from '../support/env';
-import { captureSave, legacySave, send } from '../support/requests';
+import { captureSave, legacySave, postSave, send } from '../support/requests';
 import { expect, test } from '../support/test';
 import { plainText } from '../support/tree';
 
@@ -107,4 +107,50 @@ test('no exposed server action can overwrite a locked document', { tag: '@B2' },
     for (const args of argumentLists) await send(page, legacySave(origin, id, args, ed.slug));
   }
   expect(await ed.row()).toEqual(before);
+});
+
+// Changes (0.5.0) are held to the same rules -------------------------------------------------------
+
+test('changes cannot lock a document, or change a locked one', { tag: '@B1' }, async ({ page }) => {
+  await page.goto('/robots.txt');
+  const open = newSlug();
+  const locked = newSlug();
+  await putRow({ slug: open, content: doc(p('one'), p('two')) });
+  await putRow({ slug: locked, content: doc(p('one'), p('two')), read_only: true });
+  for (const slug of [open, locked]) {
+    const before = (await getRow(slug))!;
+    const { result } = await postSave(page, {
+      slug, tab: 't', seq: 1, revision: before.updated_at, readOnly: true, read_only: true,
+      changes: {
+        count: 2,
+        root: { type: 'root', read_only: true },
+        ranges: [{ start: 1, deleteCount: 1, blocks: [p('changed')] }],
+      },
+    });
+    const after = (await getRow(slug))!;
+    expect(after.read_only).toBe(before.read_only);
+    if (before.read_only) {
+      expect(result).toEqual({ status: 'read-only' });
+      expect(after).toEqual(before);
+    } else {
+      expect(result.status).toBe('saved');
+      expect(plainText(after.content)).toBe('one|changed');
+    }
+  }
+});
+
+test('changes cannot make the root anything but a root', async ({ page }) => {
+  await page.goto('/robots.txt');
+  const slug = newSlug();
+  await putRow({ slug, content: doc(p('one'), p('two')) });
+  const before = (await getRow(slug))!;
+  const { result } = await postSave(page, {
+    slug, tab: 't', seq: 1, revision: before.updated_at,
+    changes: { count: 2, root: { type: 'paragraph' }, ranges: [{ start: 0, deleteCount: 1, blocks: [p('x')] }] },
+  });
+  expect(result.status).toBe('saved');
+  expect((await getRow(slug))!.content.root.type).toBe('root');
+  const response = await page.goto(`/${slug}`);
+  expect(response!.status()).toBe(200);
+  await expect(page.locator('.editor-input')).toContainText('x');
 });

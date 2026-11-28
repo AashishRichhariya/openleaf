@@ -1,5 +1,6 @@
 import { debounce } from 'lodash-es';
 
+import { getBlockRanges } from '@/app/utils/blockChanges';
 import { mergeBlocks } from '@/app/utils/mergeDocuments';
 import {
   DocumentContent,
@@ -9,7 +10,7 @@ import {
   toComparable,
   withoutTransientNodes,
 } from '@/app/utils/storedDocument';
-import { DocumentPatch, SaveLogEntry, SaveRequest, SaveResult } from '@/types';
+import { DocumentChanges, SaveLogEntry, SaveRequest, SaveResult } from '@/types';
 
 import { applyMerge } from './applyMerge';
 import { claimUnsavedEdits, clearUnsavedEdit, storeUnsavedEdit, UnsavedEdit } from './unsavedEdits';
@@ -96,25 +97,31 @@ function createTabId(): string {
   return `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
 }
 
-function createPatch(base: Base, content: DocumentContent): DocumentPatch | null {
-  const before = getBlocks(base.local);
-  const after = getBlocks(content);
-  // Positions must mean the same in the editor and in the database
-  if (before.length !== getBlocks(base.remote).length) return null;
+type Change = Pick<SaveRequest, 'content' | 'changes'>;
 
-  const from = before.map(toComparable);
-  const to = after.map(toComparable);
-  let start = 0;
-  while (start < from.length && start < to.length && from[start] === to[start]) start += 1;
-  let end = 0;
-  while (
-    end < from.length - start
-    && end < to.length - start
-    && from[from.length - 1 - end] === to[to.length - 1 - end]
-  ) {
-    end += 1;
-  }
-  return { start, end, count: from.length, blocks: after.slice(start, after.length - end) };
+/**
+ * What changed since the confirmed revision, as ranges of its blocks as stored. Compared with the
+ * stored form, so that what the server ends up with is what the whole document would give.
+ */
+function createChanges(base: Base, content: DocumentContent): DocumentChanges | null {
+  const stored = getBlocks(base.remote);
+  // Positions must mean the same in the editor and in the database
+  if (getBlocks(base.local).length !== stored.length) return null;
+  const { children: _children, ...root } = content.root;
+  return {
+    count: stored.length,
+    root: root as DocumentChanges['root'],
+    ranges: getBlockRanges(stored, getBlocks(content)),
+  };
+}
+
+/** The changes if they are smaller than the whole document, else the whole document */
+function createChange(base: Base, content: DocumentContent): Change {
+  const changes = createChanges(base, content);
+  if (!changes) return { content };
+  return JSON.stringify(changes).length < JSON.stringify(content).length
+    ? { changes }
+    : { content };
 }
 
 /**
@@ -127,6 +134,8 @@ export class DocumentSaver {
   private seq = 0;
   private saving = false;
   private saveAgain = false;
+  // The server asked for the whole document, or refused the changes
+  private sendWhole = false;
   // Until the first edit, changes are Lexical normalizing what was loaded
   private edited = false;
   private leaving = false;
@@ -248,7 +257,9 @@ export class DocumentSaver {
 
     this.saving = true;
     this.saveAgain = false;
-    const body = JSON.stringify(this.createRequest({ content }));
+    const change = this.sendWhole ? { content } : createChange(this.base, content);
+    this.sendWhole = false;
+    const body = JSON.stringify(this.createRequest(change));
     let result: SaveResult | null = null;
     try {
       const response = await fetch('/api/documents', {
@@ -267,7 +278,7 @@ export class DocumentSaver {
     // Leaving has sent its own request, and left a copy in storage
     if (this.disposed || this.leaving) return;
     try {
-      this.handleResult(result, content);
+      this.handleResult(result, content, !!change.changes);
     } catch (error) {
       // Such as content from another tab that this editor can't take in
       console.error('Could not handle the save:', error);
@@ -275,7 +286,17 @@ export class DocumentSaver {
     }
   }
 
-  private handleResult(result: SaveResult | null, content: DocumentContent): void {
+  private handleResult(
+    result: SaveResult | null,
+    content: DocumentContent,
+    sentChanges: boolean,
+  ): void {
+    // The changes didn't fit the stored revision, or were refused: the whole document, at once
+    if (sentChanges && (result?.status === 'resend' || result?.status === 'invalid')) {
+      this.sendWhole = true;
+      void this.save();
+      return;
+    }
     switch (result?.status) {
     case 'saved':
       this.base = { revision: result.revision, local: content, remote: toStored(content) };
@@ -392,7 +413,7 @@ export class DocumentSaver {
     applyMerge(this.editor, blocks);
   }
 
-  private createRequest(change: Pick<SaveRequest, 'content' | 'patch'>): SaveRequest {
+  private createRequest(change: Change): SaveRequest {
     this.seq += 1;
     return {
       slug: this.document.slug,
@@ -429,11 +450,8 @@ export class DocumentSaver {
     const content = this.read();
     if (!this.saving && isUnedited(content, this.base.local)) return;
 
-    let body = JSON.stringify(this.createRequest({ content }));
-    if (!this.fitsKeepalive(body)) {
-      const patch = createPatch(this.base, content);
-      if (patch) body = JSON.stringify({ ...JSON.parse(body), content: undefined, patch });
-    }
+    // The smaller of the two, as browsers refuse keepalive requests over 64 KB
+    const body = JSON.stringify(this.createRequest(createChange(this.base, content)));
 
     this.storeDraft(true, content);
     // The page is going away, so nothing can wait for the response
