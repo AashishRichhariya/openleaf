@@ -25,6 +25,18 @@ export const test = base.extend<Fixtures>({
   },
 
   context: async ({ context, external, problems }, provide) => {
+    // Scrolls happen at once instead of animating (the page sets scroll-behavior: smooth), as
+    // animations are disabled for screenshots: WebKit reports almost no position while it
+    // animates, so a capture could catch a smooth scroll halfway.
+    await context.addInitScript(() => {
+      const instant = () => {
+        const style = document.createElement('style');
+        style.textContent = 'html { scroll-behavior: auto !important; }';
+        document.documentElement.appendChild(style);
+      };
+      if (document.documentElement) instant();
+      else document.addEventListener('DOMContentLoaded', instant, { once: true });
+    });
     await context.route(
       (url) => !isLoopback(url.href),
       async (route) => {
