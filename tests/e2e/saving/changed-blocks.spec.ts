@@ -322,6 +322,22 @@ test('closing a tab with a large document sends only the changes', async ({ page
   expect(sent[0].size).toBeLessThan(1000);
 });
 
+test('leaving during an unfinished save stores the last edit without reopening', async ({ ed, page }) => {
+  await ed.open({ content: doc(p('first'), p('second')) });
+  // Every save takes over a second to arrive
+  await page.route('**/api/documents', async (route) => {
+    await new Promise((done) => setTimeout(done, 1200));
+    return route.continue().catch(() => undefined);
+  });
+  await ed.caretAfter('second');
+  await ed.type(' saving');
+  await page.waitForTimeout(2300);
+  // The save is on its way: this edit goes with the page being left
+  await ed.type(' plus more');
+  await page.goto('about:blank');
+  await expect.poll(() => storedText(ed.slug), { timeout: 8000 }).toBe('first|second saving plus more');
+});
+
 // Tabs opened before 0.5.0 keep saving --------------------------------------------------------------
 
 test('a whole document, as tabs opened on 0.4.x send it, is saved', async ({ page }) => {

@@ -450,8 +450,16 @@ export class DocumentSaver {
     const content = this.read();
     if (!this.saving && isUnedited(content, this.base.local)) return;
 
-    // The smaller of the two, as browsers refuse keepalive requests over 64 KB
-    const body = JSON.stringify(this.createRequest(createChange(this.base, content)));
+    // A save still on its way may change the revision before this arrives, and then only the whole
+    // document can be taken (as this tab's own save). Otherwise the smaller of the two
+    const change = this.saving ? { content } : createChange(this.base, content);
+    const request = this.createRequest(change);
+    let body = JSON.stringify(request);
+    if (this.saving && !this.fitsKeepalive(body)) {
+      // Browsers refuse keepalive requests over 64 KB
+      const changes = createChanges(this.base, content);
+      if (changes) body = JSON.stringify({ ...request, content: undefined, changes });
+    }
 
     this.storeDraft(true, content);
     // The page is going away, so nothing can wait for the response
