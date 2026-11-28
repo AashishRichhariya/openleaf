@@ -52,8 +52,8 @@ Docker results count.
 | Path | What it is for | What may change it |
 | --- | --- | --- |
 | `editor/` | Typing, formatting, markdown, lists, links, code, equations, tables, slash menu, clipboard, history, blocks | Any editor change: add tests with it |
-| `saving/` | Autosave, reload, two tabs, read-only documents, empty values | Changes to saving or the documents API |
-| `server/` | Forged requests (`security`) and crafted requests that must not crash or stall (`hardening`) | Server changes |
+| `saving/` | Autosave, reload, two tabs, read-only documents, empty values, the save log, how documents are stored (compressed since 0.5.0, and the formats before), saves that send only the changed blocks | Changes to saving or the documents API |
+| `server/` | Forged requests (`security`) and crafted requests that must not crash or stall (`hardening`), including crafted change sets | Server changes |
 | `app/` | URLs and slugs, the page around the editor, metadata, widths | Page and routing changes |
 | `compat/` | Documents and clipboard contents saved by 0.3.0, which must keep opening and pasting | Only new old-format cases |
 | `visual/` | Screenshots of the editor | Intended look changes |
@@ -100,7 +100,12 @@ something looks.
   `cell`, `tree`, `row`, `saved`, `doubleClick` (a double click with a person's timing, where the first click changes
   the layout)...
 - `doc` builders (`support/doc.ts`): `doc(p('text'), heading(2, 'Title'), table([['a', 'b']]))`.
-- `getRow`, `putRow`, `storedText` (`support/db.ts`): read and seed the local table.
+- `getRow`, `putRow`, `storedText` (`support/db.ts`): read and seed the local table. Since 0.5.0 content is stored
+  compressed, in `content_gz`; `getRow` decodes it into `content`, so rows read, compare and record the same in either
+  format. `getStoredItem` returns the row exactly as stored. `putRow` seeds the format of 0.3.0 to 0.4.1 (a `content`
+  map), or with `{ compressed: true }` the format of 0.5.0; `ed.open({ content, compressed: true })` does the same.
+- `postSave`, `tabHash` (`support/requests.ts`): send a save to the documents API as a tab does, and the id the save log
+  keeps of a tab.
 
 ```ts
 import { doc, p } from '../support/doc';
