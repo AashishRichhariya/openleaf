@@ -4,7 +4,8 @@ import { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import { DocumentSaver, SavedDocument, SaveProblem, SaveStatus } from '../autosave/DocumentSaver';
 
-// A failed save is not shown: it is retried, and the next save sends the whole document anyway.
+// A failed save is not shown: it is retried, and the next save carries every edit since the last
+// one the server confirmed.
 // Users never asked for the save, so a notice would only suggest that something is broken.
 // A document locked while open is not shown either: it stays editable and is never saved.
 const PROBLEMS: Partial<Record<SaveProblem, string>> = {

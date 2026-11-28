@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { readStoredContent } from '@/app/utils/storedDocument';
 import { getDocumentBySlug } from '@/server/document-service';
 import { isValidSlug } from '@/server/request-utils';
+import { readContent } from '@/server/stored-content';
 
 import EditorContainer from '../components/editor/EditorContainer';
 
@@ -30,7 +30,9 @@ export default async function EditorPage(props: EditorPageProps) {
   // A slug too long to be stored was never a document
   if (!isValidSlug(slug)) notFound();
   const document = await getDocumentBySlug(slug.toLowerCase());
-  const content = readStoredContent(document?.content);
+  // Content that can't be read fails the page, rather than showing a blank document a save could
+  // overwrite
+  const content = readContent(document);
   const pageContent = content?.root.children?.length ? JSON.stringify(content) : null;
 
   return (

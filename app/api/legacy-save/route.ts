@@ -18,6 +18,7 @@ import { saveFromOldTab } from '@/server/save-document';
  *   - server/decode-action-args.ts
  *   - saveFromOldTab in server/save-document.ts
  *   - the beforeFiles rewrite in next.config.ts
+ *   - isOverMapLimit and its helpers in server/stored-content.ts (0.3.0 tabs keep the old limits)
  * Keep the tests that send old-tab requests (legacySave in tests/e2e/support/requests.ts): they
  * prove such requests can't change documents, which must stay true once they are simply refused.
  */

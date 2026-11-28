@@ -1,7 +1,8 @@
 import 'server-only';
 
-// Server actions refused larger bodies as well
-export const MAX_BODY_BYTES = 2 * 1024 * 1024;
+// Enough for the whole of the largest document that can be stored compressed. Vercel accepts
+// 4.5 MB
+export const MAX_BODY_BYTES = 4 * 1024 * 1024;
 // DynamoDB's limit for a partition key
 const MAX_SLUG_BYTES = 2048;
 

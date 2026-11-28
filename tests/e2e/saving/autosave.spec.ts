@@ -263,3 +263,42 @@ for (const [name, [response, message]] of Object.entries(SHOWN)) {
     await expect(notice(page)).toContainText(message, { timeout: 8000 });
   });
 }
+
+// A failed save keeps the edit in the browser too, so that a crash can't lose it ------------------
+
+for (const failure of ['network error', 'server error', 'unreadable response'] as const) {
+  const name = `after a ${failure} and a crash, the edit comes back on reopening, quietly`;
+  test(name, async ({ ed, page, context }) => {
+    // A crash: the page goes without its pagehide and visibilitychange events, so it can't save
+    // or keep its edit on the way out
+    await context.addInitScript(() => {
+      for (const type of ['pagehide', 'visibilitychange', 'beforeunload', 'unload']) {
+        window.addEventListener(type, (event) => {
+          const crashing = (window as unknown as { crashing?: boolean }).crashing;
+          if (crashing) event.stopImmediatePropagation();
+        }, true);
+      }
+    });
+    await ed.open({ content: doc(p('kept'), p('crash')) });
+    let failed = 0;
+    await page.route('**/api/documents', (route) => {
+      if (route.request().method() !== 'POST') return route.fallback();
+      failed += 1;
+      if (failure === 'network error') return route.abort('connectionrefused');
+      if (failure === 'server error') return route.fulfill({ status: 500, body: 'failed' });
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{"status":' });
+    });
+    await ed.caretAfter('crash');
+    await ed.type(' survives');
+    await expect.poll(() => failed, { timeout: 8000 }).toBeGreaterThanOrEqual(1);
+    await page.evaluate(() => { (window as unknown as { crashing?: boolean }).crashing = true; });
+    await page.close();
+    expect(await storedText(ed.slug)).toBe('kept|crash');
+
+    const reopened = new Editor(await context.newPage());
+    await reopened.open({ slug: ed.slug });
+    await expect(reopened.root).toContainText('crash survives');
+    await expect.poll(() => storedText(ed.slug), { timeout: 8000 }).toBe('kept|crash survives');
+    await expect(notice(reopened.page)).toHaveCount(0);
+  });
+}

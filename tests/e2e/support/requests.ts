@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import { Page } from '@playwright/test';
 
 export interface CapturedSave {
@@ -56,4 +58,28 @@ export function legacySave(
     },
     body: JSON.stringify(args),
   };
+}
+
+/** Sends a save to the documents API from the page, as a tab does. Returns the HTTP status and the answer. */
+export function postSave(page: Page, body: unknown): Promise<{ status: number; result: any }> {
+  return page.evaluate(async (sent) => {
+    const response = await fetch('/api/documents', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: typeof sent === 'string' ? sent : JSON.stringify(sent),
+    });
+    const text = await response.text();
+    let result: unknown = text;
+    try {
+      result = JSON.parse(text);
+    } catch {
+      // Not JSON: kept as text
+    }
+    return { status: response.status, result };
+  }, body);
+}
+
+/** The id the server's save log keeps of a tab. */
+export function tabHash(tab: string): string {
+  return createHash('sha256').update(tab).digest('hex').slice(0, 32);
 }
