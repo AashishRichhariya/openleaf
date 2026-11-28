@@ -185,7 +185,9 @@ scenario('equation: Enter ignores two selected', async (ed) => {
 scenario('equation: editing one closes the other', async (ed) => {
   await first(ed).dblclick();
   await ed.settle();
-  await ed.root.locator('.equation-wrapper').nth(1).dblclick();
+  // The first press closes the other editor, which moves this equation left: the second press
+  // lands where it was, as a person's would.
+  await ed.doubleClick(ed.root.locator('.equation-wrapper').nth(1));
 }, { content: pair, persist: false });
 
 scenario('equation: rendering of common constructs', async () => {}, {
