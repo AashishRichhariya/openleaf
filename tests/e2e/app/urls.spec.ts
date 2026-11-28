@@ -18,7 +18,7 @@ test('app: / gives a different slug each time', async ({ request }) => {
   const seen = new Set<string>();
   for (let i = 0; i < 6; i += 1) {
     const response = await request.get('/', { maxRedirects: 0 });
-    expect(response.status()).toBe(308);
+    expect(response.status()).toBe(307);
     seen.add(response.headers().location);
   }
   expect(seen.size).toBeGreaterThan(4);
