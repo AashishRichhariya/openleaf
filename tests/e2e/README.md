@@ -65,6 +65,8 @@ Docker results count.
 | `perf.mjs` | Typing latency and page load against a reference build | Perf method changes |
 
 Each area file holds `scenario()`s, which record behavior, and plain `test()`s, which state rules with `expect`.
+The test browser scrolls at once instead of smoothly, as animations are off for screenshots, so captures never catch a
+scroll halfway. Firefox's system font fallback is synchronous, for the same reason.
 Steps that need platform-specific editing keys use `support/keys.ts` (delete a word, go to the line start...).
 
 A scenario performs a user's steps, then records everything observable: the text, focus, caret, scroll, every element's
@@ -95,7 +97,8 @@ something looks.
 
 **Helpers:**
 - `ed` (`support/editor.ts`): `open`, `type`, `press`, `select`, `caretAfter`, `paste`, `copy`, `pick` (slash menu),
-  `cell`, `tree`, `row`, `saved`...
+  `cell`, `tree`, `row`, `saved`, `doubleClick` (a double click with a person's timing, where the first click changes
+  the layout)...
 - `doc` builders (`support/doc.ts`): `doc(p('text'), heading(2, 'Title'), table([['a', 'b']]))`.
 - `getRow`, `putRow`, `storedText` (`support/db.ts`): read and seed the local table.
 

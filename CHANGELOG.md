@@ -2,6 +2,13 @@
 
 All notable changes to openleaf will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Deleting a selected equation with Backspace or Delete no longer deletes the character next to it too, and undo brings the equation back
+- Inserting an equation near the bottom of a long page leaves the page at the same place every time
+
 ## [0.4.1] - 2026-11-24
 
 ### Changed
