@@ -164,6 +164,37 @@ test('a document of 1.5 MB, over the old limit of 400 KB, saves and reloads', as
   await expect(notice(page)).toHaveCount(0);
 });
 
+// Until 0.4.1 DynamoDB refused content nested deeper than 32 levels of maps, so the deepest lists
+// were never saved. Compressed, they are: the owner chose to lift that limit for 0.5.0.
+test('a list indented as deep as the editor allows saves and reloads', async ({ ed, page }) => {
+  await ed.open();
+  await ed.type('- one');
+  await ed.enter();
+  await ed.press('Tab', 10);
+  await ed.type('deep');
+  await ed.saved();
+  const shown = await ed.tree();
+  expect(shown).toContain('indent=6');
+  await expectCompressed(ed.slug);
+  await ed.reload();
+  expect(await ed.tree()).toBe(shown);
+  await expect(notice(page)).toHaveCount(0);
+});
+
+test('a tab still on 0.3.0 keeps the old limits: nesting past 31 levels is refused', async ({ page }) => {
+  await page.goto('/robots.txt');
+  const slug = newSlug();
+  await putRow({ slug, content: doc(p('precious')) });
+  const before = await getStoredItem(slug);
+  let deep: object = text('deep');
+  for (let level = 0; level < 20; level += 1) deep = { ...p(), children: [deep] };
+  const request = legacySave(new URL(page.url()).origin, 'x'.repeat(42), [slug, doc(deep), false, false]);
+  const status = await page.evaluate(async ({ url, method, headers, body }) =>
+    (await fetch(url, { method, headers, body })).status, request);
+  expect(status).toBe(413);
+  expect(await getStoredItem(slug)).toEqual(before);
+});
+
 test('content too large even compressed is refused as too large', async ({ page }) => {
   await page.goto('/robots.txt');
   const slug = newSlug();

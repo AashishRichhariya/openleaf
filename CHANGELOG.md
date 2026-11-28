@@ -11,6 +11,7 @@ All notable changes to openleaf will be documented in this file.
 - Each save sends only the blocks that changed since the last save, instead of the whole document, so saving a large document costs about as much as saving a small one
 - Documents are stored compressed, about 7 times smaller. Documents over the old limit of 400 KB, about 1,000 to 2,000 lines, can be saved again: the limit is now 400 KB compressed. A document is converted the next time it is saved; nothing has to be run
 - A save that fails also keeps the edit in the browser until a save succeeds, as hiding the tab already did, so a crash or a tab closed while offline loses nothing. Failed saves are still not shown
+- Lists indented as deep as the editor allows are saved. Until now they were refused as too deeply nested, a limit of the old storage format. Tabs still running 0.3.0 keep the old limits
 - Each document's save log keeps one entry per tab, for the 10 most recent tabs, instead of the last 100 saves
 - This version can't be rolled back to 0.4.1, which can't read compressed documents: fix forward
 

@@ -23,15 +23,15 @@ import {
 /** Beyond this, stored bytes are not decompressed: no save writes more */
 export const MAX_CONTENT_BYTES = 5 * 1024 * 1024;
 /**
- * The deepest content DynamoDB stores as a map, which it was until 0.4.1. Compressed content has
- * no such limit, but deeper content is refused as before, so that nothing changes for users.
+ * The deepest content DynamoDB stores as a map, as it was until 0.4.1. Compressed content has no
+ * such limit: only tabs still on 0.3.0 keep it (isOverMapLimit).
  */
-const MAX_STORED_DEPTH = 31;
+const MAX_MAP_DEPTH = 31;
 
 /** Stored content that can't be read. It is never treated as empty, so never overwritten */
 export class UnreadableContentError extends Error {}
 
-/** Content that can't be stored: too large, or nested too deeply */
+/** Content that can't be stored: too large */
 export class ContentTooLargeError extends Error {}
 
 /** The attributes of a document's item that hold its content */
@@ -128,11 +128,12 @@ function storedSize(value: unknown): number {
 }
 
 /**
- * Whether content is larger than DynamoDB could store as a map, as 0.3.0 to 0.4.1 stored it.
- * Tabs still running 0.3.0 keep that limit (see saveFromOldTab).
+ * Whether content is larger, or nested deeper, than DynamoDB could store as a map, as 0.3.0 to
+ * 0.4.1 stored it. Tabs still running 0.3.0 keep those limits (see saveFromOldTab).
  */
 export function isOverMapLimit(content: DocumentContent): boolean {
-  return storedSize(content) + OTHER_ATTRIBUTES_BYTES > MAX_ITEM_BYTES;
+  return depthOf(content) > MAX_MAP_DEPTH
+    || storedSize(content) + OTHER_ATTRIBUTES_BYTES > MAX_ITEM_BYTES;
 }
 
 /**
@@ -145,7 +146,6 @@ export function isOverMapLimit(content: DocumentContent): boolean {
 export function writeContent(content: DocumentContent | null): ContentWrite {
   const stored = content && withoutTransientNodes(content);
   if (!stored || isContentEmpty(stored)) return { content: null };
-  if (depthOf(stored) > MAX_STORED_DEPTH) throw new ContentTooLargeError('content nests too deeply');
 
   const json = JSON.stringify(stored);
   if (Buffer.byteLength(json) > MAX_CONTENT_BYTES) throw new ContentTooLargeError('content too large');
