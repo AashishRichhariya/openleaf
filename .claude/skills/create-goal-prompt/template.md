@@ -1,13 +1,29 @@
 # <Project>: <task title>
 
 <!-- One or two lines: when to paste this, from which checkout, and what must be true first (for example "after PR #N is merged"). -->
-Paste the block below into a fresh chat, opened in the main checkout. Everything after the block is the brief that the
-goal tells the agent to read. Problem, decisions and plan: `README.md` next to this file.
+Paste the block below into a fresh chat, opened in the main checkout. It is one `/goal` line, under the 4,000-character
+limit of `/goal`. Everything after it is the brief: its section 0 holds the hard rules and DONE items. Problem, decisions
+and plan: `README.md` next to this file.
 
 ```text
-/goal <One sentence: the outcome, and how it is proven.>
+/goal All <N> DONE items in section 0 of "<absolute path to this goal_prompt.md>" are proven with the evidence that section requires, printed in this conversation as a final numbered checklist (item, status, evidence) and saved under "<[META]/task>/evidence/"; or BLOCKED was declared exactly as section 0 allows. FIRST read that whole file and follow it: its section 0 hard rules bind you and every subagent at all times, and its section <n+2> (preconditions, keeper watch, progress file) comes before any other work. In short: <the outcome in one or two sentences>. <The two or three most important prohibitions, for example: never merge, never touch production, never weaken a test or re-record a baseline.> Usage limits never end this job: the keeper resumes it.
+```
 
-FIRST read all of "<absolute path to this goal_prompt.md>" and follow its brief. BEFORE any other work, do its "Keep going" section: check the preconditions, register this session with the keeper, and create the progress file. Usage limits never end this job: the keeper resumes it after each reset. Use subagents where useful; you own every commit and check their results yourself.
+<!-- The block above is ONE line and stays under 4,000 characters. It only points here: every rule, DONE item and
+detail lives below. Measure it as SKILL.md step 6 says. -->
+
+---
+
+# Brief
+
+## 0. Rules and DONE items
+
+The `/goal` line above points here. Everything in this section applies at all times, to you and every subagent.
+
+Read this whole file and follow its brief. BEFORE any other work, do section <n+2> ("Keep going"): check the
+preconditions, register this session with the keeper, and create the progress file. Usage limits never end this job:
+the keeper resumes it after each reset. Use subagents where useful; you own every commit and check their results
+yourself.
 
 HARD RULES, for you and every subagent:
 - <Production and data safety: what must never be contacted or written. Env files are never printed, copied or mounted.>
@@ -17,20 +33,21 @@ HARD RULES, for you and every subagent:
 - Nothing committed may read from or depend on [META]. Never commit anything in [META] or any env file. Stage files by explicit path.
 
 DONE only when ALL are true, with evidence printed in this conversation (commands, exit codes, counts) and saved under "<[META]/task>/evidence/":
-1. Preconditions hold (Keep going section), the keeper is watching this session, and progress.md exists.
+1. Preconditions hold (section <n+2>), the keeper is watching this session, and progress.md exists.
 2. Starting point: <the checks that prove the current state before any change, for example the full suite green>.
-<3 to N-4. One checkable item each, in the order of work. Each says what is proven and how.>
+<3 to N-4. One checkable line each, in the order of work. Point to the brief section for details ("section 4 holds") instead of restating it.>
 N-3. The full test suite passes locally and in CI, and new behavior has new tests as CLAUDE.md requires.
 N-2. A proof video made with the /proof-video skill. Print its path and the skill's checks: ffprobe, the transcript match, and a frame-by-narration review.
 N-1. "<[META]/task>/REPORT.md" covers what changed, evidence, known limits, the owner's steps, and commands.
 N. Only after 1 to N-1: progress.md says STATUS: DONE, the keeper no longer watches this session, and keeper status proves it.
 
-Usage limits, expired sessions, errors and long runtime are never reasons to finish: the keeper resumes you, so keep progress.md current and continue. Only if a decision or access truly needs me: finish all other work, revert any local setup, set STATUS: BLOCKED in progress.md, unwatch, print "BLOCKED" with evidence and the exact question or command for me, and stop. Never present that as done.
-```
+Usage limits, errors and long runtime never end this job: keep progress.md current and continue. Only if a decision or
+access truly needs me (for example a precondition fails, access is refused, or the work can only be finished by
+breaking a hard rule): finish all other work, revert local setup, set STATUS: BLOCKED, unwatch, print "BLOCKED" with
+evidence and the exact question for me, and stop. Never present that as done.
 
----
-
-# Brief
+**Before you stop** (DONE or BLOCKED), print the full checklist: items 1 to N, each with its status and evidence (or
+the evidence file's path). The goal's stop-check reads the conversation, not this file.
 
 ## 1. Context
 
