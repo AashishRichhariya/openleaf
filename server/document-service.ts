@@ -6,11 +6,11 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
-import { isContentEmpty } from '@/app/utils/storedDocument';
 import { Document } from '@/types';
 
 import { docClient, DOCUMENTS_TABLE_NAME } from './aws-config';
 import { generateRandomSlug } from './document-utils';
+import { ContentWrite, isStoredContentEmpty } from './stored-content';
 
 /** The document was changed, created or locked since it was read */
 export class StaleDocumentError extends Error {}
@@ -22,9 +22,12 @@ function rethrow(error: unknown, action: string): never {
 }
 
 /**
- * Create a document. Never overwrites one
+ * Create a document. Never overwrites one. Its content is written as given, so it comes from
+ * writeContent
  */
-export async function createDocument(document: Document): Promise<void> {
+export async function createDocument(
+  document: Omit<Document, 'content' | 'content_gz'> & ContentWrite,
+): Promise<void> {
   try {
     await docClient.send(new PutCommand({
       TableName: DOCUMENTS_TABLE_NAME,
@@ -37,32 +40,37 @@ export async function createDocument(document: Document): Promise<void> {
 }
 
 /**
- * Update a document's content, if it is unlocked and still as it was read
+ * Update a document's content, if it is unlocked and still as it was read. The content is
+ * written in one format and the other one removed
  */
 export async function updateDocumentContent(
   previous: Document,
-  updates: Required<Pick<Document, 'content' | 'updated_at' | 'save_log'>>,
+  updates: Required<Pick<Document, 'updated_at' | 'save_log'>> & { content: ContentWrite },
 ): Promise<void> {
   const unchanged = previous.updated_at
     ? '#updatedAt = :previous'
     : '(attribute_not_exists(#updatedAt) OR attribute_type(#updatedAt, :nullType))';
+  const compressed = 'content_gz' in updates.content;
 
   try {
     await docClient.send(new UpdateCommand({
       TableName: DOCUMENTS_TABLE_NAME,
       Key: { slug: previous.slug, version: previous.version },
-      UpdateExpression: 'SET #content = :content, #updatedAt = :updatedAt, #log = :log',
+      UpdateExpression: compressed
+        ? 'SET #gz = :content, #updatedAt = :updatedAt, #log = :log REMOVE #content'
+        : 'SET #content = :content, #updatedAt = :updatedAt, #log = :log REMOVE #gz',
       ConditionExpression:
         `attribute_exists(slug) AND ${unchanged} AND `
         + '(attribute_not_exists(#readOnly) OR #readOnly <> :locked)',
       ExpressionAttributeNames: {
         '#content': 'content',
+        '#gz': 'content_gz',
         '#updatedAt': 'updated_at',
         '#log': 'save_log',
         '#readOnly': 'read_only',
       },
       ExpressionAttributeValues: {
-        ':content': updates.content,
+        ':content': 'content_gz' in updates.content ? updates.content.content_gz : null,
         ':updatedAt': updates.updated_at,
         ':log': updates.save_log,
         ':locked': true,
@@ -111,8 +119,8 @@ async function isSlugDocumentEmpty(slug: string): Promise<boolean> {
     // Picking a random name for a new document needs no consistent read, which costs double
     const document = await getDocumentBySlug(slug, { consistent: false });
 
-    // Return true if document is null or content is empty
-    return !document || isContentEmpty(document.content);
+    // Return true if document is null or content is empty. Content that can't be read isn't
+    return !document || isStoredContentEmpty(document);
   } catch (error) {
     console.error(`Error checking if slug document is empty: ${error}`);
     return true; // Consider non-existent or error as empty

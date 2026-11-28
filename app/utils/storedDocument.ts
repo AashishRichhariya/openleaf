@@ -34,7 +34,7 @@ const BLOCK_TYPES = new Set([
   'code', 'paragraph', 'heading', 'quote', 'list', 'table', 'horizontalrule',
 ]);
 
-// Far beyond what DynamoDB stores: 400 KB per document, 32 levels of nesting
+// Far beyond what a document can store: 400 KB compressed, 31 levels of nesting
 const MAX_NODES = 100_000;
 const MAX_DEPTH = 100;
 

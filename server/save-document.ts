@@ -3,13 +3,7 @@ import 'server-only';
 import { createHash } from 'node:crypto';
 
 import { mergeBlocks } from '@/app/utils/mergeDocuments';
-import {
-  DocumentContent,
-  getBlocks,
-  isContentEmpty,
-  readStoredContent,
-  withoutTransientNodes,
-} from '@/app/utils/storedDocument';
+import { DocumentContent, getBlocks, isContentEmpty } from '@/app/utils/storedDocument';
 import { Document, DocumentPatch, SaveLogEntry, SaveRequest, SaveResult } from '@/types';
 
 import {
@@ -18,6 +12,7 @@ import {
   StaleDocumentError,
   updateDocumentContent,
 } from './document-service';
+import { ContentTooLargeError, readContent, writeContent } from './stored-content';
 
 // The tabs whose saves the log can recognize: each tab's latest save, of the most recent tabs.
 // A tab's latest save is all that matters, as a save landing means its earlier ones did too.
@@ -47,14 +42,15 @@ async function save(
   slug: string,
   tab: string,
   seq: number,
-  decide: (stored: Document | null) => Decision,
+  decide: (stored: Document | null, content: DocumentContent | null) => Decision,
 ): Promise<SaveResult> {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
     const stored = await getDocumentBySlug(slug);
     // Up to 0.3.0 anyone could store any value here, and the page treats every truthy one as locked
     if (stored?.read_only) return { status: 'read-only' };
 
-    const decision = decide(stored);
+    // Stored content that can't be read throws here, so that no save overwrites it
+    const decision = decide(stored, readContent(stored));
     if ('status' in decision) return decision;
 
     // Strictly increasing, as it identifies the revision
@@ -63,18 +59,18 @@ async function save(
     const entry: SaveLogEntry = { tab, seq, at: now };
 
     try {
-      const content = withoutTransientNodes(decision.content);
-      const processedContent = isContentEmpty(content) ? null : content;
+      // Compressed, and checked to read back, before anything is written
+      const content = writeContent(decision.content);
       if (stored) {
         await updateDocumentContent(stored, {
-          content: processedContent,
+          content,
           updated_at: now,
           save_log: withSave(stored.save_log ?? [], entry),
         });
       } else {
         await createDocument({
           slug,
-          content: processedContent,
+          ...content,
           read_only: false,
           version: 1, // Default version
           created_at: now,
@@ -85,8 +81,9 @@ async function save(
       return { status: 'saved', revision: now };
     } catch (error) {
       if (error instanceof StaleDocumentError) continue;
+      if (error instanceof ContentTooLargeError) return { status: 'too-large' };
       const { name, message } = error as Error;
-      // DynamoDB's limits of 400 KB and 32 levels of nesting, and nesting too deep to marshal
+      // DynamoDB's limit of 400 KB per item, and nesting too deep to marshal
       const overLimit = name === 'ValidationException' && /size|nest/i.test(message);
       if (overLimit || error instanceof RangeError) {
         return { status: 'too-large' };
@@ -97,8 +94,7 @@ async function save(
   throw new Error(`Document ${slug} kept changing while it was being saved`);
 }
 
-function applyPatch(stored: Document | null, patch: DocumentPatch): DocumentContent | null {
-  const content = readStoredContent(stored?.content);
+function applyPatch(content: DocumentContent | null, patch: DocumentPatch): DocumentContent | null {
   const blocks = getBlocks(content);
   if (blocks.length !== patch.count || patch.start + patch.end > blocks.length) return null;
   const children = [
@@ -126,7 +122,7 @@ export function saveDocument(request: SaveRequest): Promise<SaveResult> {
   const { tab, seq, revision } = request;
 
   const tabHash = hashTabId(tab);
-  return save(request.slug.toLowerCase(), tabHash, seq, (stored) => {
+  return save(request.slug.toLowerCase(), tabHash, seq, (stored, storedContent) => {
     const current = stored?.updated_at ?? null;
     const log = stored?.save_log ?? [];
     const last = log.at(-1);
@@ -137,7 +133,7 @@ export function saveDocument(request: SaveRequest): Promise<SaveResult> {
 
     const basedOnCurrent = revision === current;
     if (request.patch) {
-      const patched = basedOnCurrent ? applyPatch(stored, request.patch) : null;
+      const patched = basedOnCurrent ? applyPatch(storedContent, request.patch) : null;
       if (patched) return { content: patched };
     } else if (request.content) {
       // Or on this tab's previous save, whose response it hasn't seen yet
@@ -147,7 +143,7 @@ export function saveDocument(request: SaveRequest): Promise<SaveResult> {
     return {
       status: 'conflict',
       revision: current,
-      content: readStoredContent(stored?.content),
+      content: storedContent,
     };
   });
 }
@@ -162,8 +158,7 @@ export function saveFromOldTab(
   content: DocumentContent,
   claimsNewDocument: boolean,
 ): Promise<SaveResult> {
-  return save(slug.toLowerCase(), 'old-tab', 0, (stored) => {
-    const existing = readStoredContent(stored?.content);
+  return save(slug.toLowerCase(), 'old-tab', 0, (_stored, existing) => {
     if (!claimsNewDocument || !existing || isContentEmpty(existing)) return { content };
 
     const local = getBlocks(content);

@@ -11,6 +11,8 @@ interface OpenOptions {
   content?: object | null;
   row?: Partial<Row>;
   slug?: string;
+  /** Seeds the content compressed, as 0.5.0 stores it, instead of as 0.4.1 did */
+  compressed?: boolean;
 }
 
 /** Drives the editor as a user does, and reads back what it holds. */
@@ -24,10 +26,10 @@ export class Editor {
     this.menu = page.locator('.component-picker-menu');
   }
 
-  async open({ content, row, slug = newSlug() }: OpenOptions = {}): Promise<void> {
+  async open({ content, row, slug = newSlug(), compressed }: OpenOptions = {}): Promise<void> {
     this.slug = slug;
     if (content !== undefined || row) {
-      await putRow({ slug: slug.toLowerCase(), content, ...row });
+      await putRow({ slug: slug.toLowerCase(), content, ...row }, { compressed });
     }
     await this.page.goto(`/${slug}`);
     await this.ready();
