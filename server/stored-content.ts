@@ -97,6 +97,44 @@ function depthOf(value: unknown): number {
   return deepest;
 }
 
+// DynamoDB's limit for an item, which held the content map until 0.4.1
+const MAX_ITEM_BYTES = 400 * 1024;
+// Room for an item's other attributes: slug, dates, flags and the save log
+const OTHER_ATTRIBUTES_BYTES = 2048;
+
+/** Bytes DynamoDB counts for a value, by its documented rules */
+function storedSize(value: unknown): number {
+  let size = 0;
+  const pending: unknown[] = [value];
+  while (pending.length) {
+    const node = pending.pop();
+    if (typeof node === 'string') size += Buffer.byteLength(node);
+    else if (typeof node === 'number') size += Math.ceil(String(Math.abs(node)).replace(/\D/g, '').length / 2) + 1;
+    else if (Array.isArray(node)) {
+      size += 3 + node.length;
+      for (const child of node) pending.push(child);
+    } else if (node && typeof node === 'object') {
+      const entries = Object.entries(node);
+      size += 3 + entries.length;
+      for (const [key, child] of entries) {
+        size += Buffer.byteLength(key);
+        pending.push(child);
+      }
+    } else {
+      size += 1;
+    }
+  }
+  return size;
+}
+
+/**
+ * Whether content is larger than DynamoDB could store as a map, as 0.3.0 to 0.4.1 stored it.
+ * Tabs still running 0.3.0 keep that limit (see saveFromOldTab).
+ */
+export function isOverMapLimit(content: DocumentContent): boolean {
+  return storedSize(content) + OTHER_ATTRIBUTES_BYTES > MAX_ITEM_BYTES;
+}
+
 /**
  * The attributes to write for content. Checks its own output: the compressed bytes are
  * decompressed and compared with the original before anything is written.

@@ -25,7 +25,7 @@ import {
   StaleDocumentError,
   updateDocumentContent,
 } from './document-service';
-import { ContentTooLargeError, readContent, writeContent } from './stored-content';
+import { ContentTooLargeError, isOverMapLimit, readContent, writeContent } from './stored-content';
 
 // The tabs whose saves the log can recognize: each tab's latest save, of the most recent tabs.
 // A tab's latest save is all that matters, as a save landing means its earlier ones did too.
@@ -201,18 +201,19 @@ export function saveFromOldTab(
   claimsNewDocument: boolean,
 ): Promise<SaveResult> {
   return save(slug.toLowerCase(), 'old-tab', 0, (_stored, existing) => {
+    // These tabs could never store more than DynamoDB held as a map, and still can't
+    if (isOverMapLimit(content)) return { status: 'too-large' };
     if (!claimsNewDocument || !existing || isContentEmpty(existing)) return { content };
 
     const local = getBlocks(content);
     const empty = getBlocks(null);
     const { blocks } = mergeBlocks(empty, local, empty, getBlocks(existing));
-    return {
-      content: {
-        root: {
-          ...existing.root,
-          children: blocks.map((block) => ('keep' in block ? local[block.keep] : block.insert)),
-        },
+    const merged = {
+      root: {
+        ...existing.root,
+        children: blocks.map((block) => ('keep' in block ? local[block.keep] : block.insert)),
       },
     };
+    return isOverMapLimit(merged) ? { status: 'too-large' } : { content: merged };
   });
 }
