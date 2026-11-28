@@ -302,20 +302,21 @@ test('two tabs changing the same block keep both, with the notice', async ({ ed 
 test('closing a tab with a large document sends only the changes', async ({ page, context }) => {
   const slug = newSlug();
   await putRow({ slug, content: LARGE });
-  // A closing page's request is not reported to Playwright, so the page notes what it sends
+  // A closing page's request is not reported to Playwright, so the page hands what it sends to the
+  // page that opened it. Not through storage: in WebKit, a closing page's storage writes can be lost,
+  // and one made before its fetch stops the request
   await context.addInitScript(() => {
     const send = window.fetch.bind(window);
     window.fetch = (input, init) => {
-      // Sent first: in WebKit, writing storage before a closing page's fetch stops the request
-      const sending = send(input, init);
+      const opener = window.opener as { sent?: string[] } | null;
       if (String(input).endsWith('/api/documents') && typeof init?.body === 'string') {
-        const sent = JSON.parse(localStorage.getItem('e2e:sent') ?? '[]');
-        localStorage.setItem('e2e:sent', JSON.stringify([...sent, init.body]));
+        opener?.sent?.push(init.body);
       }
-      return sending;
+      return send(input, init);
     };
   });
   await page.goto('/robots.txt');
+  await page.evaluate(() => { (window as unknown as { sent: string[] }).sent = []; });
   const opened = context.waitForEvent('page');
   await page.evaluate((url) => void window.open(url, '_blank'), `/${slug}`);
   const tab = new Editor(await opened);
@@ -329,12 +330,16 @@ test('closing a tab with a large document sends only the changes', async ({ page
   await closed;
   await expect.poll(() => storedText(slug), { timeout: 5000 })
     .toBe(expectedLines((lines) => { lines[150] += ' last words'; }));
-  const bodies: string[] = await page.evaluate(() => JSON.parse(localStorage.getItem('e2e:sent') ?? '[]'));
+  const bodies = await page.evaluate(() => (window as unknown as { sent: string[] }).sent);
   const sent = bodies.map((body) => ({ body: JSON.parse(body), size: Buffer.byteLength(body) }));
-  expect(sent).toHaveLength(1);
-  expect(sent[0].body.changes.ranges).toHaveLength(1);
-  // Well under the 64 KB a closing page may send
-  expect(sent[0].size).toBeLessThan(1000);
+  // One request, or two where hiding the tab saves before pagehide does (WebKit)
+  expect(sent.length).toBeGreaterThanOrEqual(1);
+  expect(sent.length).toBeLessThanOrEqual(2);
+  for (const save of sent) {
+    expect(save.body.changes.ranges).toHaveLength(1);
+    // Well under the 64 KB a closing page may send
+    expect(save.size).toBeLessThan(1000);
+  }
 });
 
 test('leaving during an unfinished save stores the last edit without reopening', async ({ ed, page }) => {
@@ -355,7 +360,10 @@ test('leaving during an unfinished save stores the last edit without reopening',
 
 test('closing a tab after a lost answer stores the last edit without reopening', async ({ page, context }) => {
   const slug = newSlug();
-  await putRow({ slug, content: LARGE });
+  // Small enough for the whole document to go with the closing page (keepalive carries 64 KB), as
+  // in 0.4.1. A larger one is kept in the browser for the next tab, as in 0.4.1
+  const lines = Array.from({ length: 100 }, (_, i) => `line ${i}`);
+  await putRow({ slug, content: doc(...lines.map((line) => p(line))) });
   await page.goto('/robots.txt');
   const opened = context.waitForEvent('page');
   await page.evaluate((url) => void window.open(url, '_blank'), `/${slug}`);
@@ -378,8 +386,8 @@ test('closing a tab after a lost answer stores the last edit without reopening',
   const closed = tab.page.waitForEvent('close');
   await tab.page.evaluate(() => void setTimeout(() => window.close(), 0));
   await closed;
-  await expect.poll(() => storedText(slug), { timeout: 5000 })
-    .toBe(expectedLines((lines) => { lines[60] += ' one two'; }));
+  lines[60] += ' one two';
+  await expect.poll(() => storedText(slug), { timeout: 5000 }).toBe(lines.join('|'));
 });
 
 // Tabs opened before 0.5.0 keep saving --------------------------------------------------------------
