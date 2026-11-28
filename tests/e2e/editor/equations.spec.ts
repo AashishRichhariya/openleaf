@@ -277,6 +277,26 @@ scenario('equation input: clicking outside the editor', async (ed) => {
   await ed.page.mouse.click(5, 300);
 }, { content: doc(p('before ', equation('x^2'), ' after')), persist: false });
 
+// Deleting a selected equation must cancel the key, or the browser deletes a character next to it
+// too. Firefox did, now and then: the handlers removed the node without preventDefault.
+for (const key of ['Backspace', 'Delete']) {
+  test(`${key} on a selected equation deletes only the equation`, async ({ ed, page }) => {
+    await ed.open({ content: sample });
+    await selectFirst(ed);
+    await page.evaluate(() => document.addEventListener('keydown', (event) => {
+      (window as unknown as { keyPrevented?: boolean }).keyPrevented = event.defaultPrevented;
+    }));
+    await page.keyboard.press(key);
+    await ed.settle();
+    const prevented = await page.evaluate(
+      () => (window as unknown as { keyPrevented?: boolean }).keyPrevented,
+    );
+    expect(prevented).toBe(true);
+    await expect(ed.root).toHaveText('before  after');
+    expect(await ed.tree()).not.toContain('equation');
+  });
+}
+
 test('clicking away from an equation keeps the edit, and typing goes where you clicked', { tag: '@U1' },
   async ({ ed }) => {
     await ed.open({ content: doc(p('before ', equation('x+1'), ' after')) });

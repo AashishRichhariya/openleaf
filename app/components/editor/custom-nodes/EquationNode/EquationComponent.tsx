@@ -211,8 +211,10 @@ export default function EquationComponent({
       // Handle delete and backspace keys
       editor.registerCommand(
         KEY_DELETE_COMMAND,
-        () => {
+        (event) => {
           if (isSelected) {
+            // Or the browser deletes a character next to the equation too
+            event?.preventDefault();
             onDelete();
             return true;
           }
@@ -222,8 +224,10 @@ export default function EquationComponent({
       ),
       editor.registerCommand(
         KEY_BACKSPACE_COMMAND,
-        () => {
+        (event) => {
           if (isSelected) {
+            // Or the browser deletes a character next to the equation too
+            event?.preventDefault();
             onDelete();
             return true;
           }
