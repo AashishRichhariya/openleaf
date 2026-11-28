@@ -88,12 +88,31 @@ tokens, and works even when yours are used up.
    - the current step and the exact next action;
    - worktrees, commits, PR and CI URLs, running processes and containers.
    Update it after every step.
+4. **Working files.** For your own tracking, so that a resume, a subagent or a later step reuses results instead of
+   recomputing them. All under `<[META]/task>/`, never committed, and never read by anything committed.
+
+   | Path | Holds |
+   |---|---|
+   | `progress.md` | Status, DONE items, the current step and the next action (above) |
+   | `notes.md` | What you learned: decisions within the brief and why, dead ends, surprises, open questions. Append; don't rewrite |
+   | `work/` | Scratch: test inventories, command logs, design sketches, subagent briefs and their results, anything half-done |
+   | `testing/` | Test-run outputs worth keeping: JSON reports, failure summaries, timings, and which new test proves which DONE item |
+   | `evidence/` | Only what proves a DONE item, named by item (for example `evidence/06-full-suite.json`) |
+   <!-- Add task-specific folders here, for example evidence/bench/ for benchmark scripts and raw samples. -->
+
+   **Make every saved result reusable:**
+   - Record next to it the commit SHA, the command, the date and the inputs it came from.
+   - Reuse a result only if those still match. A code change makes earlier runs stale for the DONE items that need the
+     final code.
+   - Before any long job (the full suite, a benchmark, a video render), check whether a valid result already exists.
+   - Write results as you go, not at the end: a limit can cut you off at any moment.
 
 ### On every resume
 
 1. If progress.md says DONE or BLOCKED, make sure the keeper no longer watches this session, then stop.
 2. Otherwise compare progress.md with reality (git, worktrees, `gh`, `docker ps`). Trust reality. Never redo finished work
-   or discard uncommitted work.
+   or discard uncommitted work. Read `notes.md`, and reuse what `work/`, `testing/` and `evidence/` already hold, if
+   their recorded commit and inputs still match.
 3. Restore what died, then continue from the next action. The rules and DONE items still apply if `/goal` was cleared.
    Tell the owner in one line that it can be pasted again.
 4. Don't wait idle for more than 20 minutes: check long jobs periodically instead.

@@ -50,6 +50,9 @@ The goal runs later, in a fresh chat, without this conversation. So **everything
      git limits agreed (worktree, branch, push and PR or not, never merge unless agreed).
    - **The keep-going section:** `keeper status`, `keeper watch --this-session --progress ...`, the progress file with a
      `STATUS:` first line, what to do on every resume, and `keeper unwatch` at the end.
+   - **Working files:** `notes.md`, `work/`, `testing/` and `evidence/` in the task folder, each result saved with the
+     commit, command and inputs it came from, so that resumes and subagents reuse it instead of recomputing. Add
+     task-specific folders, such as one for benchmarks.
 8. **Re-read both files** as the fresh agent would: could it do the job, with only them and the repo? Fix any gap.
 9. **Tell the owner:**
    - the two paths;
