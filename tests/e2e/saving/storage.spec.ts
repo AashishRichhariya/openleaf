@@ -133,8 +133,12 @@ test('a new document left empty is never stored compressed', async ({ ed, page }
   await expect.poll(async () => (await getStoredItem(ed.slug))!.content, { timeout: 8000 })
     .toBeNull();
   expect('content_gz' in (await getStoredItem(ed.slug))!).toBe(false);
+  // It opens as a document that was never written does
+  const fresh = new Editor(await page.context().newPage());
+  await fresh.open();
   await ed.reload();
-  expect(await ed.blocks()).toEqual(['paragraph']);
+  expect(await ed.tree()).toBe(await fresh.tree());
+  await expect(ed.root).toHaveText('');
   await expect(notice(page)).toHaveCount(0);
 });
 

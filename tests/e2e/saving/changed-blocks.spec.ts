@@ -166,6 +166,7 @@ test('moving a block sends it and its old place, not what is between', async ({ 
 test('the whole document is sent when it is smaller than the changes', async ({ ed, page }) => {
   await ed.open({ content: doc(p('one short line')) });
   const sent = recordSaves(page);
+  await ed.caretAfter('one short line');
   await ed.selectAll();
   await ed.type('all new');
   await ed.saved();
@@ -301,8 +302,18 @@ test('two tabs changing the same block keep both, with the notice', async ({ ed 
 test('closing a tab with a large document sends only the changes', async ({ page, context }) => {
   const slug = newSlug();
   await putRow({ slug, content: LARGE });
+  // A closing page's request is not reported to Playwright, so the page notes what it sends
+  await context.addInitScript(() => {
+    const send = window.fetch;
+    window.fetch = (input, init) => {
+      if (String(input).endsWith('/api/documents') && typeof init?.body === 'string') {
+        const sent = JSON.parse(localStorage.getItem('e2e:sent') ?? '[]');
+        localStorage.setItem('e2e:sent', JSON.stringify([...sent, init.body]));
+      }
+      return send(input, init);
+    };
+  });
   await page.goto('/robots.txt');
-  const sent = recordSaves(context);
   const opened = context.waitForEvent('page');
   await page.evaluate((url) => void window.open(url, '_blank'), `/${slug}`);
   const tab = new Editor(await opened);
@@ -316,6 +327,8 @@ test('closing a tab with a large document sends only the changes', async ({ page
   await closed;
   await expect.poll(() => storedText(slug), { timeout: 5000 })
     .toBe(expectedLines((lines) => { lines[150] += ' last words'; }));
+  const bodies: string[] = await page.evaluate(() => JSON.parse(localStorage.getItem('e2e:sent') ?? '[]'));
+  const sent = bodies.map((body) => ({ body: JSON.parse(body), size: Buffer.byteLength(body) }));
   expect(sent).toHaveLength(1);
   expect(sent[0].body.changes.ranges).toHaveLength(1);
   // Well under the 64 KB a closing page may send

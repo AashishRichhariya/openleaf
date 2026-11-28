@@ -107,15 +107,28 @@ async function close(tab: Editor): Promise<void> {
   await closed;
 }
 
-test('a closed tab\'s edit that never arrived is recovered, after other tabs saved', async ({ page }) => {
+test('a tab\'s edit that never arrived is recovered, after other tabs saved', async ({ page }) => {
   const slug = newSlug();
   await putRow({ slug, content: doc(p('base'), p('middle'), p('end')) });
+  // A closing page's own request can't be stopped (even offline, Chromium delivers it), so the tab
+  // goes as in a crash, without its pagehide and visibilitychange, after its saves failed
+  await page.context().addInitScript(() => {
+    for (const type of ['pagehide', 'visibilitychange']) {
+      window.addEventListener(type, (event) => {
+        if ((window as unknown as { crashing?: boolean }).crashing) event.stopImmediatePropagation();
+      }, true);
+    }
+  });
   const tab = await closableTab(page, slug);
-  // Its saves, and the one sent while closing, never arrive
-  await tab.page.route('**/api/documents', (route) => route.abort('connectionrefused'));
+  let failed = 0;
+  await tab.page.route('**/api/documents', (route) => {
+    failed += 1;
+    return route.abort('connectionrefused');
+  });
   await tab.caretAfter('end');
   await tab.type(' from the closed tab');
-  await tab.page.waitForTimeout(150);
+  await expect.poll(() => failed, { timeout: 8000 }).toBeGreaterThanOrEqual(1);
+  await tab.page.evaluate(() => { (window as unknown as { crashing?: boolean }).crashing = true; });
   await close(tab);
   expect(await storedText(slug)).toBe('base|middle|end');
   // 11 other tabs save meanwhile, more than the log keeps
